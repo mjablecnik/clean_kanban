@@ -1,12 +1,16 @@
 import '../entities/board.dart';
 import '../repositories/board_repository.dart';
+import '../events/event_notifier.dart';
+import '../events/board_events.dart';
 
 class GetBoardUseCase {
   final BoardRepository repository;
   GetBoardUseCase(this.repository);
 
   Future<Board> execute() async {
-    return await repository.getBoard();
+    final board = await repository.getBoard();
+    EventNotifier().notify(BoardLoadedEvent(board));
+    return board;
   }
 }
 
@@ -16,6 +20,7 @@ class SaveBoardUseCase {
 
   Future<void> execute(Board board) async {
     await repository.saveBoard(board);
+    EventNotifier().notify(BoardSavedEvent(board));
   }
 }
 
@@ -25,5 +30,6 @@ class UpdateBoardUseCase {
 
   Future<void> execute(Board board) async {
     await repository.updateBoard(board);
+    EventNotifier().notify(BoardSavedEvent(board));
   }
 }

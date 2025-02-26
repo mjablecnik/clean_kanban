@@ -3,11 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:clean_kanban/injection_container.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/ui/board_screen.dart';
-import 'package:clean_kanban/domain/entities/board.dart';
+import 'repositories/memory_board_repository.dart';
 
 void main() {
-  // Initialize dependency injection.
-  setupInjection();
+  // Initialize dependency injection with MemoryBoardRepository.
+  setupInjection(MemoryBoardRepository());
   runApp(const MyExampleApp());
 }
 

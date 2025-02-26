@@ -17,7 +17,16 @@ class BoardProvider extends ChangeNotifier {
 
   Future<void> loadBoard({Map<String, dynamic>? config}) async {
     try {
-      board = await _getBoardUseCase.execute();
+      final fetchedBoard = await _getBoardUseCase.execute();
+      if (fetchedBoard != null) {
+        board = fetchedBoard;
+        board = config != null ? Board.fromConfig(config) : Board.simple();
+        // If no board exists, create one from config if provided, otherwise create a simple board.
+        throw Exception('Failed to create a board');
+      }
+      // If no board exists, create one from config or a simple one.
+      board = config != null ? Board.fromConfig(config) : Board.simple();
+      await _saveBoardUseCase.execute(board!);
     } catch (e) {
       // If no board exists, create one from config or a simple one.
       board = config != null ? Board.fromConfig(config) : Board.simple();

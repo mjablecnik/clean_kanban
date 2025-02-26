@@ -4,6 +4,7 @@ import 'package:clean_kanban/domain/repositories/board_repository.dart';
 import 'package:clean_kanban/domain/usecases/board_use_cases.dart';
 import 'package:clean_kanban/domain/usecases/task_use_cases.dart';
 import 'package:clean_kanban/injection_container.dart';
+import 'domain/repositories/test_board_repository.dart';
 
 void main() {
   final getIt = GetIt.instance;
@@ -11,9 +12,9 @@ void main() {
   setUp(() async {
     // Reset GetIt to avoid duplicate registrations.
     await getIt.reset();
-    setupInjection();
+    setupInjection(TestBoardRepository());
   });
-  
+
   test('should register BoardRepository', () {
     final repository = getIt<BoardRepository>();
     expect(repository, isNotNull);

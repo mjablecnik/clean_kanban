@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
 import 'package:clean_kanban/domain/repositories/board_repository.dart';
+import 'repositories/test_board_repository.dart';
 
 void main() {
   group('BoardRepository', () {
@@ -9,7 +10,7 @@ void main() {
 
     setUp(() {
       // Using the concrete implementation.
-      repository = InMemoryBoardRepository();
+      repository = TestBoardRepository();
     });
 
     test('should throw error when getting board if none saved', () async {

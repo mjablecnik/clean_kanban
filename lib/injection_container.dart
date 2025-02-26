@@ -5,9 +5,9 @@ import 'domain/usecases/task_use_cases.dart';
 
 final GetIt getIt = GetIt.instance;
 
-void setupInjection() {
+void setupInjection(BoardRepository repository) {
   // Register repository as a lazy singleton.
-  getIt.registerLazySingleton<BoardRepository>(() => InMemoryBoardRepository());
+  getIt.registerLazySingleton<BoardRepository>(() => repository);
 
   // Register board use cases.
   getIt.registerFactory(() => GetBoardUseCase(getIt<BoardRepository>()));

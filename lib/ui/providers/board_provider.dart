@@ -15,12 +15,12 @@ class BoardProvider extends ChangeNotifier {
   final DeleteTaskUseCase _deleteTaskUseCase = getIt<DeleteTaskUseCase>();
   final MoveTaskUseCase _moveTaskUseCase = getIt<MoveTaskUseCase>();
 
-  Future<void> loadBoard() async {
+  Future<void> loadBoard({Map<String, dynamic>? config}) async {
     try {
       board = await _getBoardUseCase.execute();
     } catch (e) {
-      // If no board exists, create a simple one.
-      board = Board.simple();
+      // If no board exists, create one from config or a simple one.
+      board = config != null ? Board.fromConfig(config) : Board.simple();
       await _saveBoardUseCase.execute(board!);
     }
     notifyListeners();

@@ -5,16 +5,16 @@ import 'package:clean_kanban/domain/usecases/task_use_cases.dart';
 
 void main() {
   group('Task Use Cases', () {
-    late Column column;
-    late Column destination;
+    late KanbanColumn column;
+    late KanbanColumn destination;
     late AddTaskUseCase addTaskUseCase;
     late DeleteTaskUseCase deleteTaskUseCase;
     late ReorderTaskUseCase reorderTaskUseCase;
     late MoveTaskUseCase moveTaskUseCase;
 
     setUp(() {
-      column = Column(id: 'col1', header: 'To Do', columnLimit: 3);
-      destination = Column(id: 'col2', header: 'Done', columnLimit: 2);
+      column = KanbanColumn(id: 'col1', header: 'To Do', columnLimit: 3);
+      destination = KanbanColumn(id: 'col2', header: 'Done', columnLimit: 2);
       addTaskUseCase = AddTaskUseCase();
       deleteTaskUseCase = DeleteTaskUseCase();
       reorderTaskUseCase = ReorderTaskUseCase();
@@ -93,7 +93,7 @@ void main() {
 
     test('should throw error when adding a task to a full column using AddTaskUseCase', () {
       // Arrange
-      final fullColumn = Column(id: 'colFull', header: 'Full Column', columnLimit: 1);
+      final fullColumn = KanbanColumn(id: 'colFull', header: 'Full Column', columnLimit: 1);
       final task1 = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final task2 = Task(id: '2', title: 'Task2', subtitle: 'Desc2');
       addTaskUseCase.execute(fullColumn, task1);

@@ -1,5 +1,17 @@
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+library clean_kanban;
+
+// Export domain entities.
+export 'domain/entities/board.dart';
+export 'domain/entities/column.dart';
+export 'domain/entities/task.dart';
+
+// Export repository interfaces.
+export 'domain/repositories/board_repository.dart';
+
+// Export use cases.
+export 'domain/usecases/board_use_cases.dart';
+export 'domain/usecases/task_use_cases.dart';
+
+// Export events and notifier.
+export 'domain/events/board_events.dart';
+export 'domain/events/event_notifier.dart';

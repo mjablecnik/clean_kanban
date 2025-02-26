@@ -17,19 +17,19 @@ class BoardSavedEvent extends BoardEvent {
 // Task-related events
 class TaskAddedEvent extends BoardEvent {
   final Task task;
-  final Column column;
+  final KanbanColumn column;
   TaskAddedEvent(this.task, this.column);
 }
 
 class TaskRemovedEvent extends BoardEvent {
   final Task task;
-  final Column column;
+  final KanbanColumn column;
   TaskRemovedEvent(this.task, this.column);
 }
 
 class TaskMovedEvent extends BoardEvent {
   final Task task;
-  final Column source;
-  final Column destination;
+  final KanbanColumn source;
+  final KanbanColumn destination;
   TaskMovedEvent(this.task, this.source, this.destination);
 }

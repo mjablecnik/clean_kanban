@@ -18,10 +18,10 @@ void main() {
     test('should create an enhanced board with at least 3 columns', () {
       // Arrange
       final columns = [
-        Column(id: '1', header: 'Backlog', columnLimit: null),
-        Column(id: '2', header: 'In Progress', columnLimit: null),
-        Column(id: '3', header: 'Review', columnLimit: null),
-        Column(id: '4', header: 'Done', columnLimit: null),
+        KanbanColumn(id: '1', header: 'Backlog', columnLimit: null),
+        KanbanColumn(id: '2', header: 'In Progress', columnLimit: null),
+        KanbanColumn(id: '3', header: 'Review', columnLimit: null),
+        KanbanColumn(id: '4', header: 'Done', columnLimit: null),
       ];
       
       // Act
@@ -34,8 +34,8 @@ void main() {
     test('should throw error when creating board with less than 3 columns', () {
       // Arrange
       final columns = [
-        Column(id: '1', header: 'Only', columnLimit: null),
-        Column(id: '2', header: 'Two', columnLimit: null),
+        KanbanColumn(id: '1', header: 'Only', columnLimit: null),
+        KanbanColumn(id: '2', header: 'Two', columnLimit: null),
       ];
       
       // Act & Assert

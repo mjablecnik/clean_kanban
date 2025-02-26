@@ -1,12 +1,12 @@
 import 'task.dart';
 
-class Column {
+class KanbanColumn {
   final String id;
   final String header;
   final int? columnLimit;
   final List<Task> tasks = [];
 
-  Column({required this.id, required this.header, this.columnLimit});
+  KanbanColumn({required this.id, required this.header, this.columnLimit});
 
   void addTask(Task task) {
     // Ensure column limit is obeyed when adding a new task.
@@ -31,7 +31,7 @@ class Column {
     return tasks.removeAt(index);
   }
 
-  void moveTaskTo(int sourceIndex, Column destination, [int? destinationIndex]) {
+  void moveTaskTo(int sourceIndex, KanbanColumn destination, [int? destinationIndex]) {
     // Ensure source index is valid.
     if (sourceIndex < 0 || sourceIndex >= tasks.length) {
       throw RangeError('Source index out of range');

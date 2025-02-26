@@ -45,7 +45,7 @@ void main() {
     });
 
     test('should notify TaskAddedEvent when a task is added', () async {
-      final column = Column(id: 'col1', header: 'To Do', columnLimit: null);
+      final column = KanbanColumn(id: 'col1', header: 'To Do', columnLimit: null);
       final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final events = <BoardEvent>[];
       final subscription = notifier.stream.listen((event) {
@@ -61,7 +61,7 @@ void main() {
     });
 
     test('should notify TaskRemovedEvent when a task is removed', () async {
-      final column = Column(id: 'col1', header: 'To Do', columnLimit: null);
+      final column = KanbanColumn(id: 'col1', header: 'To Do', columnLimit: null);
       final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final events = <BoardEvent>[];
       final subscription = notifier.stream.listen((event) {
@@ -77,8 +77,8 @@ void main() {
     });
 
     test('should notify TaskMovedEvent when a task is moved', () async {
-      final source = Column(id: 'col1', header: 'To Do', columnLimit: null);
-      final destination = Column(id: 'col2', header: 'Done', columnLimit: null);
+      final source = KanbanColumn(id: 'col1', header: 'To Do', columnLimit: null);
+      final destination = KanbanColumn(id: 'col2', header: 'Done', columnLimit: null);
       final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final events = <BoardEvent>[];
       final subscription = notifier.stream.listen((event) {

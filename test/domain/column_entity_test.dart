@@ -6,7 +6,7 @@ void main() {
   group('Column Entity', () {
     test('should create a valid column with unlimited tasks when limit is null', () {
       // Arrange
-      final column = Column(id: 'col1', header: 'To Do', columnLimit: null);
+      final column = KanbanColumn(id: 'col1', header: 'To Do', columnLimit: null);
       
       // Assert
       expect(column.id, equals('col1'));
@@ -16,7 +16,7 @@ void main() {
 
     test('should add a task when under column limit', () {
       // Arrange
-      final column = Column(id: 'col2', header: 'In Progress', columnLimit: 2);
+      final column = KanbanColumn(id: 'col2', header: 'In Progress', columnLimit: 2);
       final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       
       // Act
@@ -29,7 +29,7 @@ void main() {
 
     test('should throw error when adding a task exceeding the column limit', () {
       // Arrange
-      final column = Column(id: 'col3', header: 'Done', columnLimit: 1);
+      final column = KanbanColumn(id: 'col3', header: 'Done', columnLimit: 1);
       final task1 = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final task2 = Task(id: '2', title: 'Task2', subtitle: 'Desc2');
       column.addTask(task1);
@@ -40,7 +40,7 @@ void main() {
 
     test('should reorder tasks', () {
       // Arrange
-      final column = Column(id: 'col4', header: 'Backlog', columnLimit: null);
+      final column = KanbanColumn(id: 'col4', header: 'Backlog', columnLimit: null);
       final task1 = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final task2 = Task(id: '2', title: 'Task2', subtitle: 'Desc2');
       final task3 = Task(id: '3', title: 'Task3', subtitle: 'Desc3');
@@ -59,7 +59,7 @@ void main() {
 
     test('should delete a task', () {
       // Arrange
-      final column = Column(id: 'col5', header: 'Review', columnLimit: null);
+      final column = KanbanColumn(id: 'col5', header: 'Review', columnLimit: null);
       final task1 = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final task2 = Task(id: '2', title: 'Task2', subtitle: 'Desc2');
       column.addTask(task1);
@@ -76,8 +76,8 @@ void main() {
 
     test('should move a task from one column to another', () {
       // Arrange
-      final source = Column(id: 'col6', header: 'Source', columnLimit: null);
-      final destination = Column(id: 'col7', header: 'Destination', columnLimit: 2);
+      final source = KanbanColumn(id: 'col6', header: 'Source', columnLimit: null);
+      final destination = KanbanColumn(id: 'col7', header: 'Destination', columnLimit: 2);
       final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       source.addTask(task);
       
@@ -92,8 +92,8 @@ void main() {
 
     test('should throw error when moving a task to a full column', () {
       // Arrange
-      final source = Column(id: 'col8', header: 'Source', columnLimit: null);
-      final destination = Column(id: 'col9', header: 'Destination', columnLimit: 1);
+      final source = KanbanColumn(id: 'col8', header: 'Source', columnLimit: null);
+      final destination = KanbanColumn(id: 'col9', header: 'Destination', columnLimit: 1);
       final task1 = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final task2 = Task(id: '2', title: 'Task2', subtitle: 'Desc2');
       destination.addTask(task1);

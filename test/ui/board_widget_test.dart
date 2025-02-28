@@ -40,4 +40,75 @@ void main() {
     expect(find.text('Doing'), findsOneWidget);
     expect(find.text('Done'), findsOneWidget);
   });
+
+  testWidgets('BoardWidget displays tasks within columns',
+      (WidgetTester tester) async {
+    // Arrange: Create a BoardProvider with a board containing tasks.
+    final boardProvider = BoardProvider();
+    boardProvider.board = Board.fromConfig({
+      'columns': [
+        {
+          'id': 'todo',
+          'header': 'To Do',
+          'tasks': [
+            {'id': '1', 'title': 'Task 1', 'subtitle': 'Description 1'},
+          ]
+        },
+        {
+          'id': 'doing',
+          'header': 'Doing',
+          'tasks': [
+            {'id': '2', 'title': 'Task 2', 'subtitle': 'Description 2'},
+          ]
+        },
+        {
+          'id': 'done',
+          'header': 'Done',
+          'tasks': [
+            {'id': '3', 'title': 'Task 3', 'subtitle': 'Description 3'},
+          ]
+        },
+      ]
+    });
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<BoardProvider>.value(
+        value: boardProvider,
+        child: const MaterialApp(home: BoardWidget()),
+      ),
+    );
+
+    // Assert: Tasks should be displayed within their respective columns.
+    expect(find.text('Task 1'), findsOneWidget);
+    expect(find.text('Task 2'), findsOneWidget);
+    expect(find.text('Task 3'), findsOneWidget);
+  });
+
+  testWidgets('BoardWidget onAddItem callback works correctly',
+      (WidgetTester tester) async {
+    // Arrange: Create a BoardProvider with a board containing columns.
+    final boardProvider = BoardProvider();
+    boardProvider.board = Board.fromConfig({
+      'columns': [
+        {'id': 'todo', 'header': 'To Do', 'tasks': []},
+        {'id': 'doing', 'header': 'Doing', 'tasks': []},
+        {'id': 'done', 'header': 'Done', 'tasks': []},
+      ]
+    });
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<BoardProvider>.value(
+        value: boardProvider,
+        child: const MaterialApp(home: BoardWidget()),
+      ),
+    );
+
+    // Act: Simulate adding a new task.
+    await tester.tap(find.byIcon(Icons.add_rounded).first);
+    await tester.pumpAndSettle();
+
+    // Assert: The new task should be added to the column.
+    expect(find.text('New Task'), findsOneWidget);
+    expect(find.text('Description'), findsOneWidget);
+  });
 }

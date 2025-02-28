@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
+import 'package:clean_kanban/ui/widgets/task_card.dart';
 
 class BoardScreen extends StatelessWidget {
   const BoardScreen({super.key});
@@ -20,22 +21,17 @@ class BoardScreen extends StatelessWidget {
               return Expanded(
                 child: Column(
                   children: [
-                    Text(column.header, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(column.header,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                     const Divider(),
                     Expanded(
                       child: ListView.builder(
                         itemCount: column.tasks.length,
                         itemBuilder: (context, index) {
                           final task = column.tasks[index];
-                          return ListTile(
-                            title: Text(task.title),
-                            subtitle: Text(task.subtitle),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                boardProv.removeTask(column.id, index);
-                              },
-                            ),
+                          return TaskCard(
+                            task: task,
                           );
                         },
                       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:clean_kanban/ui/board_widget.dart';
+import 'package:clean_kanban/ui/widgets/board_widget.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/injection_container.dart';
 import 'package:clean_kanban/domain/entities/board.dart';

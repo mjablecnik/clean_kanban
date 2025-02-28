@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clean_kanban/injection_container.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
-import 'package:clean_kanban/ui/board_screen.dart';
+import 'package:clean_kanban/ui/board_widget.dart';
 import 'repositories/memory_board_repository.dart';
 
 void main() {
@@ -19,9 +19,15 @@ class MyExampleApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => BoardProvider()..loadBoard(config: _boardConfig),
       child: MaterialApp(
-          title: 'Clean Kanban Example',
-          theme: ThemeData.light(),
-          home: const BoardScreen()),
+        title: 'Clean Kanban Example',
+        theme: ThemeData.light(),
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Kanban Board'),
+          ),
+          body: const BoardWidget(),
+        ),
+      ),
     );
   }
 }

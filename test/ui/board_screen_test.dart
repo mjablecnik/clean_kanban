@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:clean_kanban/ui/board_screen.dart';
+import 'package:clean_kanban/ui/board_widget.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/injection_container.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
@@ -14,7 +14,7 @@ void main() {
     setupInjection(TestBoardRepository());
   });
 
-  testWidgets('BoardScreen shows loading indicator then board UI',
+  testWidgets('BoardWidget shows loading indicator then board UI',
       (WidgetTester tester) async {
     // Arrange: Create a BoardProvider that initially has a null board.
     final boardProvider = BoardProvider();
@@ -22,7 +22,7 @@ void main() {
     await tester.pumpWidget(
       ChangeNotifierProvider<BoardProvider>.value(
         value: boardProvider,
-        child: const MaterialApp(home: BoardScreen()),
+        child: const MaterialApp(home: BoardWidget()),
       ),
     );
 

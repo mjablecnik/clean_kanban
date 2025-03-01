@@ -14,6 +14,7 @@ class BoardProvider extends ChangeNotifier {
   final AddTaskUseCase _addTaskUseCase = getIt<AddTaskUseCase>();
   final DeleteTaskUseCase _deleteTaskUseCase = getIt<DeleteTaskUseCase>();
   final MoveTaskUseCase _moveTaskUseCase = getIt<MoveTaskUseCase>();
+  final ReorderTaskUseCase _reorderTaskUseCase = getIt<ReorderTaskUseCase>();
 
   Future<void> loadBoard({Map<String, dynamic>? config}) async {
     try {
@@ -51,11 +52,19 @@ class BoardProvider extends ChangeNotifier {
     }
   }
 
-  void moveTask(String sourceId, int sourceIndex, String destId) {
-    final source = board?.columns.firstWhere((c) => c.id == sourceId);
-    final destination = board?.columns.firstWhere((c) => c.id == destId);
+  void moveTask(String sourceColId, int sourceIndex, String destColId) {
+    final source = board?.columns.firstWhere((c) => c.id == sourceColId);
+    final destination = board?.columns.firstWhere((c) => c.id == destColId);
     if (source != null && destination != null) {
       _moveTaskUseCase.execute(source, sourceIndex, destination);
+      notifyListeners();
+    }
+  }
+
+  void reorderTask(String columnId, int oldIndex, int newIndex) {
+    final col = board?.columns.firstWhere((c) => c.id == columnId);
+    if (col != null) {
+      _reorderTaskUseCase.execute(col, oldIndex, newIndex);
       notifyListeners();
     }
   }

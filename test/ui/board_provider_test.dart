@@ -116,5 +116,24 @@ void main() {
       expect(destColumn.tasks.length, equals(1));
       expect(destColumn.tasks.first, equals(task));
     });
+
+    test('should reorder the task within the same column', () {
+      // Arrange
+      final boardProvider = BoardProvider();
+      boardProvider.board = Board.simple();
+      final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+      final task2 = Task(id: '2', title: 'Task2', subtitle: 'Desc2');
+      boardProvider.addTask('todo', task);
+      boardProvider.addTask('todo', task2);
+
+      // Act
+      boardProvider.reorderTask('todo', 1, 0);
+
+      // Assert
+      final column =
+          boardProvider.board!.columns.firstWhere((c) => c.id == 'todo');
+      expect(column.tasks[0], equals(task2), reason: 'Task2 should be first');
+      expect(column.tasks[1], equals(task));
+    });
   });
 }

@@ -25,8 +25,10 @@ class DeleteTaskUseCase {
 class ReorderTaskUseCase {
   /// Reorders a task within the same column.
   void execute(KanbanColumn column, int oldIndex, int newIndex) {
+    Task task = column.tasks[oldIndex];
     column.reorderTask(oldIndex, newIndex);
-    // (Optional) Add an event if needed.
+    EventNotifier()
+        .notify(TaskReorderedEvent(column, task, oldIndex, newIndex));
   }
 }
 
@@ -34,7 +36,8 @@ class MoveTaskUseCase {
   /// Moves a task from the source column to the destination column.
   ///
   /// Optionally, a destination index can be provided.
-  void execute(KanbanColumn source, int sourceIndex, KanbanColumn destination, [int? destinationIndex]) {
+  void execute(KanbanColumn source, int sourceIndex, KanbanColumn destination,
+      [int? destinationIndex]) {
     // Capture the task before moving.
     final task = source.tasks[sourceIndex];
     source.moveTaskTo(sourceIndex, destination, destinationIndex);

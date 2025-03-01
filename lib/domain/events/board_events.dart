@@ -33,3 +33,11 @@ class TaskMovedEvent extends BoardEvent {
   final KanbanColumn destination;
   TaskMovedEvent(this.task, this.source, this.destination);
 }
+
+class TaskReorderedEvent extends BoardEvent {
+  final KanbanColumn column;
+  final Task task;
+  final int oldIndex;
+  final int newIndex;
+  TaskReorderedEvent(this.column, this.task, this.oldIndex, this.newIndex);
+}

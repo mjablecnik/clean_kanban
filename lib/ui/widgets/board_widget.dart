@@ -27,6 +27,9 @@ class BoardWidget extends StatelessWidget {
                   );
                   boardProv.addTask(column.id, newTask);
                 },
+                onReorderedTask: (column, oldIndex, newIndex) {
+                  boardProv.reorderTask(column.id, oldIndex, newIndex);
+                },
               ),
             );
           }).toList(),

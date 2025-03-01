@@ -1,6 +1,5 @@
+import 'package:clean_kanban/clean_kanban.dart';
 import 'package:flutter/material.dart';
-import 'package:clean_kanban/domain/entities/column.dart';
-import 'task_card.dart';
 
 class ColumnWidget extends StatelessWidget {
   final KanbanColumn column;
@@ -8,7 +7,10 @@ class ColumnWidget extends StatelessWidget {
   final Color columnBorderColor;
   final Color columnHeaderColor;
   final Color columnHeaderTextColor;
-  final Function(String title, String subtitle)? onAddItem;
+  final Function(String title, String subtitle)?
+      onAddItem; // TODO: rename to onAddTask
+  final Function(KanbanColumn column, int oldIndex, int newIndex)?
+      onReorderedTask;
 
   const ColumnWidget({
     Key? key,
@@ -18,6 +20,7 @@ class ColumnWidget extends StatelessWidget {
     this.columnHeaderColor = Colors.blue,
     this.columnHeaderTextColor = Colors.black87,
     this.onAddItem,
+    this.onReorderedTask,
   }) : super(key: key);
 
   @override
@@ -39,12 +42,25 @@ class ColumnWidget extends StatelessWidget {
                 itemCount: column.tasks.length,
                 itemBuilder: (context, index) {
                   final task = column.tasks[index];
-                  return TaskCard(task: task);
+                  return _buildDragTargetItem(task, index);
                 },
               ),
             ),
           ],
         ));
+  }
+
+  Widget _buildDragTargetItem(Task task, int index) {
+    return DragTarget<String>(builder: (context, candidateData, rejectedData) {
+      return TaskCard(task: task);
+    }, onWillAcceptWithDetails: (details) {
+      return onReorderedTask != null;
+    }, onAcceptWithDetails: (details) {
+      final draggedIndex =
+          column.tasks.indexWhere((task) => task.id == details.data);
+      if (draggedIndex == -1 && draggedIndex == index) return;
+      onReorderedTask?.call(column, draggedIndex, index);
+    });
   }
 
   Widget _buildHeader() {

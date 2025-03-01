@@ -4,7 +4,7 @@ import 'task_card.dart';
 
 class ColumnWidget extends StatelessWidget {
   final KanbanColumn column;
-  final Color columnColor;
+  final Color columnBackgroundColor;
   final Color columnBorderColor;
   final Color columnHeaderColor;
   final Color columnHeaderTextColor;
@@ -13,7 +13,7 @@ class ColumnWidget extends StatelessWidget {
   const ColumnWidget({
     Key? key,
     required this.column,
-    this.columnColor = Colors.white,
+    this.columnBackgroundColor = Colors.white,
     this.columnBorderColor = const Color(0xFFE0E0E0),
     this.columnHeaderColor = Colors.blue,
     this.columnHeaderTextColor = Colors.black87,
@@ -22,20 +22,29 @@ class ColumnWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildHeader(),
-        Expanded(
-          child: ListView.builder(
-            itemCount: column.tasks.length,
-            itemBuilder: (context, index) {
-              final task = column.tasks[index];
-              return TaskCard(task: task);
-            },
+    return Container(
+        decoration: BoxDecoration(
+          color: columnBackgroundColor,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: columnBorderColor.withValues(alpha: 0.3),
+            width: 1.0,
           ),
         ),
-      ],
-    );
+        child: Column(
+          children: [
+            _buildHeader(),
+            Expanded(
+              child: ListView.builder(
+                itemCount: column.tasks.length,
+                itemBuilder: (context, index) {
+                  final task = column.tasks[index];
+                  return TaskCard(task: task);
+                },
+              ),
+            ),
+          ],
+        ));
   }
 
   Widget _buildHeader() {
@@ -75,7 +84,7 @@ class ColumnWidget extends StatelessWidget {
                   vertical: 2.0,
                 ),
                 decoration: BoxDecoration(
-                  color: columnColor,
+                  color: columnBackgroundColor,
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Text(

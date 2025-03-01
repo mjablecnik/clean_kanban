@@ -46,19 +46,23 @@ const Map<String, dynamic> _boardConfig = {
     {
       'id': 'doing',
       'header': 'In Progress',
-      'limit': 3,
-      'tasks': [
-        {'id': '3', 'title': 'Task 3', 'subtitle': 'Description 3'},
-      ]
+      'limit': 1,
+      'tasks': [],
+      'canAddTask': false
     },
-    {'id': 'review', 'header': 'Review', 'limit': 2, 'tasks': []},
+    {
+      'id': 'review',
+      'header': 'Review',
+      'limit': 2,
+      'tasks': [],
+      'canAddTask': false
+    },
     {
       'id': 'done',
       'header': 'Done',
       'limit': null,
-      'tasks': [
-        {'id': '4', 'title': 'Task 4', 'subtitle': 'Description 4'}
-      ]
+      'tasks': [],
+      'canAddTask': false
     }
   ]
 };

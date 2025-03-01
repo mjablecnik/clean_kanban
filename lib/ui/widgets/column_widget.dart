@@ -117,7 +117,7 @@ class ColumnWidget extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          if (onAddTask != null)
+          if (column.canAddTask && onAddTask != null)
             Container(
               height: 32.0,
               width: 32.0,

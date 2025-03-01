@@ -37,6 +37,7 @@ class Board {
         id: colConfig['id'],
         header: colConfig['header'],
         columnLimit: colConfig['limit'],
+        canAddTask: colConfig['canAddTask'] ?? true,
       );
 
       if (colConfig['tasks'] != null) {

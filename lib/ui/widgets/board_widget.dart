@@ -19,7 +19,7 @@ class BoardWidget extends StatelessWidget {
             return Expanded(
               child: ColumnWidget(
                 column: column,
-                onAddItem: (title, subtitle) {
+                onAddTask: (title, subtitle) {
                   final newTask = Task(
                     id: DateTime.now().millisecondsSinceEpoch.toString(),
                     title: title,

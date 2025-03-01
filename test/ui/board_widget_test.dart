@@ -84,7 +84,7 @@ void main() {
     expect(find.text('Task 3'), findsOneWidget);
   });
 
-  testWidgets('BoardWidget onAddItem callback works correctly',
+  testWidgets('BoardWidget onAddTask callback works correctly',
       (WidgetTester tester) async {
     // Arrange: Create a BoardProvider with a board containing columns.
     final boardProvider = BoardProvider();

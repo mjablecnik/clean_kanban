@@ -8,7 +8,7 @@ class ColumnWidget extends StatelessWidget {
   final Color columnHeaderColor;
   final Color columnHeaderTextColor;
   final Function(String title, String subtitle)?
-      onAddItem; // TODO: rename to onAddTask
+      onAddTask; // TODO: rename to onAddTask
   final Function(KanbanColumn column, int oldIndex, int newIndex)?
       onReorderedTask;
 
@@ -19,7 +19,7 @@ class ColumnWidget extends StatelessWidget {
     this.columnBorderColor = const Color(0xFFE0E0E0),
     this.columnHeaderColor = Colors.blue,
     this.columnHeaderTextColor = Colors.black87,
-    this.onAddItem,
+    this.onAddTask,
     this.onReorderedTask,
   }) : super(key: key);
 
@@ -117,7 +117,7 @@ class ColumnWidget extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          if (onAddItem != null)
+          if (onAddTask != null)
             Container(
               height: 32.0,
               width: 32.0,
@@ -129,9 +129,9 @@ class ColumnWidget extends StatelessWidget {
                 icon: const Icon(Icons.add_rounded, size: 20.0),
                 padding: EdgeInsets.zero,
                 color: Colors.grey.shade500,
-                onPressed: onAddItem != null
+                onPressed: onAddTask != null
                     ? () {
-                        onAddItem!('New Task', 'Description');
+                        onAddTask!('New Task', 'Description');
                       }
                     : null,
               ),

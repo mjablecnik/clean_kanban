@@ -122,13 +122,13 @@ class ColumnWidget extends StatelessWidget {
               height: 32.0,
               width: 32.0,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Colors.grey.shade700,
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: IconButton(
                 icon: const Icon(Icons.add_rounded, size: 20.0),
                 padding: EdgeInsets.zero,
-                color: Colors.grey.shade500,
+                color: Colors.white,
                 onPressed: onAddTask != null
                     ? () {
                         onAddTask!('New Task', 'Description');

@@ -89,4 +89,14 @@ class Board {
     }
     return columns[index + 1].id;
   }
+
+  // function return true if column reached its limit
+  bool isColumnLimitReached(String columnId) {
+    final column = columns.firstWhere((col) => col.id == columnId);
+    if (column.columnLimit != null &&
+        column.tasks.length >= column.columnLimit!) {
+      return true;
+    }
+    return false;
+  }
 }

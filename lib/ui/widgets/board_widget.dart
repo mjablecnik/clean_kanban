@@ -20,6 +20,10 @@ class BoardWidget extends StatelessWidget {
             final hasRightColumn = boardProv.board!.hasRightColumn(column.id);
             final leftColumnId = boardProv.board!.getLeftColumnId(column.id);
             final rightColumnId = boardProv.board!.getRightColumnId(column.id);
+            final isLeftColumnLimitReached = hasLeftColumn &&
+                boardProv.board!.isColumnLimitReached(leftColumnId!);
+            final isRightColumnLimitReached = hasRightColumn &&
+                boardProv.board!.isColumnLimitReached(rightColumnId!);
             return Expanded(
               child: ColumnWidget(
                 column: column,
@@ -51,8 +55,8 @@ class BoardWidget extends StatelessWidget {
                         }
                       }
                     : null,
-                canMoveLeft: hasLeftColumn,
-                canMoveRight: hasRightColumn,
+                canMoveLeft: hasLeftColumn && !isLeftColumnLimitReached,
+                canMoveRight: hasRightColumn && !isRightColumnLimitReached,
               ),
             );
           }).toList(),

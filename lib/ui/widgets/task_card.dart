@@ -9,6 +9,7 @@ class TaskCard extends StatelessWidget {
   final Color cardSubtitleColor;
   final VoidCallback? onMoveLeft;
   final VoidCallback? onMoveRight;
+
   const TaskCard({
     Key? key,
     required this.task,

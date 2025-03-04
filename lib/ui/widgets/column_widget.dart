@@ -7,10 +7,11 @@ class ColumnWidget extends StatelessWidget {
   final Color columnBorderColor;
   final Color columnHeaderColor;
   final Color columnHeaderTextColor;
-  final Function(String title, String subtitle)?
-      onAddTask; // TODO: rename to onAddTask
+  final Function(String title, String subtitle)? onAddTask;
   final Function(KanbanColumn column, int oldIndex, int newIndex)?
       onReorderedTask;
+  final Function(int sourceTaskIndex)? onMoveTaskLeftToRight;
+  final Function(int sourceTaskIndex)? onMoveTaskRightToLeft;
 
   const ColumnWidget({
     Key? key,
@@ -21,6 +22,8 @@ class ColumnWidget extends StatelessWidget {
     this.columnHeaderTextColor = Colors.black87,
     this.onAddTask,
     this.onReorderedTask,
+    this.onMoveTaskLeftToRight,
+    this.onMoveTaskRightToLeft,
   }) : super(key: key);
 
   @override
@@ -52,7 +55,18 @@ class ColumnWidget extends StatelessWidget {
 
   Widget _buildDragTargetItem(Task task, int index) {
     return DragTarget<String>(builder: (context, candidateData, rejectedData) {
-      return TaskCard(task: task);
+      return TaskCard(
+          task: task,
+          onMoveLeft: () {
+            if (onMoveTaskRightToLeft != null) {
+              onMoveTaskRightToLeft!(index);
+            }
+          },
+          onMoveRight: () {
+            if (onMoveTaskLeftToRight != null) {
+              onMoveTaskLeftToRight!(index);
+            }
+          });
     }, onWillAcceptWithDetails: (details) {
       return onReorderedTask != null;
     }, onAcceptWithDetails: (details) {

@@ -39,6 +39,8 @@ void main() {
           onMoveRight: () {
             movedRight = true;
           },
+          canMoveLeft: true,
+          canMoveRight: true,
         ),
       ),
     );
@@ -56,5 +58,30 @@ void main() {
 
     // Assert: The move right callback should be triggered.
     expect(movedRight, isTrue);
+  });
+
+  testWidgets('TaskCard move buttons are disabled correctly',
+      (WidgetTester tester) async {
+    // Arrange
+    final testTask =
+        Task(id: '1', title: 'Test Title', subtitle: 'Test Subtitle');
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: TaskCard(
+          task: testTask,
+          onMoveLeft: () {},
+          onMoveRight: () {},
+          canMoveLeft: false,
+          canMoveRight: false,
+        ),
+      ),
+    );
+
+    // Assert: The move left and move right buttons should be disabled.
+    final iconButtonFinder = find.byType(InkWell);
+    tester.widgetList<InkWell>(iconButtonFinder).forEach((element) {
+      expect(element.onTap, isNull);
+    });
   });
 }

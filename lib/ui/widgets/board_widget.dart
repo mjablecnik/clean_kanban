@@ -16,6 +16,10 @@ class BoardWidget extends StatelessWidget {
         }
         return Row(
           children: boardProv.board!.columns.map((column) {
+            final hasLeftColumn = boardProv.board!.hasLeftColumn(column.id);
+            final hasRightColumn = boardProv.board!.hasRightColumn(column.id);
+            final leftColumnId = boardProv.board!.getLeftColumnId(column.id);
+            final rightColumnId = boardProv.board!.getRightColumnId(column.id);
             return Expanded(
               child: ColumnWidget(
                 column: column,
@@ -33,8 +37,6 @@ class BoardWidget extends StatelessWidget {
                 onMoveTaskLeftToRight:
                     boardProv.board!.hasRightColumn(column.id)
                         ? (sourceTaskIndex) {
-                            final rightColumnId =
-                                boardProv.board!.getRightColumnId(column.id);
                             if (rightColumnId != null) {
                               boardProv.moveTask(
                                   column.id, sourceTaskIndex, rightColumnId!);
@@ -43,14 +45,14 @@ class BoardWidget extends StatelessWidget {
                         : null,
                 onMoveTaskRightToLeft: boardProv.board!.hasLeftColumn(column.id)
                     ? (sourceTaskIndex) {
-                        final leftColumnId =
-                            boardProv.board!.getLeftColumnId(column.id);
                         if (leftColumnId != null) {
                           boardProv.moveTask(
                               column.id, sourceTaskIndex, leftColumnId);
                         }
                       }
                     : null,
+                canMoveLeft: hasLeftColumn,
+                canMoveRight: hasRightColumn,
               ),
             );
           }).toList(),

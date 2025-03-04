@@ -9,6 +9,8 @@ class TaskCard extends StatelessWidget {
   final Color cardSubtitleColor;
   final VoidCallback? onMoveLeft;
   final VoidCallback? onMoveRight;
+  final bool canMoveLeft;
+  final bool canMoveRight;
 
   const TaskCard({
     Key? key,
@@ -19,6 +21,8 @@ class TaskCard extends StatelessWidget {
     this.cardSubtitleColor = const Color.fromRGBO(0, 0, 0, 0.541),
     this.onMoveLeft,
     this.onMoveRight,
+    this.canMoveLeft = true,
+    this.canMoveRight = true,
   }) : super(key: key);
 
   @override
@@ -122,9 +126,9 @@ class TaskCard extends StatelessWidget {
                         children: [
                           _buildControlButton(
                             icon: Icons.chevron_left,
-                            onPressed: onMoveLeft,
+                            onPressed: canMoveLeft ? onMoveLeft : null,
                             tooltip: 'Move to Previous Column',
-                            color: onMoveLeft != null
+                            color: canMoveLeft
                                 ? const Color.fromRGBO(25, 118, 210, 1)
                                 : Colors.grey.shade300,
                           ),
@@ -136,9 +140,9 @@ class TaskCard extends StatelessWidget {
                           ),
                           _buildControlButton(
                             icon: Icons.chevron_right,
-                            onPressed: onMoveRight,
+                            onPressed: canMoveRight ? onMoveRight : null,
                             tooltip: 'Move to Next Column',
-                            color: onMoveRight != null
+                            color: canMoveRight
                                 ? Colors.blue.shade700
                                 : Colors.grey.shade300,
                           ),

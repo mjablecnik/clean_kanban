@@ -12,6 +12,8 @@ class ColumnWidget extends StatelessWidget {
       onReorderedTask;
   final Function(int sourceTaskIndex)? onMoveTaskLeftToRight;
   final Function(int sourceTaskIndex)? onMoveTaskRightToLeft;
+  final bool canMoveLeft;
+  final bool canMoveRight;
 
   const ColumnWidget({
     Key? key,
@@ -24,6 +26,8 @@ class ColumnWidget extends StatelessWidget {
     this.onReorderedTask,
     this.onMoveTaskLeftToRight,
     this.onMoveTaskRightToLeft,
+    this.canMoveLeft = true,
+    this.canMoveRight = true,
   }) : super(key: key);
 
   @override
@@ -66,7 +70,9 @@ class ColumnWidget extends StatelessWidget {
             if (onMoveTaskLeftToRight != null) {
               onMoveTaskLeftToRight!(index);
             }
-          });
+          },
+          canMoveLeft: canMoveLeft,
+          canMoveRight: canMoveRight);
     }, onWillAcceptWithDetails: (details) {
       return onReorderedTask != null;
     }, onAcceptWithDetails: (details) {

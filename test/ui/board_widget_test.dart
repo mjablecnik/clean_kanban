@@ -1,3 +1,4 @@
+import 'package:clean_kanban/clean_kanban.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -112,45 +113,45 @@ void main() {
     expect(find.text('Description'), findsOneWidget);
   });
 
-  //TODO: fix this test
-  // testWidgets('BoardWidget onReorderedTasks callback works correctly',
-  //     (WidgetTester tester) async {
-  //   // Arrange: Create a BoardProvider with a board containing columns.
-  //   final boardProvider = BoardProvider();
-  //   boardProvider.board = Board.fromConfig({
-  //     'columns': [
-  //       {
-  //         'id': 'todo',
-  //         'header': 'To Do',
-  //         'tasks': [
-  //           {'id': '1', 'title': 'Task 1', 'subtitle': 'Description 1'},
-  //           {'id': '2', 'title': 'Task 2', 'subtitle': 'Description 2'},
-  //           {'id': '3', 'title': 'Task 3', 'subtitle': 'Description 3'},
-  //         ]
-  //       },
-  //       {'id': 'doing', 'header': 'Doing', 'tasks': []},
-  //       {'id': 'done', 'header': 'Done', 'tasks': []},
-  //     ]
-  //   });
+  testWidgets('BoardWidget onReorderedTasks callback works correctly',
+      (WidgetTester tester) async {
+    // Arrange: Create a BoardProvider with a board containing columns.
+    final boardProvider = BoardProvider();
+    boardProvider.board = Board.fromConfig({
+      'columns': [
+        {
+          'id': 'todo',
+          'header': 'To Do',
+          'tasks': [
+            {'id': '1', 'title': 'Task 1', 'subtitle': 'Description 1'},
+            {'id': '2', 'title': 'Task 2', 'subtitle': 'Description 2'},
+            {'id': '3', 'title': 'Task 3', 'subtitle': 'Description 3'},
+          ]
+        },
+        {'id': 'doing', 'header': 'Doing', 'tasks': []},
+        {'id': 'done', 'header': 'Done', 'tasks': []},
+      ]
+    });
 
-  //   await tester.pumpWidget(
-  //     ChangeNotifierProvider<BoardProvider>.value(
-  //       value: boardProvider,
-  //       child: const MaterialApp(home: BoardWidget()),
-  //     ),
-  //   );
+    await tester.pumpWidget(
+      ChangeNotifierProvider<BoardProvider>.value(
+        value: boardProvider,
+        child: const MaterialApp(home: BoardWidget()),
+      ),
+    );
 
-  //   // Act: Simulate reordering tasks within a column.
-  //   await tester.drag(find.text('Task 1'), const Offset(0, 100));
-  //   await tester.pumpAndSettle();
+    // Act: Simulate reordering tasks within a column.
+    await tester.drag(find.text('Task 1'), const Offset(0, 100));
+    await tester.pumpAndSettle();
 
-  //   // Assert: The tasks should be reordered within the column.
-  //   final columnFinder = find.text('To Do');
-  //   expect(find.descendant(of: columnFinder, matching: find.('Task 2')),
-  //       findsOneWidget);
-  //   expect(find.descendant(of: columnFinder, matching: find.text('Task 3')),
-  //       findsOneWidget);
-  //   expect(find.descendant(of: columnFinder, matching: find.text('Task 1')),
-  //       findsOneWidget);
-  // });
+    // Assert: The tasks should be reordered within the column.
+    final taskCards =
+        tester.widgetList<TaskCard>(find.byType(TaskCard)).toList();
+
+    expect(taskCards.map((taskCard) => taskCard.task.title).toList(), [
+      'Task 2',
+      'Task 1',
+      'Task 3',
+    ]);
+  });
 }

@@ -30,6 +30,27 @@ class BoardWidget extends StatelessWidget {
                 onReorderedTask: (column, oldIndex, newIndex) {
                   boardProv.reorderTask(column.id, oldIndex, newIndex);
                 },
+                onMoveTaskLeftToRight:
+                    boardProv.board!.hasRightColumn(column.id)
+                        ? (sourceTaskIndex) {
+                            final rightColumnId =
+                                boardProv.board!.getRightColumnId(column.id);
+                            if (rightColumnId != null) {
+                              boardProv.moveTask(
+                                  column.id, sourceTaskIndex, rightColumnId!);
+                            }
+                          }
+                        : null,
+                onMoveTaskRightToLeft: boardProv.board!.hasLeftColumn(column.id)
+                    ? (sourceTaskIndex) {
+                        final leftColumnId =
+                            boardProv.board!.getLeftColumnId(column.id);
+                        if (leftColumnId != null) {
+                          boardProv.moveTask(
+                              column.id, sourceTaskIndex, leftColumnId);
+                        }
+                      }
+                    : null,
               ),
             );
           }).toList(),

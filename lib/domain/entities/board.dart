@@ -56,4 +56,37 @@ class Board {
 
     return Board(columns: columns);
   }
+
+  // return the id of the column on the left of the given column, return null if not found
+  bool hasLeftColumn(String columnId) {
+    final index = columns.indexWhere((col) => col.id == columnId);
+    if (index == -1 || index == 0) {
+      return false;
+    }
+    return true;
+  }
+
+  String? getLeftColumnId(String columnId) {
+    final index = columns.indexWhere((col) => col.id == columnId);
+    if (index == -1 || index == 0) {
+      return null;
+    }
+    return columns[index - 1].id;
+  }
+
+  bool hasRightColumn(String columnId) {
+    final index = columns.indexWhere((col) => col.id == columnId);
+    if (index == -1 || index == columns.length - 1) {
+      return false;
+    }
+    return true;
+  }
+
+  String? getRightColumnId(String columnId) {
+    final index = columns.indexWhere((col) => col.id == columnId);
+    if (index == -1 || index == columns.length - 1) {
+      return null;
+    }
+    return columns[index + 1].id;
+  }
 }

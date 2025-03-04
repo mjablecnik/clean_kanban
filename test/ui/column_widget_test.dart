@@ -154,7 +154,7 @@ void main() {
     expect(leftColumn.tasks.length, equals(1));
     expect(rightColumn.tasks.length, equals(1));
 
-    // Act: Click on the chevron_right in the task card to move the task to the right column.
+    // Act: Click on the chevron_left in the task card to move the task to the left column.
     // Find button by both column header and button text
     final buttonFinder = find.descendant(
       of: find.ancestor(

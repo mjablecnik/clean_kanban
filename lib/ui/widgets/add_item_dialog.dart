@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-class AddItemDialog extends StatefulWidget {
+class AddTaskDialog extends StatefulWidget {
   final Function(String title, String subtitle) onAdd;
 
-  const AddItemDialog({
+  const AddTaskDialog({
     super.key,
     required this.onAdd,
   });
 
   @override
-  State<AddItemDialog> createState() => AddItemDialogState();
+  State<AddTaskDialog> createState() => AddTaskDialogState();
 }
 
-class AddItemDialogState extends State<AddItemDialog> {
+class AddTaskDialogState extends State<AddTaskDialog> {
   late final TextEditingController _titleController;
   late final TextEditingController _subtitleController;
   final _formKey = GlobalKey<FormState>();
@@ -65,7 +65,7 @@ class AddItemDialogState extends State<AddItemDialog> {
           widget.onAdd(title, subtitle);
           Navigator.of(context).pop();
         } catch (e) {
-          _showError('Failed to add item. Please try again.');
+          _showError('Failed to add task. Please try again.');
         }
       }
     } catch (e) {
@@ -138,7 +138,7 @@ class AddItemDialogState extends State<AddItemDialog> {
                           controller: _titleController,
                           decoration: const InputDecoration(
                             labelText: 'Title',
-                            hintText: 'Enter item title',
+                            hintText: 'Enter task title',
                             errorMaxLines: 2,
                             helperText: 'Required, max 100 characters',
                             helperMaxLines: 2,

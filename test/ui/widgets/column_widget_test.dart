@@ -41,9 +41,9 @@ void main() {
         home: Scaffold(
           body: ColumnWidget(
             column: testColumn,
-            onAddTask: (title, subtitle) {
+            onAddTask: () {
               testColumn
-                  .addTask(Task(id: '1', title: title, subtitle: subtitle));
+                  .addTask(Task(id: '1', title: 'title', subtitle: 'subtitle'));
             },
           ),
         ),

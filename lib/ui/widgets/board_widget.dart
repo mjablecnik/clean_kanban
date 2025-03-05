@@ -12,7 +12,7 @@ class BoardWidget extends StatelessWidget {
     showDialog(
         context: context,
         barrierDismissible: true,
-        builder: (BuildContext context) => AddItemDialog(onAdd: onAddTask));
+        builder: (BuildContext context) => AddTaskDialog(onAdd: onAddTask));
   }
 
   @override

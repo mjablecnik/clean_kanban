@@ -37,7 +37,7 @@ class BoardWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 2.0),
                 child: ColumnWidget(
                   column: column,
-                  onAddTask: (title, subtitle) {
+                  onAddTask: () {
                     _showAddTaskDialog(context, (title, subtitle) {
                       final newTask = Task(
                         id: DateTime.now().millisecondsSinceEpoch.toString(),

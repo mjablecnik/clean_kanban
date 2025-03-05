@@ -14,7 +14,7 @@ class KanbanColumnTheme {
     this.columnBorderColor = const Color(0xFFE0E0E0),
     this.columnHeaderColor = Colors.blue,
     this.columnHeaderTextColor = Colors.black87,
-    this.columnAddButtonBoxColor = const Color.fromARGB(255, 30, 99, 164),
+    this.columnAddButtonBoxColor = const Color.fromARGB(255, 76, 127, 175),
     this.columnAddIconColor = Colors.white,
   });
 }
@@ -22,7 +22,7 @@ class KanbanColumnTheme {
 class ColumnWidget extends StatelessWidget {
   final KanbanColumn column;
   final KanbanColumnTheme theme;
-  final Function(String title, String subtitle)? onAddTask;
+  final Function()? onAddTask;
   final Function(KanbanColumn column, int oldIndex, int newIndex)?
       onReorderedTask;
   final Function(int sourceTaskIndex)? onMoveTaskLeftToRight;
@@ -163,7 +163,7 @@ class ColumnWidget extends StatelessWidget {
                 color: theme.columnAddIconColor,
                 onPressed: onAddTask != null
                     ? () {
-                        onAddTask!('New Task', 'Description');
+                        onAddTask!();
                       }
                     : null,
               ),

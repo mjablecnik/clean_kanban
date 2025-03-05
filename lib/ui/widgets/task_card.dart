@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 
-class TaskCard extends StatelessWidget {
-  final Task task;
+class TaskCardTheme {
   final Color cardBackgroundColor;
   final Color cardBorderColor;
   final Color cardTitleColor;
   final Color cardSubtitleColor;
+  final Color cardMoveIconEnabledColor;
+  final Color cardMoveIconDisabledColor;
+
+  const TaskCardTheme({
+    this.cardBackgroundColor = Colors.white,
+    this.cardBorderColor = const Color(0xFFE0E0E0),
+    this.cardTitleColor = const Color.fromRGBO(0, 0, 0, 0.867),
+    this.cardSubtitleColor = const Color.fromRGBO(0, 0, 0, 0.541),
+    this.cardMoveIconEnabledColor = const Color.fromRGBO(25, 118, 210, 1),
+    this.cardMoveIconDisabledColor = const Color.fromRGBO(224, 224, 224, 1),
+  });
+}
+
+class TaskCard extends StatelessWidget {
+  final Task task;
+  final TaskCardTheme theme;
   final VoidCallback? onMoveLeft;
   final VoidCallback? onMoveRight;
   final bool canMoveLeft;
@@ -15,15 +30,12 @@ class TaskCard extends StatelessWidget {
   const TaskCard({
     Key? key,
     required this.task,
-    this.cardBackgroundColor = Colors.white,
-    this.cardBorderColor = const Color(0xFFE0E0E0),
-    this.cardTitleColor = const Color.fromRGBO(0, 0, 0, 0.867),
-    this.cardSubtitleColor = const Color.fromRGBO(0, 0, 0, 0.541),
     this.onMoveLeft,
     this.onMoveRight,
     this.canMoveLeft = true,
     this.canMoveRight = true,
-  }) : super(key: key);
+  })  : theme = const TaskCardTheme(),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +59,11 @@ class TaskCard extends StatelessWidget {
   Widget _buildCardContent({required bool isDragging}) {
     return Card(
       elevation: isDragging ? 0 : 2.0,
-      color: cardBackgroundColor,
+      color: theme.cardBackgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
         side: BorderSide(
-          color: cardBorderColor,
+          color: theme.cardBorderColor,
           width: 1.0,
           style: BorderStyle.solid,
         ),
@@ -67,8 +79,8 @@ class TaskCard extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      cardBackgroundColor,
-                      cardBackgroundColor.withValues(alpha: 0.95),
+                      theme.cardBackgroundColor,
+                      theme.cardBackgroundColor.withValues(alpha: 0.95),
                     ],
                   ),
           ),
@@ -91,7 +103,7 @@ class TaskCard extends StatelessWidget {
                               fontSize: 17.0,
                               fontWeight: FontWeight.w700,
                               letterSpacing: -0.3,
-                              color: cardTitleColor,
+                              color: theme.cardTitleColor,
                             ),
                           ),
                           const SizedBox(height: 6.0),
@@ -100,7 +112,7 @@ class TaskCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 14.0,
                               height: 1.3,
-                              color: cardSubtitleColor,
+                              color: theme.cardSubtitleColor,
                             ),
                           ),
                         ],
@@ -115,7 +127,7 @@ class TaskCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         border: Border(
                           left: BorderSide(
-                            color: cardBorderColor.withValues(alpha: 0.7),
+                            color: theme.cardBorderColor.withValues(alpha: 0.7),
                             width: 1.0,
                           ),
                         ),
@@ -129,22 +141,22 @@ class TaskCard extends StatelessWidget {
                             onPressed: canMoveLeft ? onMoveLeft : null,
                             tooltip: 'Move to Previous Column',
                             color: canMoveLeft
-                                ? const Color.fromRGBO(25, 118, 210, 1)
-                                : Colors.grey.shade300,
+                                ? theme.cardMoveIconEnabledColor
+                                : theme.cardMoveIconDisabledColor,
                           ),
                           Container(
                             height: 1,
                             width: 16,
                             margin: const EdgeInsets.symmetric(vertical: 2.0),
-                            color: cardBorderColor.withValues(alpha: 0.7),
+                            color: theme.cardBorderColor.withValues(alpha: 0.7),
                           ),
                           _buildControlButton(
                             icon: Icons.chevron_right,
                             onPressed: canMoveRight ? onMoveRight : null,
                             tooltip: 'Move to Next Column',
                             color: canMoveRight
-                                ? Colors.blue.shade700
-                                : Colors.grey.shade300,
+                                ? theme.cardMoveIconEnabledColor
+                                : theme.cardMoveIconDisabledColor,
                           ),
                         ],
                       ),

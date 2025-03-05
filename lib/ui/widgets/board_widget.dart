@@ -1,3 +1,4 @@
+import 'package:clean_kanban/ui/widgets/add_item_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
@@ -6,56 +7,12 @@ import 'package:clean_kanban/domain/entities/task.dart';
 
 class BoardWidget extends StatelessWidget {
   const BoardWidget({super.key});
-
   void _showAddTaskDialog(
       BuildContext context, Function(String, String) onAddTask) {
-    final titleController = TextEditingController();
-    final subtitleController = TextEditingController();
     showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Add New Task'),
-          content: SizedBox(
-            width: 400,
-            height: 150,
-            child: Column(
-              children: [
-                TextField(
-                  controller: titleController,
-                  maxLength: 100,
-                  decoration: const InputDecoration(labelText: 'Title'),
-                ),
-                TextField(
-                  controller: subtitleController,
-                  maxLength: 100,
-                  decoration: const InputDecoration(labelText: 'Subtitle'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                final title = titleController.text;
-                final subtitle = subtitleController.text;
-                if (title.isNotEmpty && subtitle.isNotEmpty) {
-                  onAddTask(title, subtitle);
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Text('Submit'),
-            ),
-          ],
-        );
-      },
-    );
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) => AddItemDialog(onAdd: onAddTask));
   }
 
   @override

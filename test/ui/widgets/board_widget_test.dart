@@ -272,12 +272,12 @@ void main() {
     expect(find.text('Add New Task'), findsOneWidget);
     expect(find.byType(TextField), findsNWidgets(2));
     expect(find.text('Cancel'), findsOneWidget);
-    expect(find.text('Submit'), findsOneWidget);
+    expect(find.text('Add'), findsOneWidget);
 
     // Fill the text fields and submit
     await tester.enterText(find.byType(TextField).at(0), 'Test Title');
     await tester.enterText(find.byType(TextField).at(1), 'Test Subtitle');
-    await tester.tap(find.text('Submit'));
+    await tester.tap(find.text('Add'));
     await tester.pumpAndSettle();
 
     // Verify the task was added

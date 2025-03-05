@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
 import 'package:clean_kanban/domain/repositories/board_repository.dart';
-import 'repositories/test_board_repository.dart';
+import 'test_board_repository.dart';
 
 void main() {
   group('BoardRepository', () {

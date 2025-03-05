@@ -1,12 +1,14 @@
-import 'package:clean_kanban/clean_kanban.dart';
+import 'package:clean_kanban/ui/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:clean_kanban/ui/widgets/board_widget.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
-import 'package:clean_kanban/injection_container.dart';
+import 'package:clean_kanban/ui/widgets/board_widget.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
-import '../domain/repositories/test_board_repository.dart';
+import 'package:clean_kanban/domain/entities/column.dart';
+import 'package:clean_kanban/domain/entities/task.dart';
+import '../../domain/repositories/test_board_repository.dart';
+import 'package:clean_kanban/injection_container.dart';
 
 void main() {
   setUpAll(() async {
@@ -83,34 +85,6 @@ void main() {
     expect(find.text('Task 1'), findsOneWidget);
     expect(find.text('Task 2'), findsOneWidget);
     expect(find.text('Task 3'), findsOneWidget);
-  });
-
-  testWidgets('BoardWidget onAddTask callback works correctly',
-      (WidgetTester tester) async {
-    // Arrange: Create a BoardProvider with a board containing columns.
-    final boardProvider = BoardProvider();
-    boardProvider.board = Board.fromConfig({
-      'columns': [
-        {'id': 'todo', 'header': 'To Do', 'tasks': []},
-        {'id': 'doing', 'header': 'Doing', 'tasks': []},
-        {'id': 'done', 'header': 'Done', 'tasks': []},
-      ]
-    });
-
-    await tester.pumpWidget(
-      ChangeNotifierProvider<BoardProvider>.value(
-        value: boardProvider,
-        child: const MaterialApp(home: BoardWidget()),
-      ),
-    );
-
-    // Act: Simulate adding a new task.
-    await tester.tap(find.byIcon(Icons.add_rounded).first);
-    await tester.pumpAndSettle();
-
-    // Assert: The new task should be added to the column.
-    expect(find.text('New Task'), findsOneWidget);
-    expect(find.text('Description'), findsOneWidget);
   });
 
   testWidgets('BoardWidget onReorderedTasks callback works correctly',
@@ -264,5 +238,52 @@ void main() {
 
     expect(taskCardsInDoing, isEmpty);
     expect(taskCardsInToDo, hasLength(1));
+  });
+
+  testWidgets(
+      'BoardWidget shows add task dialog and onAddTask callback works correctly',
+      (WidgetTester tester) async {
+    // Arrange
+    final boardProvider = BoardProvider();
+    boardProvider.board = Board.fromConfig({
+      'columns': [
+        {'id': 'todo', 'header': 'To Do', 'tasks': []},
+        {'id': 'doing', 'header': 'Doing', 'tasks': [], 'canAddTask': false},
+        {'id': 'done', 'header': 'Done', 'tasks': [], 'canAddTask': false},
+      ]
+    });
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<BoardProvider>.value(
+        value: boardProvider,
+        child: MaterialApp(
+          home: Scaffold(
+            body: BoardWidget(),
+          ),
+        ),
+      ),
+    );
+
+    // Act
+    await tester.tap(find.byIcon(Icons.add_rounded).first);
+    await tester.pumpAndSettle();
+
+    // Assert
+    expect(find.text('Add New Task'), findsOneWidget);
+    expect(find.byType(TextField), findsNWidgets(2));
+    expect(find.text('Cancel'), findsOneWidget);
+    expect(find.text('Submit'), findsOneWidget);
+
+    // Fill the text fields and submit
+    await tester.enterText(find.byType(TextField).at(0), 'Test Title');
+    await tester.enterText(find.byType(TextField).at(1), 'Test Subtitle');
+    await tester.tap(find.text('Submit'));
+    await tester.pumpAndSettle();
+
+    // Verify the task was added
+    expect(boardProvider.board!.columns.first.tasks.length, 1);
+    expect(boardProvider.board!.columns.first.tasks.first.title, 'Test Title');
+    expect(boardProvider.board!.columns.first.tasks.first.subtitle,
+        'Test Subtitle');
   });
 }

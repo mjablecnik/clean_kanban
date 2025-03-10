@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
-import 'package:clean_kanban/domain/entities/column.dart';
 import 'package:clean_kanban/injection_container.dart';
 import '../../domain/repositories/test_board_repository.dart';
 

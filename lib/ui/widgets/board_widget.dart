@@ -77,7 +77,7 @@ class BoardWidget extends StatelessWidget {
                           ? (sourceTaskIndex) {
                               if (rightColumnId != null) {
                                 boardProv.moveTask(
-                                    column.id, sourceTaskIndex, rightColumnId!);
+                                    column.id, sourceTaskIndex, rightColumnId);
                               }
                             }
                           : null,

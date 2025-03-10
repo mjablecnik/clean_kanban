@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
-import 'package:clean_kanban/domain/repositories/board_repository.dart';
 import 'package:clean_kanban/domain/usecases/board_use_cases.dart';
 import '../repositories/test_board_repository.dart';
 

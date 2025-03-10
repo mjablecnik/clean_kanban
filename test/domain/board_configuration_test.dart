@@ -1,7 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
-import 'package:clean_kanban/domain/entities/column.dart';
-import 'package:clean_kanban/domain/entities/task.dart';
 
 void main() {
   group('Board Configuration', () {

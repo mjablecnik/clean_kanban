@@ -4,6 +4,7 @@ import 'package:clean_kanban/injection_container.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/ui/widgets/board_widget.dart';
 import 'repositories/memory_board_repository.dart';
+import 'package:clean_kanban/ui/theme/kanban_theme.dart';
 
 void main() {
   // Initialize dependency injection with MemoryBoardRepository.
@@ -25,7 +26,9 @@ class MyExampleApp extends StatelessWidget {
           appBar: AppBar(
             title: const Text('Kanban Board'),
           ),
-          body: const BoardWidget(),
+          body: BoardWidget(
+            theme: KanbanTheme.light(),
+          ),
         ),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:clean_kanban/domain/entities/column.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 
 void main() {
+  final columnTheme = KanbanColumnTheme();
   testWidgets('ColumnWidget displays header and tasks',
       (WidgetTester tester) async {
     // Arrange: Create a test column with two tasks.
@@ -18,7 +19,10 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: ColumnWidget(column: testColumn),
+          body: ColumnWidget(
+            column: testColumn,
+            theme: columnTheme,
+          ),
         ),
       ),
     );
@@ -41,6 +45,7 @@ void main() {
         home: Scaffold(
           body: ColumnWidget(
             column: testColumn,
+            theme: columnTheme,
             onAddTask: () {
               testColumn
                   .addTask(Task(id: '1', title: 'title', subtitle: 'subtitle'));
@@ -78,6 +83,7 @@ void main() {
               Expanded(
                 child: ColumnWidget(
                   column: leftColumn,
+                  theme: columnTheme,
                   onMoveTaskLeftToRight: (sourceTaskIndex) {
                     leftColumn.moveTaskTo(sourceTaskIndex, rightColumn);
                   },
@@ -86,6 +92,7 @@ void main() {
               Expanded(
                 child: ColumnWidget(
                   column: rightColumn,
+                  theme: columnTheme,
                 ),
               )
             ],
@@ -134,11 +141,13 @@ void main() {
               Expanded(
                 child: ColumnWidget(
                   column: leftColumn,
+                  theme: columnTheme,
                 ),
               ),
               Expanded(
                 child: ColumnWidget(
                   column: rightColumn,
+                  theme: columnTheme,
                   onMoveTaskRightToLeft: (sourceTaskIndex) {
                     rightColumn.moveTaskTo(sourceTaskIndex, leftColumn);
                   },

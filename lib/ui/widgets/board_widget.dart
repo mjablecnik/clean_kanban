@@ -4,9 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/ui/widgets/column_widget.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
+import 'package:clean_kanban/ui/theme/kanban_theme.dart';
 
 class BoardWidget extends StatelessWidget {
-  const BoardWidget({super.key});
+  final KanbanTheme? theme;
+
+  const BoardWidget({super.key, this.theme});
   void _showAddTaskDialog(
       BuildContext context, Function(String, String) onAddTask) {
     showDialog(
@@ -17,41 +20,60 @@ class BoardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BoardProvider>(
-      builder: (context, boardProv, child) {
-        if (boardProv.board == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        return Row(
-          children: boardProv.board!.columns.map((column) {
-            final hasLeftColumn = boardProv.board!.hasLeftColumn(column.id);
-            final hasRightColumn = boardProv.board!.hasRightColumn(column.id);
-            final leftColumnId = boardProv.board!.getLeftColumnId(column.id);
-            final rightColumnId = boardProv.board!.getRightColumnId(column.id);
-            final isLeftColumnLimitReached = hasLeftColumn &&
-                boardProv.board!.isColumnLimitReached(leftColumnId!);
-            final isRightColumnLimitReached = hasRightColumn &&
-                boardProv.board!.isColumnLimitReached(rightColumnId!);
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                child: ColumnWidget(
-                  column: column,
-                  onAddTask: () {
-                    _showAddTaskDialog(context, (title, subtitle) {
-                      final newTask = Task(
-                        id: DateTime.now().millisecondsSinceEpoch.toString(),
-                        title: title,
-                        subtitle: subtitle,
-                      );
-                      boardProv.addTask(column.id, newTask);
-                    });
-                  },
-                  onReorderedTask: (column, oldIndex, newIndex) {
-                    boardProv.reorderTask(column.id, oldIndex, newIndex);
-                  },
-                  onMoveTaskLeftToRight:
-                      boardProv.board!.hasRightColumn(column.id)
+    final effectiveTheme = theme ?? KanbanThemeProvider.of(context);
+    return KanbanThemeProvider(
+      theme: effectiveTheme,
+      child: Container(
+        decoration: BoxDecoration(
+          color: effectiveTheme.boardBackgroundColor,
+          border: Border.all(
+            color: effectiveTheme.boardBorderColor,
+            width: 1.0,
+          ),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Consumer<BoardProvider>(
+          builder: (context, boardProv, child) {
+            if (boardProv.board == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: boardProv.board!.columns.map((column) {
+                final hasLeftColumn = boardProv.board!.hasLeftColumn(column.id);
+                final hasRightColumn =
+                    boardProv.board!.hasRightColumn(column.id);
+                final leftColumnId =
+                    boardProv.board!.getLeftColumnId(column.id);
+                final rightColumnId =
+                    boardProv.board!.getRightColumnId(column.id);
+                final isLeftColumnLimitReached = hasLeftColumn &&
+                    boardProv.board!.isColumnLimitReached(leftColumnId!);
+                final isRightColumnLimitReached = hasRightColumn &&
+                    boardProv.board!.isColumnLimitReached(rightColumnId!);
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                    child: ColumnWidget(
+                      theme: effectiveTheme.columnTheme,
+                      column: column,
+                      onAddTask: () {
+                        _showAddTaskDialog(context, (title, subtitle) {
+                          final newTask = Task(
+                            id: DateTime.now()
+                                .millisecondsSinceEpoch
+                                .toString(),
+                            title: title,
+                            subtitle: subtitle,
+                          );
+                          boardProv.addTask(column.id, newTask);
+                        });
+                      },
+                      onReorderedTask: (column, oldIndex, newIndex) {
+                        boardProv.reorderTask(column.id, oldIndex, newIndex);
+                      },
+                      onMoveTaskLeftToRight: boardProv.board!
+                              .hasRightColumn(column.id)
                           ? (sourceTaskIndex) {
                               if (rightColumnId != null) {
                                 boardProv.moveTask(
@@ -59,8 +81,8 @@ class BoardWidget extends StatelessWidget {
                               }
                             }
                           : null,
-                  onMoveTaskRightToLeft:
-                      boardProv.board!.hasLeftColumn(column.id)
+                      onMoveTaskRightToLeft: boardProv.board!
+                              .hasLeftColumn(column.id)
                           ? (sourceTaskIndex) {
                               if (leftColumnId != null) {
                                 boardProv.moveTask(
@@ -68,14 +90,17 @@ class BoardWidget extends StatelessWidget {
                               }
                             }
                           : null,
-                  canMoveLeft: hasLeftColumn && !isLeftColumnLimitReached,
-                  canMoveRight: hasRightColumn && !isRightColumnLimitReached,
-                ),
-              ),
+                      canMoveLeft: hasLeftColumn && !isLeftColumnLimitReached,
+                      canMoveRight:
+                          hasRightColumn && !isRightColumnLimitReached,
+                    ),
+                  ),
+                );
+              }).toList(),
             );
-          }).toList(),
-        );
-      },
+          },
+        ),
+      ),
     );
   }
 }

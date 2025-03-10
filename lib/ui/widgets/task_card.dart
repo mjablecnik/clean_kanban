@@ -30,12 +30,12 @@ class TaskCard extends StatelessWidget {
   const TaskCard({
     Key? key,
     required this.task,
+    required this.theme,
     this.onMoveLeft,
     this.onMoveRight,
     this.canMoveLeft = true,
     this.canMoveRight = true,
-  })  : theme = const TaskCardTheme(),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +148,7 @@ class TaskCard extends StatelessWidget {
                             height: 1,
                             width: 16,
                             margin: const EdgeInsets.symmetric(vertical: 2.0),
-                            color: theme.cardBorderColor.withValues(alpha: 0.7),
+                            color: theme.cardBorderColor.withOpacity(0.7),
                           ),
                           _buildControlButton(
                             icon: Icons.chevron_right,

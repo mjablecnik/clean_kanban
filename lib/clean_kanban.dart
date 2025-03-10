@@ -20,3 +20,6 @@ export 'domain/events/event_notifier.dart';
 export 'ui/widgets/board_widget.dart';
 export 'ui/widgets/column_widget.dart';
 export 'ui/widgets/task_card.dart';
+
+// Export theming system
+export 'ui/theme/kanban_theme.dart';

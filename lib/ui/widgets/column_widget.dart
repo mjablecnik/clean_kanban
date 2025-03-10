@@ -33,14 +33,14 @@ class ColumnWidget extends StatelessWidget {
   const ColumnWidget({
     Key? key,
     required this.column,
+    required this.theme,
     this.onAddTask,
     this.onReorderedTask,
     this.onMoveTaskLeftToRight,
     this.onMoveTaskRightToLeft,
     this.canMoveLeft = true,
     this.canMoveRight = true,
-  })  : theme = const KanbanColumnTheme(),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +71,10 @@ class ColumnWidget extends StatelessWidget {
 
   Widget _buildDragTargetItem(Task task, int index) {
     return DragTarget<String>(builder: (context, candidateData, rejectedData) {
+      final effectiveTheme = KanbanThemeProvider.of(context);
       return TaskCard(
           task: task,
+          theme: effectiveTheme.cardTheme,
           onMoveLeft: () {
             if (onMoveTaskRightToLeft != null) {
               onMoveTaskRightToLeft!(index);

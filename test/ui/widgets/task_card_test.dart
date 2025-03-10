@@ -4,6 +4,7 @@ import 'package:clean_kanban/ui/widgets/task_card.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 
 void main() {
+  final cardTheme = TaskCardTheme();
   testWidgets('TaskCard displays task title and subtitle',
       (WidgetTester tester) async {
     // Arrange
@@ -12,7 +13,10 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: TaskCard(task: testTask),
+        home: TaskCard(
+          task: testTask,
+          theme: cardTheme,
+        ),
       ),
     );
 
@@ -33,6 +37,7 @@ void main() {
       MaterialApp(
         home: TaskCard(
           task: testTask,
+          theme: cardTheme,
           onMoveLeft: () {
             movedLeft = true;
           },
@@ -70,6 +75,7 @@ void main() {
       MaterialApp(
         home: TaskCard(
           task: testTask,
+          theme: cardTheme,
           onMoveLeft: () {},
           onMoveRight: () {},
           canMoveLeft: false,

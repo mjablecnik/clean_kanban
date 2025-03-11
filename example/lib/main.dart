@@ -3,12 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:clean_kanban/injection_container.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/ui/widgets/board_widget.dart';
-import 'repositories/memory_board_repository.dart';
+import 'repositories/shared_preferences_board_repository.dart'; // Updated import
 import 'package:clean_kanban/ui/theme/kanban_theme.dart';
 
 void main() {
-  // Initialize dependency injection with MemoryBoardRepository.
-  setupInjection(MemoryBoardRepository());
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Add this to initialize Flutter binding
+  // Initialize dependency injection with SharedPreferencesBoardRepository.
+  setupInjection(SharedPreferencesBoardRepository());
   runApp(const MyExampleApp());
 }
 
@@ -18,20 +20,32 @@ class MyExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => BoardProvider()..loadBoard(config: _boardConfig),
-      child: MaterialApp(
-        title: 'Clean Kanban Example',
-        theme: ThemeData.light(),
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Kanban Board'),
-          ),
-          body: BoardWidget(
-            theme: KanbanTheme.light(),
-          ),
-        ),
-      ),
-    );
+        create: (_) => BoardProvider()..loadBoard(config: _boardConfig),
+        child: Consumer<BoardProvider>(builder: (context, boardProv, child) {
+          return MaterialApp(
+            title: 'Clean Kanban Example',
+            theme: ThemeData.light(),
+            home: Scaffold(
+              appBar: AppBar(
+                title: const Text('Kanban Board'),
+                actions: [
+                  // Add save button
+                  IconButton(
+                    icon: const Icon(Icons.save),
+                    onPressed: () {
+                      if (boardProv.board != null) {
+                        boardProv.saveBoard();
+                      }
+                    },
+                  ),
+                ],
+              ),
+              body: BoardWidget(
+                theme: KanbanTheme.light(),
+              ),
+            ),
+          );
+        }));
   }
 }
 

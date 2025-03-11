@@ -6,10 +6,12 @@ import 'package:clean_kanban/injection_container.dart';
 import '../../domain/repositories/test_board_repository.dart';
 
 void main() {
+  late TestBoardRepository testBoardRepository;
   setUpAll(() async {
+    testBoardRepository = TestBoardRepository();
     // Reset and setup injection so dependencies are registered.
     await getIt.reset();
-    setupInjection(TestBoardRepository());
+    setupInjection(testBoardRepository);
   });
 
   group('BoardProvider', () {
@@ -27,6 +29,8 @@ void main() {
     });
 
     test('should load a board with custom configuration', () async {
+      // force a null board, to simulate no previous board
+      testBoardRepository.board = null;
       // Arrange
       final config = {
         'columns': [
@@ -60,6 +64,46 @@ void main() {
       expect(boardProvider.board!.columns.length, equals(3));
       expect(boardProvider.board!.columns[0].header, equals('To Do'));
       expect(boardProvider.board!.columns[0].tasks.length, equals(2));
+      expect(boardProvider.board!.columns[1].tasks, isEmpty);
+      expect(boardProvider.board!.columns[2].tasks.length, equals(1));
+    });
+
+    test('Load previously saved board', () async {
+      // Arrange
+      final config = {
+        'columns': [
+          {
+            'id': 'todo',
+            'header': 'To Do',
+            'limit': 5,
+            'tasks': [
+              {'id': '1', 'title': 'Task 1', 'subtitle': 'Description 1'},
+              {'id': '2', 'title': 'Task 2', 'subtitle': 'Description 2'},
+              {'id': '3', 'title': 'Task 3', 'subtitle': 'Description 3'},
+            ]
+          },
+          {'id': 'doing', 'header': 'In Progress', 'limit': 3, 'tasks': []},
+          {
+            'id': 'done',
+            'header': 'Done',
+            'limit': null,
+            'tasks': [
+              {'id': '3', 'title': 'Task 3', 'subtitle': 'Description 3'}
+            ]
+          }
+        ]
+      };
+      testBoardRepository.board = Board.fromConfig(config);
+      final boardProvider = BoardProvider();
+
+      // Act
+      await boardProvider.loadBoard();
+
+      // Assert
+      expect(boardProvider.board, isNotNull);
+      expect(boardProvider.board!.columns.length, equals(3));
+      expect(boardProvider.board!.columns[0].header, equals('To Do'));
+      expect(boardProvider.board!.columns[0].tasks.length, equals(3));
       expect(boardProvider.board!.columns[1].tasks, isEmpty);
       expect(boardProvider.board!.columns[2].tasks.length, equals(1));
     });

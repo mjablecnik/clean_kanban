@@ -14,9 +14,6 @@ class KanbanColumn {
       this.canAddTask = true});
 
   void addTask(Task task) {
-    if (!canAddTask) {
-      throw Exception('Cannot add task to this column.');
-    }
     // Ensure column limit is obeyed when adding a new task.
     if (columnLimit != null && tasks.length >= columnLimit!) {
       throw Exception('Column limit reached.');
@@ -61,5 +58,16 @@ class KanbanColumn {
     } else {
       destination.tasks.insert(destinationIndex, task);
     }
+  }
+
+  // Convert column to JSON format for persistence
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'header': header,
+      'limit': columnLimit,
+      'canAddTask': canAddTask,
+      'tasks': tasks.map((task) => task.toJson()).toList(),
+    };
   }
 }

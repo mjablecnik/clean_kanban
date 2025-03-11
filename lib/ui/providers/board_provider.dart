@@ -19,19 +19,19 @@ class BoardProvider extends ChangeNotifier {
   Future<void> loadBoard({Map<String, dynamic>? config}) async {
     try {
       final fetchedBoard = await _getBoardUseCase.execute();
-      if (fetchedBoard != null) {
-        board = fetchedBoard;
+      if (fetchedBoard == null) {
         board = config != null ? Board.fromConfig(config) : Board.simple();
-        // If no board exists, create one from config if provided, otherwise create a simple board.
-        throw Exception('Failed to create a board');
+        await _saveBoardUseCase.execute(board!);
+        debugPrint('No previous saved board found, created a new one.');
+      } else {
+        board = fetchedBoard;
+        debugPrint('Previous saved board found');
       }
-      // If no board exists, create one from config or a simple one.
-      board = config != null ? Board.fromConfig(config) : Board.simple();
-      await _saveBoardUseCase.execute(board!);
     } catch (e) {
       // If no board exists, create one from config or a simple one.
       board = config != null ? Board.fromConfig(config) : Board.simple();
       await _saveBoardUseCase.execute(board!);
+      debugPrint('No previous saved board found, created a new one.');
     }
     notifyListeners();
   }
@@ -66,6 +66,13 @@ class BoardProvider extends ChangeNotifier {
     if (col != null) {
       _reorderTaskUseCase.execute(col, oldIndex, newIndex);
       notifyListeners();
+    }
+  }
+
+  // Add this method to save the current board state
+  Future<void> saveBoard() async {
+    if (board != null) {
+      await _saveBoardUseCase.execute(board!);
     }
   }
 }

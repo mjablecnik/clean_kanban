@@ -2,6 +2,11 @@ import 'package:clean_kanban/clean_kanban.dart';
 
 class TestBoardRepository implements BoardRepository {
   Board? _board;
+
+  set board(Board? board) {
+    _board = board;
+  }
+
   bool throwsOnGet = false;
   bool throwsOnSave = false;
   bool throwsOnUpdate = false;

@@ -99,4 +99,11 @@ class Board {
     }
     return false;
   }
+  
+  // Convert board to JSON format for persistence
+  Map<String, dynamic> toJson() {
+    return {
+      'columns': columns.map((column) => column.toJson()).toList(),
+    };
+  }
 }

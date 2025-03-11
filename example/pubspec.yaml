@@ -36,7 +36,9 @@ dependencies:
   cupertino_icons: ^1.0.8
   clean_kanban:
     path: ../
-
+  provider: ^6.0.0
+  shared_preferences: ^2.2.0  # A
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

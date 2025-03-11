@@ -11,4 +11,13 @@ class Task {
       throw ArgumentError('Subtitle must be at most 100 characters long.');
     }
   }
+  
+  // Convert task to JSON format for persistence
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'subtitle': subtitle,
+    };
+  }
 }

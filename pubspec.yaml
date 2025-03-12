@@ -1,7 +1,7 @@
 name: clean_kanban
-description: "A new Flutter package project."
+description: "A simple, customizable, testable Kanban board widget for Flutter applications built on clean architecture."
 version: 0.0.1
-homepage:
+homepage: https://github.com/kinwahlai/clean_kanban.git
 
 environment:
   sdk: ^3.6.2

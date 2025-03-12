@@ -10,8 +10,10 @@ class Board {
   factory Board.simple() {
     return Board._([
       KanbanColumn(id: 'todo', header: 'To Do', columnLimit: null),
-      KanbanColumn(id: 'doing', header: 'Doing', columnLimit: null),
-      KanbanColumn(id: 'done', header: 'Done', columnLimit: null),
+      KanbanColumn(
+          id: 'doing', header: 'Doing', columnLimit: null, canAddTask: false),
+      KanbanColumn(
+          id: 'done', header: 'Done', columnLimit: null, canAddTask: false),
     ]);
   }
 
@@ -99,7 +101,7 @@ class Board {
     }
     return false;
   }
-  
+
   // Convert board to JSON format for persistence
   Map<String, dynamic> toJson() {
     return {

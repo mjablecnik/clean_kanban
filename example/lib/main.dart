@@ -19,33 +19,41 @@ class MyExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (_) => BoardProvider()..loadBoard(config: _boardConfig),
-        child: Consumer<BoardProvider>(builder: (context, boardProv, child) {
-          return MaterialApp(
-            title: 'Clean Kanban Example',
-            theme: ThemeData.light(),
-            home: Scaffold(
-              appBar: AppBar(
-                title: const Text('Kanban Board'),
-                actions: [
-                  // Add save button
-                  IconButton(
-                    icon: const Icon(Icons.save),
-                    onPressed: () {
-                      if (boardProv.board != null) {
-                        boardProv.saveBoard();
-                      }
-                    },
-                  ),
-                ],
+    return ChangeNotifierProvider(create: (context) {
+      final boardProv = BoardProvider();
+      boardProv.loadBoard(config: _boardConfig);
+      boardProv.addListener(() {
+        // auto save function
+        if (boardProv.board != null) {
+          boardProv.saveBoard();
+        }
+      });
+      return boardProv;
+    }, child: Consumer<BoardProvider>(builder: (context, boardProv, child) {
+      return MaterialApp(
+        title: 'Clean Kanban Example',
+        theme: ThemeData.light(),
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Kanban Board'),
+            actions: [
+              // Add save button
+              IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: () {
+                  if (boardProv.board != null) {
+                    boardProv.saveBoard();
+                  }
+                },
               ),
-              body: BoardWidget(
-                theme: KanbanTheme.light(),
-              ),
-            ),
-          );
-        }));
+            ],
+          ),
+          body: BoardWidget(
+            theme: KanbanTheme.light(),
+          ),
+        ),
+      );
+    }));
   }
 }
 

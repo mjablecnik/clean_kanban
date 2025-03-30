@@ -27,6 +27,7 @@ class ColumnWidget extends StatelessWidget {
       onReorderedTask;
   final Function(int sourceTaskIndex)? onMoveTaskLeftToRight;
   final Function(int sourceTaskIndex)? onMoveTaskRightToLeft;
+  final Function()? onClearDone;
   final bool canMoveLeft;
   final bool canMoveRight;
 
@@ -38,6 +39,7 @@ class ColumnWidget extends StatelessWidget {
     this.onReorderedTask,
     this.onMoveTaskLeftToRight,
     this.onMoveTaskRightToLeft,
+    this.onClearDone,
     this.canMoveLeft = true,
     this.canMoveRight = true,
   }) : super(key: key);
@@ -55,7 +57,7 @@ class ColumnWidget extends StatelessWidget {
         ),
         child: Column(
           children: [
-            _buildHeader(),
+            _buildHeader(context),
             Expanded(
               child: ListView.builder(
                 itemCount: column.tasks.length,
@@ -97,7 +99,7 @@ class ColumnWidget extends StatelessWidget {
     });
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       height: 64.0,
@@ -151,25 +153,80 @@ class ColumnWidget extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          if (column.canAddTask && onAddTask != null)
-            Container(
-              height: 32.0,
-              width: 32.0,
-              decoration: BoxDecoration(
-                color: theme.columnAddButtonBoxColor,
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.add_rounded, size: 20.0),
-                padding: EdgeInsets.zero,
-                color: theme.columnAddIconColor,
-                onPressed: onAddTask != null
-                    ? () {
-                        onAddTask!();
-                      }
-                    : null,
-              ),
+          Row(
+            children: [
+              if (column.isDoneColumn())
+                Container(
+                  height: 32.0,
+                  width: 32.0,
+                  margin: const EdgeInsets.only(right: 8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.red[400]?.withValues(alpha: 
+                      column.tasks.isNotEmpty && onClearDone != null ? 1.0 : 0.3,
+                    ),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.clear_all, size: 20.0),
+                    padding: EdgeInsets.zero,
+                    color: Colors.white,
+                    tooltip: column.tasks.isEmpty
+                        ? 'No tasks to clear'
+                        : 'Clear all done tasks',
+                    onPressed: (column.tasks.isNotEmpty && onClearDone != null)
+                        ? () => _showClearConfirmDialog(context)
+                        : null,
+                  ),
+                ),
+              if (column.canAddTask && onAddTask != null)
+                Container(
+                  height: 32.0,
+                  width: 32.0,
+                  decoration: BoxDecoration(
+                    color: theme.columnAddButtonBoxColor,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.add_rounded, size: 20.0),
+                    padding: EdgeInsets.zero,
+                    color: theme.columnAddIconColor,
+                    onPressed: onAddTask != null
+                        ? () {
+                            onAddTask!();
+                          }
+                        : null,
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showClearConfirmDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Clear Done Tasks'),
+        content: const Text(
+          'Are you sure you want to clear all completed tasks? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red[400],
             ),
+            child: const Text('Clear'),
+            onPressed: () {
+              onClearDone?.call();
+              Navigator.of(context).pop();
+            },
+          ),
         ],
       ),
     );

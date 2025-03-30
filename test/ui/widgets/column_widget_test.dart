@@ -177,4 +177,81 @@ void main() {
     expect(leftColumn.tasks.length, equals(2));
     expect(rightColumn.tasks.length, equals(0));
   });
+
+  testWidgets('Clear button shows only in Done column with tasks',
+      (WidgetTester tester) async {
+    final doneColumn = KanbanColumn(
+      id: 'done',
+      header: 'Done',
+    );
+    final task = Task(id: '1', title: 'Test Task', subtitle: 'Test');
+    doneColumn.addTask(task);
+
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: ColumnWidget(
+          column: doneColumn,
+          theme: const KanbanColumnTheme(),
+          onClearDone: () {},
+        ),
+      ),
+    ));
+
+    expect(find.byIcon(Icons.clear_all), findsOneWidget);
+  });
+
+  testWidgets('Clear button not shown in non-Done column',
+      (WidgetTester tester) async {
+    final todoColumn = KanbanColumn(
+      id: 'todo',
+      header: 'To Do',
+    );
+    final task = Task(id: '1', title: 'Test Task', subtitle: 'Test');
+    todoColumn.addTask(task);
+
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: ColumnWidget(
+          column: todoColumn,
+          theme: const KanbanColumnTheme(),
+          onClearDone: () {},
+        ),
+      ),
+    ));
+
+    expect(find.byIcon(Icons.clear_all), findsNothing);
+  });
+
+  testWidgets('Clear button shows confirmation dialog',
+      (WidgetTester tester) async {
+    bool clearCalled = false;
+    final doneColumn = KanbanColumn(
+      id: 'done',
+      header: 'Done',
+    );
+    final task = Task(id: '1', title: 'Test Task', subtitle: 'Test');
+    doneColumn.addTask(task);
+
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: ColumnWidget(
+          column: doneColumn,
+          theme: const KanbanColumnTheme(),
+          onClearDone: () => clearCalled = true,
+        ),
+      ),
+    ));
+
+    await tester.tap(find.byIcon(Icons.clear_all));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Clear Done Tasks'), findsOneWidget);
+    expect(find.text('Cancel'), findsOneWidget);
+    expect(find.text('Clear'), findsOneWidget);
+
+    await tester.tap(find.text('Clear'));
+    await tester.pumpAndSettle();
+
+    expect(clearCalled, true);
+  });
 }

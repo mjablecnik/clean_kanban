@@ -98,6 +98,9 @@ class BoardWidget extends StatelessWidget {
                               hasLeftColumn && !isLeftColumnLimitReached,
                           canMoveRight:
                               hasRightColumn && !isRightColumnLimitReached,
+                          onClearDone: column.isDoneColumn()
+                              ? () => boardProv.clearDoneColumn(column.id)
+                              : null,
                         ),
                       ),
                     );

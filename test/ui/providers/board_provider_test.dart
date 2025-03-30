@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
+import 'package:clean_kanban/domain/entities/column.dart';
 import 'package:clean_kanban/injection_container.dart';
 import '../../domain/repositories/test_board_repository.dart';
 
@@ -177,6 +178,99 @@ void main() {
           boardProvider.board!.columns.firstWhere((c) => c.id == 'todo');
       expect(column.tasks[0], equals(task2), reason: 'Task2 should be first');
       expect(column.tasks[1], equals(task));
+    });
+  });
+
+  group('Done Column Management', () {
+    late BoardProvider boardProvider;
+    late Task task1;
+    late Task task2;
+
+    setUp(() {
+      boardProvider = BoardProvider();
+      boardProvider.board = Board.simple();
+      task1 = Task(
+        id: '1',
+        title: 'Task 1',
+        subtitle: 'Subtitle 1',
+      );
+      task2 = Task(
+        id: '2',
+        title: 'Task 2',
+        subtitle: 'Subtitle 2',
+      );
+
+      boardProvider.addTask('done', task1);
+      boardProvider.addTask('done', task2);
+    });
+
+    test('should delete single task from Done column', () {
+      // Act
+      boardProvider.deleteDoneTask('done', 0);
+
+      // Assert
+      final column =
+          boardProvider.board!.columns.firstWhere((c) => c.id == 'done');
+      expect(column.tasks.length, 1);
+      expect(column.tasks[0], task2);
+    });
+
+    test('should throw error when deleting task from non-Done column', () {
+      // Arrange
+      boardProvider.addTask('todo', task1);
+
+      // Act & Assert
+      expect(
+        () => boardProvider.deleteDoneTask('todo', 0),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('should clear all tasks from Done column', () {
+      final column =
+          boardProvider.board!.columns.firstWhere((c) => c.id == 'done');
+
+      // Act
+      expect(column.tasks.length, 2); // Ensure there are tasks before clearing
+      boardProvider.clearDoneColumn('done');
+
+      // Assert
+      expect(column.tasks.length, 0);
+    });
+
+    test('should throw error when clearing non-Done column', () {
+      // Arrange
+      boardProvider.addTask('todo', task1);
+
+      // Act & Assert
+      expect(
+        () => boardProvider.clearDoneColumn('todo'),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('should notify listeners when deleting done task', () {
+      // Arrange
+      var notified = false;
+      boardProvider.addListener(() => notified = true);
+
+      // Act
+      boardProvider.deleteDoneTask('done', 0);
+
+      // Assert
+      expect(notified, true);
+    });
+
+    test('should notify listeners when clearing done column', () {
+      // Arrange
+      var notified = false;
+      boardProvider.addListener(() => notified = true);
+
+      // Act
+      boardProvider.clearDoneColumn('done');
+
+      // Assert
+      expect(notified, true);
     });
   });
 }

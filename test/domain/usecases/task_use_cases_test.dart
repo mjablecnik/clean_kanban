@@ -7,18 +7,24 @@ void main() {
   group('Task Use Cases', () {
     late KanbanColumn column;
     late KanbanColumn destination;
+    late KanbanColumn doneColumn;
     late AddTaskUseCase addTaskUseCase;
     late DeleteTaskUseCase deleteTaskUseCase;
     late ReorderTaskUseCase reorderTaskUseCase;
     late MoveTaskUseCase moveTaskUseCase;
+    late DeleteDoneTaskUseCase deleteDoneTaskUseCase;
+    late ClearDoneColumnUseCase clearDoneColumnUseCase;
 
     setUp(() {
       column = KanbanColumn(id: 'col1', header: 'To Do', columnLimit: 3);
-      destination = KanbanColumn(id: 'col2', header: 'Done', columnLimit: 2);
+      destination = KanbanColumn(id: 'col2', header: 'In Progress', columnLimit: 2);
+      doneColumn = KanbanColumn(id: 'col3', header: 'Done', columnLimit: 10);
       addTaskUseCase = AddTaskUseCase();
       deleteTaskUseCase = DeleteTaskUseCase();
       reorderTaskUseCase = ReorderTaskUseCase();
       moveTaskUseCase = MoveTaskUseCase();
+      deleteDoneTaskUseCase = DeleteDoneTaskUseCase();
+      clearDoneColumnUseCase = ClearDoneColumnUseCase();
     });
 
     test('should add a task to a column using AddTaskUseCase', () {
@@ -100,6 +106,72 @@ void main() {
       
       // Act & Assert
       expect(() => addTaskUseCase.execute(fullColumn, task2), throwsA(isA<Exception>()));
+    });
+
+    group('DeleteDoneTaskUseCase', () {
+      test('should delete a task from Done column', () {
+        // Arrange
+        final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+        addTaskUseCase.execute(doneColumn, task);
+
+        // Act
+        final removed = deleteDoneTaskUseCase.execute(doneColumn, 0);
+
+        // Assert
+        expect(doneColumn.tasks, isEmpty);
+        expect(removed, equals(task));
+      });
+
+      test('should throw error when deleting from non-Done column', () {
+        // Arrange
+        final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+        addTaskUseCase.execute(column, task);
+
+        // Act & Assert
+        expect(
+          () => deleteDoneTaskUseCase.execute(column, 0),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+    });
+
+    group('ClearDoneColumnUseCase', () {
+      test('should clear all tasks from Done column', () {
+        // Arrange
+        final task1 = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+        final task2 = Task(id: '2', title: 'Task2', subtitle: 'Desc2');
+        addTaskUseCase.execute(doneColumn, task1);
+        addTaskUseCase.execute(doneColumn, task2);
+
+        // Act
+        final removedTasks = clearDoneColumnUseCase.execute(doneColumn);
+
+        // Assert
+        expect(doneColumn.tasks, isEmpty);
+        expect(removedTasks.length, equals(2));
+        expect(removedTasks, contains(task1));
+        expect(removedTasks, contains(task2));
+      });
+
+      test('should return empty list when clearing empty Done column', () {
+        // Act
+        final removedTasks = clearDoneColumnUseCase.execute(doneColumn);
+
+        // Assert
+        expect(removedTasks, isEmpty);
+      });
+
+      test('should throw error when clearing non-Done column', () {
+        // Arrange
+        final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+        addTaskUseCase.execute(column, task);
+
+        // Act & Assert
+        expect(
+          () => clearDoneColumnUseCase.execute(column),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
     });
   });
 }

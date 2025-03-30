@@ -41,3 +41,10 @@ class TaskReorderedEvent extends BoardEvent {
   final int newIndex;
   TaskReorderedEvent(this.column, this.task, this.oldIndex, this.newIndex);
 }
+
+class DoneColumnClearedEvent extends BoardEvent {
+  final List<Task> removedTasks;
+  final KanbanColumn column;
+
+  DoneColumnClearedEvent(this.removedTasks, this.column);
+}

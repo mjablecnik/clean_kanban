@@ -44,3 +44,32 @@ class MoveTaskUseCase {
     EventNotifier().notify(TaskMovedEvent(task, source, destination));
   }
 }
+
+class DeleteDoneTaskUseCase {
+  /// Deletes a single task from the Done column.
+  /// 
+  /// Returns the removed task.
+  Task execute(KanbanColumn doneColumn, int index) {
+    if (!doneColumn.isDoneColumn()) {
+      throw ArgumentError('This operation is only allowed for Done column');
+    }
+    final removed = doneColumn.deleteTask(index);
+    EventNotifier().notify(TaskRemovedEvent(removed, doneColumn));
+    return removed;
+  }
+}
+
+class ClearDoneColumnUseCase {
+  /// Removes all tasks from the Done column.
+  /// 
+  /// Returns the list of removed tasks.
+  List<Task> execute(KanbanColumn doneColumn) {
+    if (!doneColumn.isDoneColumn()) {
+      throw ArgumentError('This operation is only allowed for Done column');
+    }
+    final removedTasks = List<Task>.from(doneColumn.tasks);
+    doneColumn.tasks.clear();
+    EventNotifier().notify(DoneColumnClearedEvent(removedTasks, doneColumn));
+    return removedTasks;
+  }
+}

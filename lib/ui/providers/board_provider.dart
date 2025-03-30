@@ -1,3 +1,4 @@
+import 'package:clean_kanban/domain/entities/column.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
@@ -15,6 +16,9 @@ class BoardProvider extends ChangeNotifier {
   final DeleteTaskUseCase _deleteTaskUseCase = getIt<DeleteTaskUseCase>();
   final MoveTaskUseCase _moveTaskUseCase = getIt<MoveTaskUseCase>();
   final ReorderTaskUseCase _reorderTaskUseCase = getIt<ReorderTaskUseCase>();
+  final DeleteDoneTaskUseCase _deleteDoneTaskUseCase = DeleteDoneTaskUseCase();
+  final ClearDoneColumnUseCase _clearDoneColumnUseCase = ClearDoneColumnUseCase();
+
 
   Future<void> loadBoard({Map<String, dynamic>? config}) async {
     try {
@@ -31,7 +35,7 @@ class BoardProvider extends ChangeNotifier {
   }
 
   void addTask(String columnId, Task task) {
-    final col = board?.columns.firstWhere((c) => c.id == columnId);
+    final col = _findColumn(columnId);
     if (col != null) {
       _addTaskUseCase.execute(col, task);
       notifyListeners();
@@ -39,7 +43,7 @@ class BoardProvider extends ChangeNotifier {
   }
 
   void removeTask(String columnId, int index) {
-    final col = board?.columns.firstWhere((c) => c.id == columnId);
+    final col = _findColumn(columnId);
     if (col != null) {
       _deleteTaskUseCase.execute(col, index);
       notifyListeners();
@@ -47,8 +51,8 @@ class BoardProvider extends ChangeNotifier {
   }
 
   void moveTask(String sourceColId, int sourceIndex, String destColId) {
-    final source = board?.columns.firstWhere((c) => c.id == sourceColId);
-    final destination = board?.columns.firstWhere((c) => c.id == destColId);
+    final source = _findColumn(sourceColId);
+    final destination = _findColumn(destColId);
     if (source != null && destination != null) {
       _moveTaskUseCase.execute(source, sourceIndex, destination);
       notifyListeners();
@@ -56,9 +60,27 @@ class BoardProvider extends ChangeNotifier {
   }
 
   void reorderTask(String columnId, int oldIndex, int newIndex) {
-    final col = board?.columns.firstWhere((c) => c.id == columnId);
+    final col = _findColumn(columnId);
     if (col != null) {
       _reorderTaskUseCase.execute(col, oldIndex, newIndex);
+      notifyListeners();
+    }
+  }
+
+   /// Deletes a task from the Done column
+  void deleteDoneTask(String columnId, int index) {
+    final column = _findColumn(columnId);
+    if (column != null) {
+      _deleteDoneTaskUseCase.execute(column, index);
+      notifyListeners();
+    }
+  }
+
+  /// Clears all tasks from the Done column
+  void clearDoneColumn(String columnId) {
+    final column = _findColumn(columnId);
+    if (column != null) {
+      _clearDoneColumnUseCase.execute(column);
       notifyListeners();
     }
   }
@@ -68,5 +90,9 @@ class BoardProvider extends ChangeNotifier {
     if (board != null) {
       await _saveBoardUseCase.execute(board!);
     }
+  }
+  
+  KanbanColumn? _findColumn(String columnId) {
+    return board?.columns.firstWhere((c) => c.id == columnId);
   }
 }

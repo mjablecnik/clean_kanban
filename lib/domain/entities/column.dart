@@ -70,4 +70,8 @@ class KanbanColumn {
       'tasks': tasks.map((task) => task.toJson()).toList(),
     };
   }
+
+  bool isDoneColumn() {
+    return header.toLowerCase() == 'done';
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:clean_kanban/domain/entities/task.dart';
+import 'task_drag_data.dart';
 
 class TaskCardTheme {
   final Color cardBackgroundColor;
@@ -20,7 +20,7 @@ class TaskCardTheme {
 }
 
 class TaskCard extends StatelessWidget {
-  final Task task;
+  final TaskDragData data;
   final TaskCardTheme theme;
   final VoidCallback? onMoveLeft;
   final VoidCallback? onMoveRight;
@@ -29,7 +29,7 @@ class TaskCard extends StatelessWidget {
 
   const TaskCard({
     Key? key,
-    required this.task,
+    required this.data,
     required this.theme,
     this.onMoveLeft,
     this.onMoveRight,
@@ -39,8 +39,8 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Draggable<String>(
-      data: task.id,
+    return Draggable<TaskDragData>(
+      data: data,
       feedback: Material(
         elevation: 4.0,
         child: SizedBox(
@@ -98,7 +98,7 @@ class TaskCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            task.title,
+                            data.task.title,
                             style: TextStyle(
                               fontSize: 17.0,
                               fontWeight: FontWeight.w700,
@@ -108,7 +108,7 @@ class TaskCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 6.0),
                           Text(
-                            task.subtitle,
+                            data.task.subtitle,
                             style: TextStyle(
                               fontSize: 14.0,
                               height: 1.3,

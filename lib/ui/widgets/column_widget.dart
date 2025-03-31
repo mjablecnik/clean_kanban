@@ -1,5 +1,6 @@
 import 'package:clean_kanban/clean_kanban.dart';
 import 'package:flutter/material.dart';
+import './task_drag_data.dart';
 
 class KanbanColumnTheme {
   final Color columnBackgroundColor;
@@ -25,6 +26,8 @@ class ColumnWidget extends StatelessWidget {
   final Function()? onAddTask;
   final Function(KanbanColumn column, int oldIndex, int newIndex)?
       onReorderedTask;
+  final Function(KanbanColumn source, int sourceIndex, KanbanColumn destination,
+      int? destinationIndex)? onTaskDropped;
   final Function(int sourceTaskIndex)? onMoveTaskLeftToRight;
   final Function(int sourceTaskIndex)? onMoveTaskRightToLeft;
   final Function()? onClearDone;
@@ -37,6 +40,7 @@ class ColumnWidget extends StatelessWidget {
     required this.theme,
     this.onAddTask,
     this.onReorderedTask,
+    this.onTaskDropped,
     this.onMoveTaskLeftToRight,
     this.onMoveTaskRightToLeft,
     this.onClearDone,
@@ -72,10 +76,14 @@ class ColumnWidget extends StatelessWidget {
   }
 
   Widget _buildDragTargetItem(Task task, int index) {
-    return DragTarget<String>(builder: (context, candidateData, rejectedData) {
+    return DragTarget<TaskDragData>(builder: (context, candidateData, rejectedData) {
       final effectiveTheme = KanbanThemeProvider.of(context);
       return TaskCard(
-          task: task,
+          data: TaskDragData(
+            task: task,
+            sourceColumn: column,
+            sourceIndex: index,
+          ),
           theme: effectiveTheme.cardTheme,
           onMoveLeft: () {
             if (onMoveTaskRightToLeft != null) {
@@ -90,12 +98,32 @@ class ColumnWidget extends StatelessWidget {
           canMoveLeft: canMoveLeft,
           canMoveRight: canMoveRight);
     }, onWillAcceptWithDetails: (details) {
-      return onReorderedTask != null;
+      if (details.data.sourceColumn == column) {
+        return true; // this is same colum reorder task, so we will accept it 
+      } 
+      if (details.data.sourceColumn != column) {
+          return true; // this is different column, so we will accept it if target column limit not reached
+      }
+      // default to false
+      return false;
     }, onAcceptWithDetails: (details) {
-      final draggedIndex =
-          column.tasks.indexWhere((task) => task.id == details.data);
-      if (draggedIndex == -1 && draggedIndex == index) return;
-      onReorderedTask?.call(column, draggedIndex, index);
+      final fromColumn = details.data.sourceColumn;
+      final fromIndex = details.data.sourceIndex;
+
+      final targetColumn = column;
+      final targetIndex = index;
+
+      if (fromColumn == targetColumn && fromIndex != targetIndex) {
+        onReorderedTask?.call(column, fromIndex, index);
+      } else {
+        onTaskDropped?.call(
+          fromColumn,
+          fromIndex,
+          targetColumn,
+          targetIndex,
+        );
+      }
+      
     });
   }
 

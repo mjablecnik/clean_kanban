@@ -36,8 +36,7 @@ class MoveTaskUseCase {
   /// Moves a task from the source column to the destination column.
   ///
   /// Optionally, a destination index can be provided.
-  void execute(KanbanColumn source, int sourceIndex, KanbanColumn destination,
-      [int? destinationIndex]) {
+  void execute(KanbanColumn source, int sourceIndex, KanbanColumn destination, [int? destinationIndex]) {
     // Capture the task before moving.
     final task = source.tasks[sourceIndex];
     source.moveTaskTo(sourceIndex, destination, destinationIndex);

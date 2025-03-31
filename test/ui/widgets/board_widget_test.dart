@@ -120,7 +120,7 @@ void main() {
     final taskCards =
         tester.widgetList<TaskCard>(find.byType(TaskCard)).toList();
 
-    expect(taskCards.map((taskCard) => taskCard.task.title).toList(), [
+    expect(taskCards.map((taskCard) => taskCard.data.task.title).toList(), [
       'Task 2',
       'Task 1',
       'Task 3',

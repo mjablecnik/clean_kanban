@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
-import 'package:clean_kanban/domain/entities/column.dart';
 import 'package:clean_kanban/injection_container.dart';
 import '../../domain/repositories/test_board_repository.dart';
 
@@ -150,6 +149,26 @@ void main() {
 
       // Act
       boardProvider.moveTask('todo', 0, 'doing');
+
+      // Assert
+      final sourceColumn =
+          boardProvider.board!.columns.firstWhere((c) => c.id == 'todo');
+      final destColumn =
+          boardProvider.board!.columns.firstWhere((c) => c.id == 'doing');
+      expect(sourceColumn.tasks, isEmpty);
+      expect(destColumn.tasks.length, equals(1));
+      expect(destColumn.tasks.first, equals(task));
+    });
+
+    test('should move a task from one column to another at specific index', () {
+      // Arrange
+      final boardProvider = BoardProvider();
+      boardProvider.board = Board.simple();
+      final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+      boardProvider.addTask('todo', task);
+
+      // Act
+      boardProvider.moveTask('todo', 0, 'doing', -1);
 
       // Assert
       final sourceColumn =

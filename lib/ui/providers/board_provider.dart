@@ -50,11 +50,11 @@ class BoardProvider extends ChangeNotifier {
     }
   }
 
-  void moveTask(String sourceColId, int sourceIndex, String destColId) {
+  void moveTask(String sourceColId, int sourceIndex, String destColId, [int? destinationIndex]) {
     final source = _findColumn(sourceColId);
     final destination = _findColumn(destColId);
     if (source != null && destination != null) {
-      _moveTaskUseCase.execute(source, sourceIndex, destination);
+      _moveTaskUseCase.execute(source, sourceIndex, destination, destinationIndex);
       notifyListeners();
     }
   }

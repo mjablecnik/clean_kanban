@@ -76,6 +76,9 @@ class BoardWidget extends StatelessWidget {
                             boardProv.reorderTask(
                                 column.id, oldIndex, newIndex);
                           },
+                          onTaskDropped: (source, oldIndex, destination, destinationIndex) {
+                            boardProv.moveTask(source.id, oldIndex, destination.id, destinationIndex);
+                          },
                           onMoveTaskLeftToRight:
                               boardProv.board!.hasRightColumn(column.id)
                                   ? (sourceTaskIndex) {

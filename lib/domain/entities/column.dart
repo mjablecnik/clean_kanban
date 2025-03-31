@@ -39,8 +39,7 @@ class KanbanColumn {
     return tasks.removeAt(index);
   }
 
-  void moveTaskTo(int sourceIndex, KanbanColumn destination,
-      [int? destinationIndex]) {
+  void moveTaskTo(int sourceIndex, KanbanColumn destination, [int? destinationIndex]) {
     // Ensure source index is valid.
     if (sourceIndex < 0 || sourceIndex >= tasks.length) {
       throw RangeError('Source index out of range');

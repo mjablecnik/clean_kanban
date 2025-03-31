@@ -42,18 +42,6 @@ class BoardWidget extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: boardProv.board!.columns.map((column) {
-                    final hasLeftColumn =
-                        boardProv.board!.hasLeftColumn(column.id);
-                    final hasRightColumn =
-                        boardProv.board!.hasRightColumn(column.id);
-                    final leftColumnId =
-                        boardProv.board!.getLeftColumnId(column.id);
-                    final rightColumnId =
-                        boardProv.board!.getRightColumnId(column.id);
-                    final isLeftColumnLimitReached = hasLeftColumn &&
-                        boardProv.board!.isColumnLimitReached(leftColumnId!);
-                    final isRightColumnLimitReached = hasRightColumn &&
-                        boardProv.board!.isColumnLimitReached(rightColumnId!);
                     return Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 2.0),
@@ -79,28 +67,9 @@ class BoardWidget extends StatelessWidget {
                           onTaskDropped: (source, oldIndex, destination, [destinationIndex]) {
                             boardProv.moveTask(source.id, oldIndex, destination.id, destinationIndex);
                           },
-                          onMoveTaskLeftToRight:
-                              boardProv.board!.hasRightColumn(column.id)
-                                  ? (sourceTaskIndex) {
-                                      if (rightColumnId != null) {
-                                        boardProv.moveTask(column.id,
-                                            sourceTaskIndex, rightColumnId);
-                                      }
-                                    }
-                                  : null,
-                          onMoveTaskRightToLeft:
-                              boardProv.board!.hasLeftColumn(column.id)
-                                  ? (sourceTaskIndex) {
-                                      if (leftColumnId != null) {
-                                        boardProv.moveTask(column.id,
-                                            sourceTaskIndex, leftColumnId);
-                                      }
-                                    }
-                                  : null,
-                          canMoveLeft:
-                              hasLeftColumn && !isLeftColumnLimitReached,
-                          canMoveRight:
-                              hasRightColumn && !isRightColumnLimitReached,
+                          onDeleteTask: (column, index) {
+                            boardProv.removeTask(column.id, index);
+                          },
                           onClearDone: column.isDoneColumn()
                               ? () => boardProv.clearDoneColumn(column.id)
                               : null,

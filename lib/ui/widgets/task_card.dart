@@ -22,29 +22,26 @@ class TaskCardTheme {
 class TaskCard extends StatelessWidget {
   final TaskDragData data;
   final TaskCardTheme theme;
-  final VoidCallback? onMoveLeft;
-  final VoidCallback? onMoveRight;
-  final bool canMoveLeft;
-  final bool canMoveRight;
+  final VoidCallback? onDeleteTask;
+  final VoidCallback? onEditTask;
 
   const TaskCard({
     Key? key,
     required this.data,
     required this.theme,
-    this.onMoveLeft,
-    this.onMoveRight,
-    this.canMoveLeft = true,
-    this.canMoveRight = true,
+    this.onDeleteTask,
+    this.onEditTask,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Draggable<TaskDragData>(
+    return LongPressDraggable<TaskDragData>(
+      delay: const Duration(milliseconds: 120),
       data: data,
       feedback: Material(
-        elevation: 4.0,
+        elevation: 2.0,
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.3,
+          width: MediaQuery.of(context).size.width * 0.25, // TODO: adjust this 
           child: _buildCardContent(isDragging: true),
         ),
       ),
@@ -137,12 +134,10 @@ class TaskCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _buildControlButton(
-                            icon: Icons.chevron_left,
-                            onPressed: canMoveLeft ? onMoveLeft : null,
-                            tooltip: 'Move to Previous Column',
-                            color: canMoveLeft
-                                ? theme.cardMoveIconEnabledColor
-                                : theme.cardMoveIconDisabledColor,
+                            icon: Icons.mode_edit_outline,
+                            onPressed: onEditTask,
+                            tooltip: 'Edit this task',
+                            color: theme.cardMoveIconEnabledColor,
                           ),
                           Container(
                             height: 1,
@@ -151,12 +146,10 @@ class TaskCard extends StatelessWidget {
                             color: theme.cardBorderColor.withValues(alpha: 0.7),
                           ),
                           _buildControlButton(
-                            icon: Icons.chevron_right,
-                            onPressed: canMoveRight ? onMoveRight : null,
-                            tooltip: 'Move to Next Column',
-                            color: canMoveRight
-                                ? theme.cardMoveIconEnabledColor
-                                : theme.cardMoveIconDisabledColor,
+                            icon: Icons.delete_outline,
+                            onPressed: onDeleteTask,
+                            tooltip: 'Delete this task',
+                            color: theme.cardMoveIconEnabledColor,
                           ),
                         ],
                       ),

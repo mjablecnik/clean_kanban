@@ -1,6 +1,7 @@
 import 'package:clean_kanban/clean_kanban.dart';
 import 'package:flutter/material.dart';
 import './task_drag_data.dart';
+import './confirmation_dialog.dart';
 
 class KanbanColumnTheme {
   final Color columnBackgroundColor;
@@ -28,11 +29,8 @@ class ColumnWidget extends StatelessWidget {
       onReorderedTask;
   final Function(KanbanColumn source, int sourceIndex, KanbanColumn destination,
       [int? destinationIndex])? onTaskDropped;
-  final Function(int sourceTaskIndex)? onMoveTaskLeftToRight;
-  final Function(int sourceTaskIndex)? onMoveTaskRightToLeft;
   final Function()? onClearDone;
-  final bool canMoveLeft;
-  final bool canMoveRight;
+  final Function(KanbanColumn column, int index)? onDeleteTask;
 
   const ColumnWidget({
     Key? key,
@@ -41,11 +39,8 @@ class ColumnWidget extends StatelessWidget {
     this.onAddTask,
     this.onReorderedTask,
     this.onTaskDropped,
-    this.onMoveTaskLeftToRight,
-    this.onMoveTaskRightToLeft,
+    this.onDeleteTask,
     this.onClearDone,
-    this.canMoveLeft = true,
-    this.canMoveRight = true,
   }) : super(key: key);
 
   bool _shouldAcceptDrop(KanbanColumn sourceColumn, KanbanColumn targetColumn, bool acceptReorder) {
@@ -105,18 +100,18 @@ class ColumnWidget extends StatelessWidget {
             sourceIndex: index,
           ),
           theme: effectiveTheme.cardTheme,
-          onMoveLeft: () {
-            if (onMoveTaskRightToLeft != null) {
-              onMoveTaskRightToLeft!(index);
-            }
-          },
-          onMoveRight: () {
-            if (onMoveTaskLeftToRight != null) {
-              onMoveTaskLeftToRight!(index);
-            }
-          },
-          canMoveLeft: canMoveLeft,
-          canMoveRight: canMoveRight);
+          onDeleteTask: () => ConfirmationDialog.show(
+            context: context,
+            title: 'Delete Task',
+            message: 'Are you sure you want to delete this task? This action cannot be undone.',
+            label: 'Delete',
+            onPressed: () {
+              onDeleteTask?.call(column, index);
+            },
+          ),
+          onEditTask: () {
+            
+          });
     }, onWillAcceptWithDetails: (details) {
       return _shouldAcceptDrop(details.data.sourceColumn, column, true);
     }, onAcceptWithDetails: (details) {
@@ -208,7 +203,15 @@ class ColumnWidget extends StatelessWidget {
                         ? 'No tasks to clear'
                         : 'Clear all done tasks',
                     onPressed: (column.tasks.isNotEmpty && onClearDone != null)
-                        ? () => _showClearConfirmDialog(context)
+                        ? () => ConfirmationDialog.show(
+                            context: context,
+                            title: 'Clear all done tasks',
+                            message: 'Are you sure you want to clear all done tasks? This action cannot be undone.',
+                            label: 'Clear',
+                            onPressed: () {
+                              onClearDone?.call();
+                            },
+                          )
                         : null,
                   ),
                 ),
@@ -232,34 +235,6 @@ class ColumnWidget extends StatelessWidget {
                   ),
                 ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showClearConfirmDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Clear Done Tasks'),
-        content: const Text(
-          'Are you sure you want to clear all completed tasks? This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red[400],
-            ),
-            child: const Text('Clear'),
-            onPressed: () {
-              onClearDone?.call();
-              Navigator.of(context).pop();
-            },
           ),
         ],
       ),

@@ -63,13 +63,28 @@ class ColumnWidget extends StatelessWidget {
           children: [
             _buildHeader(context),
             Expanded(
-              child: ListView.builder(
-                itemCount: column.tasks.length,
-                itemBuilder: (context, index) {
-                  final task = column.tasks[index];
-                  return _buildDragTargetItem(task, index);
-                },
-              ),
+              child: DragTarget<TaskDragData>(builder: (context, candidateData, rejectedData) { 
+              return ListView.builder(
+                  itemCount: column.tasks.length,
+                  itemBuilder: (context, index) {
+                    final task = column.tasks[index];
+                    return _buildDragTargetItem(task, index);
+                  },
+                ); 
+              }, onWillAcceptWithDetails: (details) {
+                return details.data.sourceColumn != column;
+              }, onAcceptWithDetails: (details) {
+                if (details.data.sourceColumn == column && details.data.sourceIndex != 0) {
+                  onReorderedTask?.call(column, details.data.sourceIndex, 0);
+                } else {
+                  onTaskDropped?.call(
+                    details.data.sourceColumn,
+                    details.data.sourceIndex,
+                    column,
+                    0,
+                  );
+                }
+              })
             ),
           ],
         ));
@@ -107,23 +122,16 @@ class ColumnWidget extends StatelessWidget {
       // default to false
       return false;
     }, onAcceptWithDetails: (details) {
-      final fromColumn = details.data.sourceColumn;
-      final fromIndex = details.data.sourceIndex;
-
-      final targetColumn = column;
-      final targetIndex = index;
-
-      if (fromColumn == targetColumn && fromIndex != targetIndex) {
-        onReorderedTask?.call(column, fromIndex, index);
+      if (details.data.sourceColumn == column && details.data.sourceIndex != index) {
+        onReorderedTask?.call(column, details.data.sourceIndex, index);
       } else {
         onTaskDropped?.call(
-          fromColumn,
-          fromIndex,
-          targetColumn,
-          targetIndex,
+          details.data.sourceColumn,
+          details.data.sourceIndex,
+          column,
+          index,
         );
       }
-      
     });
   }
 

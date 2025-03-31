@@ -1,4 +1,4 @@
-import 'package:clean_kanban/ui/widgets/add_item_dialog.dart';
+import 'package:clean_kanban/ui/widgets/task_form_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
@@ -15,7 +15,10 @@ class BoardWidget extends StatelessWidget {
     showDialog(
         context: context,
         barrierDismissible: true,
-        builder: (BuildContext context) => AddTaskDialog(onAdd: onAddTask));
+        builder: (BuildContext context) => TaskFormDialog(
+          dialogTitle: 'Add New Task',
+          submitLabel: 'Add',
+          onSave: onAddTask));
   }
 
   @override

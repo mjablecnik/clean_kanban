@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 
-class AddTaskDialog extends StatefulWidget {
-  final Function(String title, String subtitle) onAdd;
+class TaskFormDialog extends StatefulWidget {
+  final Function(String title, String subtitle) onSave;
+  final String? initialTitle;
+  final String? initialSubtitle;
+  final String dialogTitle;
+  final String submitLabel;
 
-  const AddTaskDialog({
+  const TaskFormDialog({
     super.key,
-    required this.onAdd,
+    required this.onSave,
+    this.initialTitle,
+    this.initialSubtitle,
+    this.dialogTitle = 'Add New Task',
+    this.submitLabel = 'Add',
   });
 
   @override
-  State<AddTaskDialog> createState() => AddTaskDialogState();
+  State<TaskFormDialog> createState() => TaskFormDialogState();
 }
 
-class AddTaskDialogState extends State<AddTaskDialog> {
+class TaskFormDialogState extends State<TaskFormDialog> {
   late final TextEditingController _titleController;
   late final TextEditingController _subtitleController;
   final _formKey = GlobalKey<FormState>();
@@ -22,8 +30,8 @@ class AddTaskDialogState extends State<AddTaskDialog> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController();
-    _subtitleController = TextEditingController();
+    _titleController = TextEditingController(text: widget.initialTitle);
+    _subtitleController = TextEditingController(text: widget.initialSubtitle);
   }
 
   @override
@@ -62,10 +70,10 @@ class AddTaskDialogState extends State<AddTaskDialog> {
         FocusManager.instance.primaryFocus?.unfocus();
 
         try {
-          widget.onAdd(title, subtitle);
+          widget.onSave(title, subtitle);
           Navigator.of(context).pop();
         } catch (e) {
-          _showError('Failed to add task. Please try again.');
+          _showError('Failed to save task. Please try again.');
         }
       }
     } catch (e) {
@@ -119,9 +127,9 @@ class AddTaskDialogState extends State<AddTaskDialog> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Add New Task',
-                  style: TextStyle(
+                Text(
+                  widget.dialogTitle,
+                  style: const TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.w600,
                   ),
@@ -229,7 +237,7 @@ class AddTaskDialogState extends State<AddTaskDialog> {
                                     AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             )
-                          : const Text('Add'),
+                          : Text(widget.submitLabel),
                     ),
                   ],
                 ),

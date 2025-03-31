@@ -27,7 +27,7 @@ class ColumnWidget extends StatelessWidget {
   final Function(KanbanColumn column, int oldIndex, int newIndex)?
       onReorderedTask;
   final Function(KanbanColumn source, int sourceIndex, KanbanColumn destination,
-      int? destinationIndex)? onTaskDropped;
+      [int? destinationIndex])? onTaskDropped;
   final Function(int sourceTaskIndex)? onMoveTaskLeftToRight;
   final Function(int sourceTaskIndex)? onMoveTaskRightToLeft;
   final Function()? onClearDone;
@@ -47,6 +47,20 @@ class ColumnWidget extends StatelessWidget {
     this.canMoveLeft = true,
     this.canMoveRight = true,
   }) : super(key: key);
+
+  bool _shouldAcceptDrop(KanbanColumn sourceColumn, KanbanColumn targetColumn) {
+    if (sourceColumn == targetColumn) {
+      return false; // reorder task in _buildDragTargetItem
+    }
+    if (sourceColumn != targetColumn) {
+      // check if target column limit not reached
+      if (targetColumn.columnLimit != null && targetColumn.tasks.length >= targetColumn.columnLimit!) {
+        return false; // target column limit reached
+      }
+      return true; // this is different column, so we will accept it
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,18 +86,9 @@ class ColumnWidget extends StatelessWidget {
                   },
                 ); 
               }, onWillAcceptWithDetails: (details) {
-                return details.data.sourceColumn != column;
+                return _shouldAcceptDrop(details.data.sourceColumn, column);
               }, onAcceptWithDetails: (details) {
-                if (details.data.sourceColumn == column && details.data.sourceIndex != 0) {
-                  onReorderedTask?.call(column, details.data.sourceIndex, 0);
-                } else {
-                  onTaskDropped?.call(
-                    details.data.sourceColumn,
-                    details.data.sourceIndex,
-                    column,
-                    0,
-                  );
-                }
+                onTaskDropped?.call(details.data.sourceColumn, details.data.sourceIndex, column);
               })
             ),
           ],
@@ -113,14 +118,7 @@ class ColumnWidget extends StatelessWidget {
           canMoveLeft: canMoveLeft,
           canMoveRight: canMoveRight);
     }, onWillAcceptWithDetails: (details) {
-      if (details.data.sourceColumn == column) {
-        return true; // this is same colum reorder task, so we will accept it 
-      } 
-      if (details.data.sourceColumn != column) {
-          return true; // this is different column, so we will accept it if target column limit not reached
-      }
-      // default to false
-      return false;
+      return _shouldAcceptDrop(details.data.sourceColumn, column);
     }, onAcceptWithDetails: (details) {
       if (details.data.sourceColumn == column && details.data.sourceIndex != index) {
         onReorderedTask?.call(column, details.data.sourceIndex, index);

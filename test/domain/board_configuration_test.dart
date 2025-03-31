@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
+import 'package:clean_kanban/core/exceptions.dart';
 
 void main() {
   group('Board Configuration', () {
@@ -51,7 +52,7 @@ void main() {
 
       // Act & Assert
       expect(
-          () => Board.fromConfig(invalidConfig), throwsA(isA<ArgumentError>()));
+          () => Board.fromConfig(invalidConfig), throwsA(isA<BoardConfigMandatoryFieldsException>()));
     });
 
     test('should throw error when tasks exceed column limit in configuration',

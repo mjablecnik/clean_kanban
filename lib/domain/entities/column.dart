@@ -1,4 +1,5 @@
 import 'task.dart';
+import '../../core/exceptions.dart';
 
 class KanbanColumn {
   final String id;
@@ -16,7 +17,7 @@ class KanbanColumn {
   void addTask(Task task) {
     // Ensure column limit is obeyed when adding a new task.
     if (columnLimit != null && tasks.length >= columnLimit!) {
-      throw Exception('Column limit reached.');
+      throw ColumnLimitExceededException(id);
     }
     tasks.add(task);
   }
@@ -26,7 +27,7 @@ class KanbanColumn {
         oldIndex >= tasks.length ||
         newIndex < 0 ||
         newIndex > tasks.length) {
-      throw RangeError('Index out of range');
+      throw ColumnOperationException('reorderTask - Index out of range');
     }
     final task = tasks.removeAt(oldIndex);
     tasks.insert(newIndex, task);
@@ -34,7 +35,7 @@ class KanbanColumn {
 
   Task deleteTask(int index) {
     if (index < 0 || index >= tasks.length) {
-      throw RangeError('Index out of range');
+      throw ColumnOperationException('reorderTask - Index out of range');
     }
     return tasks.removeAt(index);
   }
@@ -42,12 +43,12 @@ class KanbanColumn {
   void moveTaskTo(int sourceIndex, KanbanColumn destination, [int? destinationIndex]) {
     // Ensure source index is valid.
     if (sourceIndex < 0 || sourceIndex >= tasks.length) {
-      throw RangeError('Source index out of range');
+      throw ColumnOperationException('moveTaskTo - Source index out of range');
     }
     // Ensure destination column limit is obeyed.
     if (destination.columnLimit != null &&
         destination.tasks.length >= destination.columnLimit!) {
-      throw Exception('Destination column limit reached.');
+      throw ColumnLimitExceededException(destination.id);
     }
     final task = deleteTask(sourceIndex);
     if (destinationIndex == null ||

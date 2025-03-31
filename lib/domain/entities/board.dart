@@ -1,5 +1,6 @@
 import 'column.dart';
 import 'task.dart';
+import '../../core/exceptions.dart';
 
 class Board {
   final List<KanbanColumn> columns;
@@ -20,19 +21,19 @@ class Board {
   // Creates an enhanced board with custom columns. Must have at least 3 columns.
   factory Board({required List<KanbanColumn> columns}) {
     if (columns.length < 3) {
-      throw Exception('Enhanced board must have at least 3 columns.');
+      throw KanbanBoardMinimumColumnRequirementException();
     }
     return Board._(columns);
   }
 
   factory Board.fromConfig(Map<String, dynamic> config) {
     if (!config.containsKey('columns')) {
-      throw ArgumentError('Configuration must contain columns');
+      throw BoardConfigColumnsRequirementException();
     }
 
     final columns = (config['columns'] as List).map((colConfig) {
       if (!colConfig.containsKey('id') || !colConfig.containsKey('header')) {
-        throw ArgumentError('Column configuration must contain id and header');
+        throw BoardConfigMandatoryFieldsException();
       }
 
       final column = KanbanColumn(

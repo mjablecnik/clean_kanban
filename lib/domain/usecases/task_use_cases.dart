@@ -2,6 +2,8 @@ import '../entities/task.dart';
 import '../entities/column.dart';
 import '../events/event_notifier.dart';
 import '../events/board_events.dart';
+import '../../core/result.dart';
+import '../../core/exceptions.dart';
 
 class AddTaskUseCase {
   /// Adds a task to the given column.
@@ -15,10 +17,10 @@ class DeleteTaskUseCase {
   /// Deletes a task at the specified index from the column.
   ///
   /// Returns the removed task.
-  Task execute(KanbanColumn column, int index) {
+  Result<Task> execute(KanbanColumn column, int index) {
     final removed = column.deleteTask(index);
     EventNotifier().notify(TaskRemovedEvent(removed, column));
-    return removed;
+    return Success(removed);
   }
 }
 
@@ -48,13 +50,19 @@ class DeleteDoneTaskUseCase {
   /// Deletes a single task from the Done column.
   /// 
   /// Returns the removed task.
-  Task execute(KanbanColumn doneColumn, int index) {
-    if (!doneColumn.isDoneColumn()) {
-      throw ArgumentError('This operation is only allowed for Done column');
+  Result<Task> execute(KanbanColumn doneColumn, int index) {
+    try {
+      if (!doneColumn.isDoneColumn()) {
+        throw OperationLimitedToDoneColumnException();
+      }
+      final removed = doneColumn.deleteTask(index);
+      EventNotifier().notify(TaskRemovedEvent(removed, doneColumn));
+      return Success(removed);
+    } on OperationLimitedToDoneColumnException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      throw TaskOperationException('Failed to delete task: ${e.toString()}');
     }
-    final removed = doneColumn.deleteTask(index);
-    EventNotifier().notify(TaskRemovedEvent(removed, doneColumn));
-    return removed;
   }
 }
 
@@ -62,13 +70,19 @@ class ClearDoneColumnUseCase {
   /// Removes all tasks from the Done column.
   /// 
   /// Returns the list of removed tasks.
-  List<Task> execute(KanbanColumn doneColumn) {
-    if (!doneColumn.isDoneColumn()) {
-      throw ArgumentError('This operation is only allowed for Done column');
+  Result<List<Task>> execute(KanbanColumn doneColumn) {
+    try {
+      if (!doneColumn.isDoneColumn()) {
+        throw OperationLimitedToDoneColumnException();
+      }
+      final removedTasks = List<Task>.from(doneColumn.tasks);
+      doneColumn.tasks.clear();
+      EventNotifier().notify(DoneColumnClearedEvent(removedTasks, doneColumn));
+      return Success(removedTasks);
+    } on OperationLimitedToDoneColumnException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      throw TaskOperationException('Failed to clear Done column: ${e.toString()}');
     }
-    final removedTasks = List<Task>.from(doneColumn.tasks);
-    doneColumn.tasks.clear();
-    EventNotifier().notify(DoneColumnClearedEvent(removedTasks, doneColumn));
-    return removedTasks;
   }
 }

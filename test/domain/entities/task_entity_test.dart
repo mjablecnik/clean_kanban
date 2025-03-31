@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
+import 'package:clean_kanban/core/exceptions.dart';
 
 void main() {
   group('Task Entity', () {
@@ -26,7 +27,7 @@ void main() {
 
       // Act & Assert
       expect(() => Task(id: id, title: longTitle, subtitle: subtitle),
-          throwsA(isA<ArgumentError>()));
+          throwsA(isA<TaskOperationException>()));
     });
 
     test('should throw error when subtitle is longer than 100 characters', () {
@@ -37,7 +38,7 @@ void main() {
 
       // Act & Assert
       expect(() => Task(id: id, title: title, subtitle: longSubtitle),
-          throwsA(isA<ArgumentError>()));
+          throwsA(isA<TaskOperationException>()));
     });
   });
 }

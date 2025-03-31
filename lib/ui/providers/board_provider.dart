@@ -5,6 +5,7 @@ import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/domain/usecases/board_use_cases.dart';
 import 'package:clean_kanban/domain/usecases/task_use_cases.dart';
 import 'package:clean_kanban/injection_container.dart';
+import '../../core/result.dart';
 
 class BoardProvider extends ChangeNotifier {
   Board? board;
@@ -42,12 +43,14 @@ class BoardProvider extends ChangeNotifier {
     }
   }
 
-  void removeTask(String columnId, int index) {
+  Result<Task> removeTask(String columnId, int index) {
     final col = _findColumn(columnId);
     if (col != null) {
-      _deleteTaskUseCase.execute(col, index);
+      final result = _deleteTaskUseCase.execute(col, index);
       notifyListeners();
+      return result;
     }
+    return Failure('Column not found');
   }
 
   void moveTask(String sourceColId, int sourceIndex, String destColId, [int? destinationIndex]) {
@@ -68,21 +71,25 @@ class BoardProvider extends ChangeNotifier {
   }
 
    /// Deletes a task from the Done column
-  void deleteDoneTask(String columnId, int index) {
+  Result<Task> deleteDoneTask(String columnId, int index) {
     final column = _findColumn(columnId);
     if (column != null) {
-      _deleteDoneTaskUseCase.execute(column, index);
+      final result = _deleteDoneTaskUseCase.execute(column, index);
       notifyListeners();
+      return result;
     }
+    return Failure('Column not found');
   }
 
   /// Clears all tasks from the Done column
-  void clearDoneColumn(String columnId) {
+  Result<List<Task>> clearDoneColumn(String columnId) {
     final column = _findColumn(columnId);
     if (column != null) {
-      _clearDoneColumnUseCase.execute(column);
+      final result = _clearDoneColumnUseCase.execute(column);
       notifyListeners();
+      return result;
     }
+    return Failure('Column not found');
   }
 
   // Add this method to save the current board state

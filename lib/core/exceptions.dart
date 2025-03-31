@@ -22,3 +22,22 @@ class TaskOperationException extends KanbanException {
 class ColumnOperationException extends KanbanException {
   const ColumnOperationException(String message) : super(message);
 }
+
+class KanbanBoardException extends KanbanException {
+  const KanbanBoardException(String message) : super(message);
+}
+
+class KanbanBoardMinimumColumnRequirementException extends KanbanBoardException {
+  const KanbanBoardMinimumColumnRequirementException()
+      : super('Kanban board must have at least 3 columns.');
+}
+
+class BoardConfigColumnsRequirementException extends KanbanBoardException {
+  const BoardConfigColumnsRequirementException()
+      : super('Configuration must contain columns');
+}
+
+class BoardConfigMandatoryFieldsException extends KanbanBoardException {
+  const BoardConfigMandatoryFieldsException()
+      : super('Column configuration must contain id and header');
+}

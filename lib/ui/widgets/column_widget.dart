@@ -48,9 +48,9 @@ class ColumnWidget extends StatelessWidget {
     this.canMoveRight = true,
   }) : super(key: key);
 
-  bool _shouldAcceptDrop(KanbanColumn sourceColumn, KanbanColumn targetColumn) {
+  bool _shouldAcceptDrop(KanbanColumn sourceColumn, KanbanColumn targetColumn, bool acceptReorder) {
     if (sourceColumn == targetColumn) {
-      return false; // reorder task in _buildDragTargetItem
+      return acceptReorder; // reorder task in _buildDragTargetItem
     }
     if (sourceColumn != targetColumn) {
       // check if target column limit not reached
@@ -86,7 +86,7 @@ class ColumnWidget extends StatelessWidget {
                   },
                 ); 
               }, onWillAcceptWithDetails: (details) {
-                return _shouldAcceptDrop(details.data.sourceColumn, column);
+                return _shouldAcceptDrop(details.data.sourceColumn, column, false);
               }, onAcceptWithDetails: (details) {
                 onTaskDropped?.call(details.data.sourceColumn, details.data.sourceIndex, column);
               })
@@ -118,7 +118,7 @@ class ColumnWidget extends StatelessWidget {
           canMoveLeft: canMoveLeft,
           canMoveRight: canMoveRight);
     }, onWillAcceptWithDetails: (details) {
-      return _shouldAcceptDrop(details.data.sourceColumn, column);
+      return _shouldAcceptDrop(details.data.sourceColumn, column, true);
     }, onAcceptWithDetails: (details) {
       if (details.data.sourceColumn == column && details.data.sourceIndex != index) {
         onReorderedTask?.call(column, details.data.sourceIndex, index);

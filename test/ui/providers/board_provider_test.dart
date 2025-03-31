@@ -4,6 +4,8 @@ import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
 import 'package:clean_kanban/injection_container.dart';
 import '../../domain/repositories/test_board_repository.dart';
+import 'package:clean_kanban/core/result.dart';
+import 'package:clean_kanban/core/exceptions.dart';
 
 void main() {
   late TestBoardRepository testBoardRepository;
@@ -239,10 +241,14 @@ void main() {
       boardProvider.addTask('todo', task1);
 
       // Act & Assert
-      expect(
-        () => boardProvider.deleteDoneTask('todo', 0),
-        throwsA(isA<ArgumentError>()),
-      );
+      final result = boardProvider.deleteDoneTask('todo', 0);
+      switch (result) {
+        case Failure<Task> failure:
+          expect(failure.message, 'This operation is only allowed for the Done column');
+          break;
+        default:
+          fail('Expected Failure, but got $result');
+      }
     });
 
     test('should clear all tasks from Done column', () {
@@ -262,10 +268,14 @@ void main() {
       boardProvider.addTask('todo', task1);
 
       // Act & Assert
-      expect(
-        () => boardProvider.clearDoneColumn('todo'),
-        throwsA(isA<ArgumentError>()),
-      );
+      final result = boardProvider.clearDoneColumn('todo');
+      switch (result) {
+        case Failure<List<Task>> failure:
+          expect(failure.message, 'This operation is only allowed for the Done column');
+          break;
+        default:
+          fail('Expected Failure, but got $result');
+      }
     });
 
     test('should notify listeners when deleting done task', () {

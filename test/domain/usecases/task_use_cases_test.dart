@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/domain/entities/column.dart';
 import 'package:clean_kanban/domain/usecases/task_use_cases.dart';
+import 'package:clean_kanban/core/result.dart';
+import 'package:clean_kanban/core/exceptions.dart';
 
 void main() {
   group('Task Use Cases', () {
@@ -48,8 +50,14 @@ void main() {
       final removed = deleteTaskUseCase.execute(column, 0);
 
       // Assert
-      expect(removed, equals(task));
-      expect(column.tasks, isEmpty);
+      switch(removed) {
+        case Success<Task> success:
+          expect(success.value, equals(task));
+          expect(column.tasks, isEmpty);
+          break;
+        default:
+          fail('Expected Success<Task>, but got ${removed.runtimeType}');
+      }
     });
 
     test('should reorder tasks in a column using ReorderTaskUseCase', () {
@@ -118,8 +126,14 @@ void main() {
         final removed = deleteDoneTaskUseCase.execute(doneColumn, 0);
 
         // Assert
-        expect(doneColumn.tasks, isEmpty);
-        expect(removed, equals(task));
+        switch(removed) {
+          case Success<Task> success:
+            expect(success.value, equals(task));
+            expect(doneColumn.tasks, isEmpty);
+            break;
+          default:
+            fail('Expected Success<Task>, but got ${removed.runtimeType}');
+        }
       });
 
       test('should throw error when deleting from non-Done column', () {
@@ -128,10 +142,13 @@ void main() {
         addTaskUseCase.execute(column, task);
 
         // Act & Assert
-        expect(
-          () => deleteDoneTaskUseCase.execute(column, 0),
-          throwsA(isA<ArgumentError>()),
-        );
+        switch(deleteDoneTaskUseCase.execute(column, 0)) {
+          case Failure<Task> failure:
+            expect(failure.message, equals('This operation is only allowed for the Done column'));
+            break;
+          default:
+            fail('Expected Failure<String>, but got ${deleteDoneTaskUseCase.execute(column, 0).runtimeType}');
+        }
       });
     });
 
@@ -148,9 +165,17 @@ void main() {
 
         // Assert
         expect(doneColumn.tasks, isEmpty);
-        expect(removedTasks.length, equals(2));
-        expect(removedTasks, contains(task1));
-        expect(removedTasks, contains(task2));
+        expect(removedTasks, isA<Success<List<Task>>>());
+        switch(removedTasks) {
+          case Success<List<Task>> success:
+            expect(success.value.length, equals(2));
+            expect(success.value, contains(task1));
+            expect(success.value, contains(task2));
+            break;
+          default:
+            fail('Expected Success<List<Task>>, but got ${removedTasks.runtimeType}');
+        }
+        
       });
 
       test('should return empty list when clearing empty Done column', () {
@@ -158,7 +183,13 @@ void main() {
         final removedTasks = clearDoneColumnUseCase.execute(doneColumn);
 
         // Assert
-        expect(removedTasks, isEmpty);
+        switch(removedTasks) {
+          case Success<List<Task>> success:
+            expect(success.value, isEmpty);
+            break;
+          default:
+            fail('Expected Success<List<Task>>, but got ${removedTasks.runtimeType}');
+        }
       });
 
       test('should throw error when clearing non-Done column', () {
@@ -167,10 +198,13 @@ void main() {
         addTaskUseCase.execute(column, task);
 
         // Act & Assert
-        expect(
-          () => clearDoneColumnUseCase.execute(column),
-          throwsA(isA<ArgumentError>()),
-        );
+        switch(clearDoneColumnUseCase.execute(column)) {
+          case Failure<List<Task>> failure:
+            expect(failure.message, equals('This operation is only allowed for the Done column'));
+            break;
+          default:
+            fail('Expected Failure<String>, but got ${clearDoneColumnUseCase.execute(column).runtimeType}');
+        }
       });
     });
   });

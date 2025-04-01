@@ -1,4 +1,4 @@
-import '../../core/exceptions.dart';
+import 'package:clean_kanban/core/exceptions.dart';
 
 /// Represents a task in a Kanban board.
 ///

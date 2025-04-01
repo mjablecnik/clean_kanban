@@ -1,4 +1,4 @@
-import '../entities/board.dart';
+import 'package:clean_kanban/domain/entities/board.dart';
 
 /// Repository interface for managing Kanban board persistence.
 ///

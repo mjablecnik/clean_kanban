@@ -1,6 +1,6 @@
-import '../entities/board.dart';
-import '../entities/task.dart';
-import '../entities/column.dart';
+import 'package:clean_kanban/domain/entities/board.dart';
+import 'package:clean_kanban/domain/entities/task.dart';
+import 'package:clean_kanban/domain/entities/column.dart';
 
 /// Base class for all events that occur on a Kanban board.
 abstract class BoardEvent {}

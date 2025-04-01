@@ -1,7 +1,7 @@
-import '../entities/board.dart';
-import '../repositories/board_repository.dart';
-import '../events/event_notifier.dart';
-import '../events/board_events.dart';
+import 'package:clean_kanban/domain/entities/board.dart';
+import 'package:clean_kanban/domain/repositories/board_repository.dart';
+import 'package:clean_kanban/domain/events/event_notifier.dart';
+import 'package:clean_kanban/domain/events/board_events.dart';
 
 /// Use case for retrieving the Kanban board from storage.
 ///

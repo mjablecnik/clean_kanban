@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
-import 'domain/repositories/board_repository.dart';
-import 'domain/usecases/board_use_cases.dart';
-import 'domain/usecases/task_use_cases.dart';
+import 'package:clean_kanban/domain/repositories/board_repository.dart';
+import 'package:clean_kanban/domain/usecases/board_use_cases.dart';
+import 'package:clean_kanban/domain/usecases/task_use_cases.dart';
 
 /// Global service locator instance.
 ///
@@ -32,4 +32,7 @@ void setupInjection(BoardRepository repository) {
   getIt.registerLazySingleton<DeleteTaskUseCase>(() => DeleteTaskUseCase());
   getIt.registerLazySingleton<ReorderTaskUseCase>(() => ReorderTaskUseCase());
   getIt.registerLazySingleton<MoveTaskUseCase>(() => MoveTaskUseCase());
+  getIt.registerLazySingleton<DeleteDoneTaskUseCase>(() => DeleteDoneTaskUseCase());
+  getIt.registerLazySingleton<ClearDoneColumnUseCase>(() => ClearDoneColumnUseCase());
+  getIt.registerLazySingleton<EditTaskUseCase>(() => EditTaskUseCase());
 }

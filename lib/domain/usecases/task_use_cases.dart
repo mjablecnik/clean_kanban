@@ -1,9 +1,9 @@
-import '../entities/task.dart';
-import '../entities/column.dart';
-import '../events/event_notifier.dart';
-import '../events/board_events.dart';
-import '../../core/result.dart';
-import '../../core/exceptions.dart';
+import 'package:clean_kanban/domain/entities/task.dart';
+import 'package:clean_kanban/domain/entities/column.dart';
+import 'package:clean_kanban/domain/events/event_notifier.dart';
+import 'package:clean_kanban/domain/events/board_events.dart';
+import 'package:clean_kanban/core/result.dart';
+import 'package:clean_kanban/core/exceptions.dart';
 
 /// Use case for adding a new task to a column.
 class AddTaskUseCase {

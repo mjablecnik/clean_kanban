@@ -1,11 +1,11 @@
-import 'package:clean_kanban/domain/entities/column.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
+import 'package:clean_kanban/domain/entities/column.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/domain/usecases/board_use_cases.dart';
 import 'package:clean_kanban/domain/usecases/task_use_cases.dart';
 import 'package:clean_kanban/injection_container.dart';
-import '../../core/result.dart';
+import 'package:clean_kanban/core/result.dart';
 
 /// Provider class that manages the state of a Kanban board.
 ///

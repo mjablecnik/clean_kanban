@@ -11,6 +11,10 @@
 /// * Theming system for customization
 library clean_kanban;
 
+// Export core components
+export 'core/exceptions.dart';
+export 'core/result.dart';
+
 // Export domain entities.
 export 'domain/entities/board.dart';
 export 'domain/entities/column.dart';
@@ -32,6 +36,11 @@ export 'injection_container.dart';
 export 'ui/widgets/board_widget.dart';
 export 'ui/widgets/column_widget.dart';
 export 'ui/widgets/task_card.dart';
+export 'ui/widgets/task_form_dialog.dart';
+export 'ui/widgets/confirmation_dialog.dart';
+export 'ui/widgets/task_drag_data.dart';
+
+// Export providers
 export 'ui/providers/board_provider.dart';
 
 // Export theming system

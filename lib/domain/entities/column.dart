@@ -1,5 +1,5 @@
 import 'task.dart';
-import '../../core/exceptions.dart';
+import 'package:clean_kanban/core/exceptions.dart';
 
 /// Represents a column in a Kanban board that contains tasks.
 ///

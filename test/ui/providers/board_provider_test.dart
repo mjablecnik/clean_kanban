@@ -3,8 +3,8 @@ import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
 import 'package:clean_kanban/injection_container.dart';
-import '../../domain/repositories/test_board_repository.dart';
 import 'package:clean_kanban/core/result.dart';
+import '../../domain/repositories/test_board_repository.dart';
 
 void main() {
   late TestBoardRepository testBoardRepository;

@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:clean_kanban/ui/providers/board_provider.dart';
 import 'package:clean_kanban/ui/widgets/board_widget.dart';
 import 'package:clean_kanban/domain/entities/board.dart';
-import '../../domain/repositories/test_board_repository.dart';
 import 'package:clean_kanban/injection_container.dart';
+import '../../domain/repositories/test_board_repository.dart';
 
 void main() {
   setUpAll(() async {

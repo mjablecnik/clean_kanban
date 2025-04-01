@@ -1,6 +1,6 @@
-import 'column.dart';
-import 'task.dart';
-import '../../core/exceptions.dart';
+import 'package:clean_kanban/domain/entities/column.dart';
+import 'package:clean_kanban/domain/entities/task.dart';
+import 'package:clean_kanban/core/exceptions.dart';
 
 /// Represents a Kanban board containing multiple columns.
 ///

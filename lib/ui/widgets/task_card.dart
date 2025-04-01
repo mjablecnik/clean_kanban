@@ -68,21 +68,32 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LongPressDraggable<TaskDragData>(
-      delay: const Duration(milliseconds: 120),
-      data: data,
-      feedback: Material(
-        elevation: 2.0,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.25, // TODO: adjust this 
-          child: _buildCardContent(isDragging: true),
-        ),
-      ),
-      childWhenDragging: Opacity(
-        opacity: 0.5,
-        child: _buildCardContent(isDragging: false),
-      ),
-      child: _buildCardContent(isDragging: false),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return LongPressDraggable<TaskDragData>(
+          delay: const Duration(milliseconds: 120),
+          data: data,
+          feedback: Material(
+            elevation: 8.0,
+            child: Container(
+              width: constraints.maxWidth,
+              constraints: BoxConstraints(
+                minWidth: 280.0,
+                maxWidth: 600.0, // Maximum width for desktop
+              ),
+              child: Transform.scale(
+                scale: 1.04,
+                child: _buildCardContent(isDragging: true),
+              ),
+            ),
+          ),
+          childWhenDragging: Opacity(
+            opacity: 0.5,
+            child: _buildCardContent(isDragging: false),
+          ),
+          child: _buildCardContent(isDragging: false),
+        );
+      },
     );
   }
 

@@ -70,6 +70,10 @@ class ColumnWidget extends StatelessWidget {
   /// Callback when a task's edit button is pressed.
   final Function(KanbanColumn column, int index, String initialTitle, String initialSubtitle)? onEditTask;
 
+  /// Maximum height for the column when displayed on mobile
+  /// Only applied when the column is in a vertical layout
+  final double? mobileMaxHeight;
+
   /// Creates a [ColumnWidget] with the given parameters.
   ///
   /// The [column] and [theme] parameters are required, while all callbacks
@@ -84,6 +88,7 @@ class ColumnWidget extends StatelessWidget {
     this.onDeleteTask,
     this.onEditTask,
     this.onClearDone,
+    this.mobileMaxHeight = 400.0,  // Default max height for mobile
   }) : super(key: key);
 
   bool _shouldAcceptDrop(KanbanColumn sourceColumn, KanbanColumn targetColumn, bool acceptReorder) {
@@ -102,35 +107,73 @@ class ColumnWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-          color: theme.columnBackgroundColor,
-          borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: theme.columnBorderColor.withValues(alpha: 0.3),
-            width: 1.0,
-          ),
-        ),
-        child: Column(
-          children: [
-            _buildHeader(context),
-            Expanded(
-              child: DragTarget<TaskDragData>(builder: (context, candidateData, rejectedData) { 
-              return ListView.builder(
-                  itemCount: column.tasks.length,
-                  itemBuilder: (context, index) {
-                    final task = column.tasks[index];
-                    return _buildDragTargetItem(task, index);
-                  },
-                ); 
-              }, onWillAcceptWithDetails: (details) {
-                return _shouldAcceptDrop(details.data.sourceColumn, column, false);
-              }, onAcceptWithDetails: (details) {
-                onTaskDropped?.call(details.data.sourceColumn, details.data.sourceIndex, column);
-              })
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrowScreen = constraints.maxWidth < 600;
+        
+        return Container(
+          constraints: isNarrowScreen && mobileMaxHeight != null
+              ? BoxConstraints(maxHeight: mobileMaxHeight!)
+              : null,
+          decoration: BoxDecoration(
+            color: theme.columnBackgroundColor,
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(
+              color: theme.columnBorderColor.withValues(alpha: 0.3),
+              width: 1.0,
             ),
-          ],
-        ));
+          ),
+          child: Column(
+            children: [
+              _buildHeader(context),
+              Expanded(
+                child: DragTarget<TaskDragData>(
+                  builder: (context, candidateData, rejectedData) {
+                    return Stack(
+                      children: [
+                        ListView.builder(
+                          itemCount: column.tasks.length,
+                          itemBuilder: (context, index) {
+                            final task = column.tasks[index];
+                            return _buildDragTargetItem(task, index);
+                          },
+                        ),
+                        // Show scroll indicator when there are more tasks
+                        if (isNarrowScreen && column.tasks.length > 4)
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 4,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    theme.columnHeaderColor.withOpacity(0.2),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                  onWillAcceptWithDetails: (details) {
+                    return _shouldAcceptDrop(details.data.sourceColumn, column, false);
+                  },
+                  onAcceptWithDetails: (details) {
+                    onTaskDropped?.call(details.data.sourceColumn, details.data.sourceIndex, column);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildDragTargetItem(Task task, int index) {

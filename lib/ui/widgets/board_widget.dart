@@ -75,51 +75,104 @@ class BoardWidget extends StatelessWidget {
             if (boardProv.board == null) {
               return const Center(child: CircularProgressIndicator());
             }
-            return Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: boardProv.board!.columns.map((column) {
-                    return Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                        child: ColumnWidget(
-                          theme: effectiveTheme.columnTheme,
-                          column: column,
-                          onAddTask: () {
-                            _showAddTaskDialog(context, (title, subtitle) {
-                              final newTask = Task(
-                                id: DateTime.now()
-                                    .millisecondsSinceEpoch
-                                    .toString(),
-                                title: title,
-                                subtitle: subtitle,
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrowScreen = constraints.maxWidth < 600; // Breakpoint for mobile
+                return Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: isNarrowScreen
+                      ? SingleChildScrollView(
+                          child: Column(
+                            children: boardProv.board!.columns.map((column) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: ColumnWidget(
+                                    theme: effectiveTheme.columnTheme,
+                                    column: column,
+                                    mobileMaxHeight: 400.0,
+                                    onAddTask: () {
+                                      _showAddTaskDialog(context, (title, subtitle) {
+                                        final newTask = Task(
+                                          id: DateTime.now()
+                                              .millisecondsSinceEpoch
+                                              .toString(),
+                                          title: title,
+                                          subtitle: subtitle,
+                                        );
+                                        boardProv.addTask(column.id, newTask);
+                                      });
+                                    },
+                                    onReorderedTask: (column, oldIndex, newIndex) {
+                                      boardProv.reorderTask(column.id, oldIndex, newIndex);
+                                    },
+                                    onTaskDropped: (source, oldIndex, destination, [destinationIndex]) {
+                                      boardProv.moveTask(source.id, oldIndex, destination.id, destinationIndex);
+                                    },
+                                    onDeleteTask: (column, index) {
+                                      boardProv.removeTask(column.id, index);
+                                    },
+                                    onEditTask: (column, index, initialTitle, initialSubtitle) =>
+                                        _showEditTaskDialog(context, initialTitle, initialSubtitle,
+                                            (title, subtitle) {
+                                      boardProv.editTask(column.id, index, title, subtitle);
+                                    }),
+                                    onClearDone: column.isDoneColumn()
+                                        ? () => boardProv.clearDoneColumn(column.id)
+                                        : null,
+                                  ),
+                                ),
                               );
-                              boardProv.addTask(column.id, newTask);
-                            });
-                          },
-                          onReorderedTask: (column, oldIndex, newIndex) {
-                            boardProv.reorderTask(
-                                column.id, oldIndex, newIndex);
-                          },
-                          onTaskDropped: (source, oldIndex, destination, [destinationIndex]) {
-                            boardProv.moveTask(source.id, oldIndex, destination.id, destinationIndex);
-                          },
-                          onDeleteTask: (column, index) {
-                            boardProv.removeTask(column.id, index);
-                          },
-                          onEditTask: (column, index, initialTitle, initialSubtitle) => 
-                          _showEditTaskDialog(context, initialTitle, initialSubtitle, (title, subtitle) {
-                            boardProv.editTask(column.id, index, title, subtitle);
-                          }),
-                          onClearDone: column.isDoneColumn()
-                              ? () => boardProv.clearDoneColumn(column.id)
-                              : null,
+                            }).toList(),
+                          ),
+                        )
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: boardProv.board!.columns.map((column) {
+                            return Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: ColumnWidget(
+                                  theme: effectiveTheme.columnTheme,
+                                  column: column,
+                                  onAddTask: () {
+                                    _showAddTaskDialog(context, (title, subtitle) {
+                                      final newTask = Task(
+                                        id: DateTime.now()
+                                            .millisecondsSinceEpoch
+                                            .toString(),
+                                        title: title,
+                                        subtitle: subtitle,
+                                      );
+                                      boardProv.addTask(column.id, newTask);
+                                    });
+                                  },
+                                  onReorderedTask: (column, oldIndex, newIndex) {
+                                    boardProv.reorderTask(column.id, oldIndex, newIndex);
+                                  },
+                                  onTaskDropped: (source, oldIndex, destination, [destinationIndex]) {
+                                    boardProv.moveTask(source.id, oldIndex, destination.id, destinationIndex);
+                                  },
+                                  onDeleteTask: (column, index) {
+                                    boardProv.removeTask(column.id, index);
+                                  },
+                                  onEditTask: (column, index, initialTitle, initialSubtitle) =>
+                                      _showEditTaskDialog(context, initialTitle, initialSubtitle,
+                                          (title, subtitle) {
+                                    boardProv.editTask(column.id, index, title, subtitle);
+                                  }),
+                                  onClearDone: column.isDoneColumn()
+                                      ? () => boardProv.clearDoneColumn(column.id)
+                                      : null,
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ));
+                );
+              },
+            );
           },
         ),
       ),

@@ -1,14 +1,32 @@
 import 'package:flutter/material.dart';
 import 'task_drag_data.dart';
 
+/// Theme configuration for a task card.
+///
+/// Defines the visual appearance of a task card including colors for
+/// background, borders, text, and interactive elements.
 class TaskCardTheme {
+  /// Background color of the card.
   final Color cardBackgroundColor;
+
+  /// Color of the card's border.
   final Color cardBorderColor;
+
+  /// Text color for the task title.
   final Color cardTitleColor;
+
+  /// Text color for the task subtitle.
   final Color cardSubtitleColor;
+
+  /// Color for enabled move/drag icons.
   final Color cardMoveIconEnabledColor;
+
+  /// Color for disabled move/drag icons.
   final Color cardMoveIconDisabledColor;
 
+  /// Creates a [TaskCardTheme] with customizable colors.
+  ///
+  /// All parameters have default values that create a standard light theme.
   const TaskCardTheme({
     this.cardBackgroundColor = Colors.white,
     this.cardBorderColor = const Color(0xFFE0E0E0),
@@ -19,12 +37,27 @@ class TaskCardTheme {
   });
 }
 
+/// A widget that displays a draggable task card.
+///
+/// This widget represents a single task in the Kanban board and supports
+/// drag-and-drop operations, editing, and deletion of tasks.
 class TaskCard extends StatelessWidget {
+  /// The data associated with this task card, used for drag operations.
   final TaskDragData data;
+
+  /// Theme configuration for the card's appearance.
   final TaskCardTheme theme;
+
+  /// Callback function when the delete button is pressed.
   final VoidCallback? onDeleteTask;
+
+  /// Callback function when the edit button is pressed.
   final VoidCallback? onEditTask;
 
+  /// Creates a [TaskCard] widget.
+  ///
+  /// The [data] and [theme] parameters are required, while [onDeleteTask]
+  /// and [onEditTask] callbacks are optional.
   const TaskCard({
     Key? key,
     required this.data,

@@ -3,14 +3,32 @@ import 'package:flutter/material.dart';
 import './task_drag_data.dart';
 import './confirmation_dialog.dart';
 
+/// Theme configuration for a Kanban column.
+///
+/// Defines the visual appearance of a column including colors for various
+/// components like background, borders, headers, and action buttons.
 class KanbanColumnTheme {
+  /// Background color of the column.
   final Color columnBackgroundColor;
+
+  /// Color of the column's border.
   final Color columnBorderColor;
+
+  /// Background color of the column header.
   final Color columnHeaderColor;
+
+  /// Text color for the column header.
   final Color columnHeaderTextColor;
+
+  /// Background color for the add task button.
   final Color columnAddButtonBoxColor;
+
+  /// Color of the add task icon.
   final Color columnAddIconColor;
 
+  /// Creates a [KanbanColumnTheme] with customizable colors.
+  ///
+  /// All parameters have default values that create a standard light theme.
   const KanbanColumnTheme({
     this.columnBackgroundColor = Colors.white,
     this.columnBorderColor = const Color(0xFFE0E0E0),
@@ -21,18 +39,41 @@ class KanbanColumnTheme {
   });
 }
 
+/// A widget that represents a column in a Kanban board.
+///
+/// Handles the display of tasks, drag-and-drop operations, and column-specific
+/// actions like adding tasks and clearing completed tasks.
 class ColumnWidget extends StatelessWidget {
+  /// The column data to display.
   final KanbanColumn column;
+
+  /// Theme configuration for the column.
   final KanbanColumnTheme theme;
+
+  /// Callback when the add task button is pressed.
   final Function()? onAddTask;
+
+  /// Callback when a task is reordered within the column.
   final Function(KanbanColumn column, int oldIndex, int newIndex)?
       onReorderedTask;
+
+  /// Callback when a task is dropped into this column.
   final Function(KanbanColumn source, int sourceIndex, KanbanColumn destination,
       [int? destinationIndex])? onTaskDropped;
+
+  /// Callback when the clear all done tasks button is pressed.
   final Function()? onClearDone;
+
+  /// Callback when a task's delete button is pressed.
   final Function(KanbanColumn column, int index)? onDeleteTask;
+
+  /// Callback when a task's edit button is pressed.
   final Function(KanbanColumn column, int index, String initialTitle, String initialSubtitle)? onEditTask;
 
+  /// Creates a [ColumnWidget] with the given parameters.
+  ///
+  /// The [column] and [theme] parameters are required, while all callbacks
+  /// are optional.
   const ColumnWidget({
     Key? key,
     required this.column,

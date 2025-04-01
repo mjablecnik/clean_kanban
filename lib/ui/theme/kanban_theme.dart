@@ -29,6 +29,8 @@ class KanbanTheme {
   });
 
   /// Creates a light theme for the Kanban board.
+  ///
+  /// Uses a white-based color scheme with blue accents.
   factory KanbanTheme.light() {
     return const KanbanTheme(
       columnTheme: KanbanColumnTheme(
@@ -53,6 +55,8 @@ class KanbanTheme {
   }
 
   /// Creates a dark theme for the Kanban board.
+  ///
+  /// Uses a dark color scheme with appropriate contrast for better visibility.
   factory KanbanTheme.dark() {
     return const KanbanTheme(
       columnTheme: KanbanColumnTheme(
@@ -77,6 +81,9 @@ class KanbanTheme {
   }
 
   /// Creates a custom theme based on the primary color.
+  ///
+  /// Takes a [primaryColor] parameter and generates appropriate light and dark
+  /// variants for various theme components.
   factory KanbanTheme.fromColor(Color primaryColor) {
     final Color primaryLight = Color.lerp(primaryColor, Colors.white, 0.3)!;
     final Color primaryDark = Color.lerp(primaryColor, Colors.black, 0.3)!;
@@ -104,6 +111,8 @@ class KanbanTheme {
   }
 
   /// Creates a copy of this theme with the given fields replaced with new values.
+  ///
+  /// Any parameter that is null will keep its original value.
   KanbanTheme copyWith({
     KanbanColumnTheme? columnTheme,
     TaskCardTheme? cardTheme,
@@ -125,23 +134,34 @@ class KanbanTheme {
   }
 }
 
-/// Extension to provide theme access through BuildContext.
+/// An inherited widget that provides theme access to its descendants.
+///
+/// Wraps a widget subtree and makes a [KanbanTheme] available to all descendants
+/// through the [of] method.
 class KanbanThemeProvider extends InheritedWidget {
+  /// The theme to be provided to descendants.
   final KanbanTheme theme;
 
+  /// Creates a [KanbanThemeProvider] that provides the given theme to its descendants.
+  ///
+  /// The [theme] and [child] arguments must not be null.
   const KanbanThemeProvider({
     Key? key,
     required this.theme,
     required Widget child,
   }) : super(key: key, child: child);
 
-// TODO: is this the correct way to implement this?
+  /// Retrieves the [KanbanTheme] from the closest [KanbanThemeProvider] ancestor.
+  ///
+  /// If there is no [KanbanThemeProvider] in the widget's ancestry, returns a default theme.
+  /// This method will cause the widget to rebuild when the theme changes.
   static KanbanTheme of(BuildContext context) {
     final KanbanThemeProvider? provider =
         context.dependOnInheritedWidgetOfExactType<KanbanThemeProvider>();
     return provider?.theme ?? const KanbanTheme();
   }
 
+  /// Determines whether dependent widgets should rebuild when the theme changes.
   @override
   bool updateShouldNotify(KanbanThemeProvider oldWidget) {
     return theme != oldWidget.theme;

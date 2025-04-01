@@ -3,8 +3,21 @@ import 'domain/repositories/board_repository.dart';
 import 'domain/usecases/board_use_cases.dart';
 import 'domain/usecases/task_use_cases.dart';
 
+/// Global service locator instance.
+///
+/// Used throughout the application to access registered dependencies.
 final GetIt getIt = GetIt.instance;
 
+/// Configures dependency injection for the application.
+///
+/// This function sets up all dependencies needed by the Kanban board system,
+/// including:
+/// * Repository implementations
+/// * Board-related use cases
+/// * Task-related use cases
+///
+/// Parameters:
+/// - [repository]: The concrete implementation of [BoardRepository] to use
 void setupInjection(BoardRepository repository) {
   // Register repository as a lazy singleton.
   getIt.registerLazySingleton<BoardRepository>(() => repository);

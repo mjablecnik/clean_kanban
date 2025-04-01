@@ -6,32 +6,54 @@ import 'package:clean_kanban/ui/widgets/column_widget.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/ui/theme/kanban_theme.dart';
 
+/// A widget that displays a complete Kanban board with multiple columns.
+///
+/// This widget handles the visual representation of the board, including
+/// column layout, task management, and theme application. It uses [BoardProvider]
+/// for state management and supports customization through [KanbanTheme].
 class BoardWidget extends StatelessWidget {
+  /// Optional theme override for this board instance.
+  ///
+  /// If not provided, the theme will be obtained from the nearest [KanbanThemeProvider].
   final KanbanTheme? theme;
 
+  /// Creates a [BoardWidget] with an optional theme override.
+  ///
+  /// The [theme] parameter allows customizing the appearance of this specific board
+  /// instance without affecting other boards in the application.
   const BoardWidget({super.key, this.theme});
+
+  /// Shows a dialog for adding a new task.
+  ///
+  /// Takes a [context] for showing the dialog and an [onAddTask] callback
+  /// that receives the new task's title and subtitle.
   void _showAddTaskDialog(
       BuildContext context, Function(String, String) onAddTask) {
     showDialog(
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) => TaskFormDialog(
-          dialogTitle: 'Add New Task',
-          submitLabel: 'Add',
-          onSave: onAddTask));
+            dialogTitle: 'Add New Task',
+            submitLabel: 'Add',
+            onSave: onAddTask));
   }
 
+  /// Shows a dialog for editing an existing task.
+  ///
+  /// Takes a [context], [initialTitle], [initialSubtitle], and an [onEditTask]
+  /// callback that receives the updated title and subtitle.
   void _showEditTaskDialog(
-      BuildContext context, String initialTitle, String initialSubtitle, Function(String, String) onEditTask) {
+      BuildContext context, String initialTitle, String initialSubtitle,
+      Function(String, String) onEditTask) {
     showDialog(
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) => TaskFormDialog(
-          initialTitle: initialTitle,
-          initialSubtitle: initialSubtitle,
-          dialogTitle: 'Edit Task',
-          submitLabel: 'Save',
-          onSave: onEditTask));
+            initialTitle: initialTitle,
+            initialSubtitle: initialSubtitle,
+            dialogTitle: 'Edit Task',
+            submitLabel: 'Save',
+            onSave: onEditTask));
   }
 
   @override

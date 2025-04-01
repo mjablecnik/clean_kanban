@@ -2,12 +2,21 @@ import 'column.dart';
 import 'task.dart';
 import '../../core/exceptions.dart';
 
+/// Represents a Kanban board containing multiple columns.
+///
+/// A board must have at least 3 columns and provides functionality for
+/// managing tasks and columns, including movement between columns and
+/// checking column limits.
 class Board {
+  /// The list of columns in this board.
   final List<KanbanColumn> columns;
 
+  /// Internal constructor for creating a board with the given columns.
   Board._(this.columns);
 
-  // Creates a simple board with exactly 3 default columns.
+  /// Creates a simple board with exactly 3 default columns: To Do, Doing, and Done.
+  ///
+  /// The Doing and Done columns are configured to not accept direct task additions.
   factory Board.simple() {
     return Board._([
       KanbanColumn(id: 'todo', header: 'To Do', columnLimit: null),
@@ -18,7 +27,9 @@ class Board {
     ]);
   }
 
-  // Creates an enhanced board with custom columns. Must have at least 3 columns.
+  /// Creates an enhanced board with custom columns.
+  ///
+  /// Throws [KanbanBoardMinimumColumnRequirementException] if fewer than 3 columns are provided.
   factory Board({required List<KanbanColumn> columns}) {
     if (columns.length < 3) {
       throw KanbanBoardMinimumColumnRequirementException();
@@ -26,6 +37,14 @@ class Board {
     return Board._(columns);
   }
 
+  /// Creates a board from a configuration map.
+  ///
+  /// The configuration must contain a 'columns' key with an array of column configurations.
+  /// Each column configuration must have 'id' and 'header' fields.
+  ///
+  /// Throws:
+  /// * [BoardConfigColumnsRequirementException] if 'columns' key is missing
+  /// * [BoardConfigMandatoryFieldsException] if column config is missing required fields
   factory Board.fromConfig(Map<String, dynamic> config) {
     if (!config.containsKey('columns')) {
       throw BoardConfigColumnsRequirementException();
@@ -60,40 +79,9 @@ class Board {
     return Board(columns: columns);
   }
 
-  // return the id of the column on the left of the given column, return null if not found
-  bool hasLeftColumn(String columnId) {
-    final index = columns.indexWhere((col) => col.id == columnId);
-    if (index == -1 || index == 0) {
-      return false;
-    }
-    return true;
-  }
-
-  String? getLeftColumnId(String columnId) {
-    final index = columns.indexWhere((col) => col.id == columnId);
-    if (index == -1 || index == 0) {
-      return null;
-    }
-    return columns[index - 1].id;
-  }
-
-  bool hasRightColumn(String columnId) {
-    final index = columns.indexWhere((col) => col.id == columnId);
-    if (index == -1 || index == columns.length - 1) {
-      return false;
-    }
-    return true;
-  }
-
-  String? getRightColumnId(String columnId) {
-    final index = columns.indexWhere((col) => col.id == columnId);
-    if (index == -1 || index == columns.length - 1) {
-      return null;
-    }
-    return columns[index + 1].id;
-  }
-
-  // function return true if column reached its limit
+  /// Checks if a column has reached its task limit.
+  ///
+  /// Returns true if the column with [columnId] has reached its configured limit.
   bool isColumnLimitReached(String columnId) {
     final column = columns.firstWhere((col) => col.id == columnId);
     if (column.columnLimit != null &&
@@ -103,7 +91,9 @@ class Board {
     return false;
   }
 
-  // Convert board to JSON format for persistence
+  /// Converts the board to a JSON-compatible map for persistence.
+  ///
+  /// Returns a map containing the board's configuration and all its columns.
   Map<String, dynamic> toJson() {
     return {
       'columns': columns.map((column) => column.toJson()).toList(),

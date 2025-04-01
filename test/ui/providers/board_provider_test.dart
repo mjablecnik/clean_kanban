@@ -5,7 +5,6 @@ import 'package:clean_kanban/domain/entities/board.dart';
 import 'package:clean_kanban/injection_container.dart';
 import '../../domain/repositories/test_board_repository.dart';
 import 'package:clean_kanban/core/result.dart';
-import 'package:clean_kanban/core/exceptions.dart';
 
 void main() {
   late TestBoardRepository testBoardRepository;

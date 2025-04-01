@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
 
+/// A dialog widget that displays a form for creating or editing tasks.
+///
+/// This dialog provides fields for entering a task title and subtitle,
+/// with validation and error handling built-in.
 class TaskFormDialog extends StatefulWidget {
+  /// Callback function called when the form is saved.
+  /// Takes a [title] and [subtitle] as parameters.
   final Function(String title, String subtitle) onSave;
+
+  /// The initial title to populate the title field.
   final String? initialTitle;
+
+  /// The initial subtitle to populate the subtitle field.
   final String? initialSubtitle;
+
+  /// The title text displayed at the top of the dialog.
   final String dialogTitle;
+
+  /// The label text for the submit button.
   final String submitLabel;
 
+  /// Creates a [TaskFormDialog].
+  ///
+  /// The [onSave] callback is required and is called when the form is submitted
+  /// with valid data.
   const TaskFormDialog({
     super.key,
     required this.onSave,

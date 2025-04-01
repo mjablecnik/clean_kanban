@@ -7,7 +7,12 @@ import 'package:clean_kanban/domain/usecases/task_use_cases.dart';
 import 'package:clean_kanban/injection_container.dart';
 import '../../core/result.dart';
 
+/// Provider class that manages the state of a Kanban board.
+///
+/// Handles all board-related operations including loading, saving, and updating
+/// the board state, as well as managing tasks within columns.
 class BoardProvider extends ChangeNotifier {
+  /// The current board instance being managed.
   Board? board;
 
   final GetBoardUseCase _getBoardUseCase = getIt<GetBoardUseCase>();
@@ -21,6 +26,10 @@ class BoardProvider extends ChangeNotifier {
   final ClearDoneColumnUseCase _clearDoneColumnUseCase = ClearDoneColumnUseCase();
   final EditTaskUseCase _editTaskUseCase = EditTaskUseCase();
 
+  /// Loads the board from storage or creates a new one.
+  ///
+  /// If [config] is provided, creates a board from the configuration.
+  /// Otherwise, attempts to load a saved board or creates a simple board.
   Future<void> loadBoard({Map<String, dynamic>? config}) async {
     try {
       final fetchedBoard = await _getBoardUseCase.execute();
@@ -35,6 +44,10 @@ class BoardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Adds a new task to the specified column.
+  ///
+  /// [columnId] is the ID of the target column.
+  /// [task] is the task to be added.
   void addTask(String columnId, Task task) {
     final col = _findColumn(columnId);
     if (col != null) {
@@ -43,6 +56,12 @@ class BoardProvider extends ChangeNotifier {
     }
   }
 
+  /// Removes a task from the specified column.
+  ///
+  /// [columnId] is the ID of the column containing the task.
+  /// [index] is the position of the task in the column.
+  ///
+  /// Returns a [Result] containing the removed task or an error message.
   Result<Task> removeTask(String columnId, int index) {
     final col = _findColumn(columnId);
     if (col != null) {
@@ -53,6 +72,12 @@ class BoardProvider extends ChangeNotifier {
     return Failure('Column not found');
   }
 
+  /// Moves a task between columns.
+  ///
+  /// [sourceColId] is the ID of the source column.
+  /// [sourceIndex] is the task's current position.
+  /// [destColId] is the ID of the destination column.
+  /// [destinationIndex] is the optional target position.
   void moveTask(String sourceColId, int sourceIndex, String destColId, [int? destinationIndex]) {
     final source = _findColumn(sourceColId);
     final destination = _findColumn(destColId);
@@ -62,6 +87,11 @@ class BoardProvider extends ChangeNotifier {
     }
   }
 
+  /// Reorders a task within its column.
+  ///
+  /// [columnId] is the ID of the column.
+  /// [oldIndex] is the task's current position.
+  /// [newIndex] is the target position.
   void reorderTask(String columnId, int oldIndex, int newIndex) {
     final col = _findColumn(columnId);
     if (col != null) {
@@ -70,7 +100,12 @@ class BoardProvider extends ChangeNotifier {
     }
   }
 
-   /// Deletes a task from the Done column
+  /// Deletes a task from the Done column.
+  ///
+  /// [columnId] must be the ID of the Done column.
+  /// [index] is the position of the task to delete.
+  ///
+  /// Returns a [Result] containing the deleted task or an error message.
   Result<Task> deleteDoneTask(String columnId, int index) {
     final column = _findColumn(columnId);
     if (column != null) {
@@ -81,7 +116,11 @@ class BoardProvider extends ChangeNotifier {
     return Failure('Column not found');
   }
 
-  /// Clears all tasks from the Done column
+  /// Clears all tasks from the Done column.
+  ///
+  /// [columnId] must be the ID of the Done column.
+  ///
+  /// Returns a [Result] containing the list of removed tasks or an error message.
   Result<List<Task>> clearDoneColumn(String columnId) {
     final column = _findColumn(columnId);
     if (column != null) {
@@ -92,7 +131,15 @@ class BoardProvider extends ChangeNotifier {
     return Failure('Column not found');
   }
 
-  Result<Task> editTask(String columnId, int index,  String newTitle, String newSubtitle) {
+  /// Edits an existing task in the specified column.
+  ///
+  /// [columnId] is the ID of the column containing the task.
+  /// [index] is the position of the task to edit.
+  /// [newTitle] is the updated title for the task.
+  /// [newSubtitle] is the updated subtitle for the task.
+  ///
+  /// Returns a [Result] containing the updated task or an error message.
+  Result<Task> editTask(String columnId, int index, String newTitle, String newSubtitle) {
     final column = _findColumn(columnId);
     if (column != null) {
       final result = _editTaskUseCase.execute(column, index, newTitle, newSubtitle);
@@ -102,7 +149,9 @@ class BoardProvider extends ChangeNotifier {
     return Failure('Column not found');
   }
 
-  // Add this method to save the current board state
+  /// Saves the current board state to storage.
+  ///
+  /// Does nothing if no board is currently loaded.
   Future<void> saveBoard() async {
     if (board != null) {
       await _saveBoardUseCase.execute(board!);

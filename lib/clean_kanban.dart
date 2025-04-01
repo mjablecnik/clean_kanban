@@ -1,3 +1,14 @@
+/// A clean architecture implementation of a Kanban board system.
+///
+/// This library provides a complete set of components for building Kanban boards
+/// in Flutter applications, following clean architecture principles. It includes:
+///
+/// * Domain entities for representing board structure
+/// * Repository interfaces for data persistence
+/// * Use cases for business logic
+/// * Event system for state updates
+/// * UI widgets for visual representation
+/// * Theming system for customization
 library clean_kanban;
 
 // Export domain entities.

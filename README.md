@@ -184,7 +184,7 @@ class SharedPreferencesBoardRepository implements BoardRepository {
 Listen to board events:
 
 ```dart
-EventNotifier().stream.listen((event) {
+EventNotifier().subscribe((event) {
   switch (event) {
     case TaskMovedEvent moved:
       print('Task moved from ${moved.source.header} to ${moved.destination.header}');

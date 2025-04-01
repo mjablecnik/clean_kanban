@@ -9,6 +9,10 @@ class EventNotifier {
   final _controller = StreamController<BoardEvent>.broadcast();
   Stream<BoardEvent> get stream => _controller.stream;
   
+  StreamSubscription<BoardEvent> subscribe(void Function(BoardEvent) onEvent) {
+    return stream.listen(onEvent);
+  }
+
   void notify(BoardEvent event) {
     _controller.add(event);
   }

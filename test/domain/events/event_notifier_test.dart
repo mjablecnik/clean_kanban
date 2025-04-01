@@ -17,7 +17,7 @@ void main() {
     test('should notify BoardLoadedEvent when board is loaded', () async {
       final board = Board.simple();
       final events = <BoardEvent>[];
-      final subscription = notifier.stream.listen((event) {
+      final subscription = notifier.subscribe((event) {
         events.add(event);
       });
 
@@ -32,7 +32,7 @@ void main() {
     test('should notify BoardSavedEvent when board is saved', () async {
       final board = Board.simple();
       final events = <BoardEvent>[];
-      final subscription = notifier.stream.listen((event) {
+      final subscription = notifier.subscribe((event) {
         events.add(event);
       });
 
@@ -49,7 +49,7 @@ void main() {
           KanbanColumn(id: 'col1', header: 'To Do', columnLimit: null);
       final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final events = <BoardEvent>[];
-      final subscription = notifier.stream.listen((event) {
+      final subscription = notifier.subscribe((event) {
         events.add(event);
       });
 
@@ -66,7 +66,7 @@ void main() {
           KanbanColumn(id: 'col1', header: 'To Do', columnLimit: null);
       final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final events = <BoardEvent>[];
-      final subscription = notifier.stream.listen((event) {
+      final subscription = notifier.subscribe((event) {
         events.add(event);
       });
 
@@ -85,7 +85,7 @@ void main() {
           KanbanColumn(id: 'col2', header: 'Done', columnLimit: null);
       final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
       final events = <BoardEvent>[];
-      final subscription = notifier.stream.listen((event) {
+      final subscription = notifier.subscribe((event) {
         events.add(event);
       });
 
@@ -95,6 +95,68 @@ void main() {
       expect(events.length, equals(1));
       expect(events.first, isA<TaskMovedEvent>());
       subscription.cancel();
+    });
+
+    test('should notify TaskEditedEvent when a task is edited', () async {
+      final source =
+          KanbanColumn(id: 'col1', header: 'To Do', columnLimit: null);
+      final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+      final updatedTask = task.copyWith(title: 'Updated Task', subtitle: 'Updated Desc');
+      final events = <BoardEvent>[];
+      final subscription = notifier.subscribe((event) {
+        events.add(event);
+      });
+
+      notifier.notify(TaskEditedEvent(task, updatedTask, source));
+      await Future.delayed(Duration(milliseconds: 10));
+
+      expect(events.length, equals(1));
+      expect(events.first, isA<TaskEditedEvent>());
+      subscription.cancel();
+    });
+
+    test('should handle multiple subscribers', () async {
+      final events1 = <BoardEvent>[];
+      final events2 = <BoardEvent>[];
+      
+      final subscription1 = notifier.subscribe((event) => events1.add(event));
+      final subscription2 = notifier.subscribe((event) => events2.add(event));
+
+      final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+      final column = KanbanColumn(id: 'col1', header: 'To Do', columnLimit: null);
+      
+      notifier.notify(TaskAddedEvent(task, column));
+      await Future.delayed(Duration(milliseconds: 10));
+
+      expect(events1.length, equals(1));
+      expect(events2.length, equals(1));
+      
+      subscription1.cancel();
+      subscription2.cancel();
+    });
+
+    test('should stop receiving events after unsubscribe', () async {
+      final events = <BoardEvent>[];
+      final subscription = notifier.subscribe((event) => events.add(event));
+      
+      final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+      final column = KanbanColumn(id: 'col1', header: 'To Do', columnLimit: null);
+      
+      notifier.notify(TaskAddedEvent(task, column));
+      await Future.delayed(Duration(milliseconds: 10));
+      subscription.cancel();
+      
+      notifier.notify(TaskAddedEvent(task, column));
+      await Future.delayed(Duration(milliseconds: 10));
+
+      expect(events.length, equals(1));
+    });
+
+    test('should properly dispose stream controller', () async {
+      notifier.dispose();
+      
+      expect(() => notifier.notify(BoardLoadedEvent(Board.simple())), 
+        throwsStateError);
     });
   });
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/domain/entities/column.dart';
@@ -21,8 +22,9 @@ void main() {
     late DeleteDoneTaskUseCase deleteDoneTaskUseCase;
     late ClearDoneColumnUseCase clearDoneColumnUseCase;
     late EditTaskUseCase editTaskUseCase;
-    // late EventNotifier eventNotifier;
-    // late List<BoardEvent> emittedEvents;
+    late EventNotifier eventNotifier;
+    late List<BoardEvent> emittedEvents;
+    late StreamSubscription<BoardEvent> subscription;
 
     setUp(() {
       column = KanbanColumn(id: 'col1', header: 'To Do', columnLimit: 3);
@@ -36,11 +38,16 @@ void main() {
       clearDoneColumnUseCase = ClearDoneColumnUseCase();
       editTaskUseCase = EditTaskUseCase();
 
-      // emittedEvents = [];
-      // eventNotifier = EventNotifier();
-      // eventNotifier.subscribe((event) { TODO: implement eventNotifier.subscribe 
-      //   emittedEvents.add(event);
-      // });
+      emittedEvents = [];
+      eventNotifier = EventNotifier();
+      subscription = eventNotifier.subscribe((event) {
+        emittedEvents.add(event);
+      });
+    });
+
+    tearDown(() async {
+      emittedEvents.clear();
+      subscription.cancel();
     });
 
     test('should add a task to a column using AddTaskUseCase', () {
@@ -223,7 +230,7 @@ void main() {
     });
     
     group('Edit task use case', () {
-      test('should edit task title and subtitle successfully', () {
+      test('should edit task title and subtitle successfully', () async {
 
         // Arrange
         final task = Task(id: 'task1', title: 'Original Title', subtitle: 'Original Subtitle');
@@ -231,13 +238,13 @@ void main() {
 
         // Act
         final result = editTaskUseCase.execute(column, 0, 'Updated Title', 'Updated Subtitle');
-
+        await Future.delayed(Duration(milliseconds: 10));
         // Assert
         expect(result, isA<Success>());
         expect(column.tasks[0].title, equals('Updated Title'));
         expect(column.tasks[0].subtitle, equals('Updated Subtitle'));
-        // expect(emittedEvents.length, equals(1));
-        // expect(emittedEvents.first, isA<TaskEditedEvent>());
+        expect(emittedEvents.length, equals(1));
+        expect(emittedEvents.first, isA<TaskEditedEvent>());
       });
 
       test('should throw TaskOperationException when index is out of bounds', () {

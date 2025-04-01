@@ -31,6 +31,7 @@ class ColumnWidget extends StatelessWidget {
       [int? destinationIndex])? onTaskDropped;
   final Function()? onClearDone;
   final Function(KanbanColumn column, int index)? onDeleteTask;
+  final Function(KanbanColumn column, int index, String initialTitle, String initialSubtitle)? onEditTask;
 
   const ColumnWidget({
     Key? key,
@@ -40,6 +41,7 @@ class ColumnWidget extends StatelessWidget {
     this.onReorderedTask,
     this.onTaskDropped,
     this.onDeleteTask,
+    this.onEditTask,
     this.onClearDone,
   }) : super(key: key);
 
@@ -109,9 +111,8 @@ class ColumnWidget extends StatelessWidget {
               onDeleteTask?.call(column, index);
             },
           ),
-          onEditTask: () {
-            
-          });
+          onEditTask: () => onEditTask?.call(column, index, task.title, task.subtitle),
+          );
     }, onWillAcceptWithDetails: (details) {
       return _shouldAcceptDrop(details.data.sourceColumn, column, true);
     }, onAcceptWithDetails: (details) {

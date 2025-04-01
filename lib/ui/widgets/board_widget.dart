@@ -21,6 +21,19 @@ class BoardWidget extends StatelessWidget {
           onSave: onAddTask));
   }
 
+  void _showEditTaskDialog(
+      BuildContext context, String initialTitle, String initialSubtitle, Function(String, String) onEditTask) {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) => TaskFormDialog(
+          initialTitle: initialTitle,
+          initialSubtitle: initialSubtitle,
+          dialogTitle: 'Edit Task',
+          submitLabel: 'Save',
+          onSave: onEditTask));
+  }
+
   @override
   Widget build(BuildContext context) {
     final effectiveTheme = theme ?? KanbanThemeProvider.of(context);
@@ -73,6 +86,10 @@ class BoardWidget extends StatelessWidget {
                           onDeleteTask: (column, index) {
                             boardProv.removeTask(column.id, index);
                           },
+                          onEditTask: (column, index, initialTitle, initialSubtitle) => 
+                          _showEditTaskDialog(context, initialTitle, initialSubtitle, (title, subtitle) {
+                            boardProv.editTask(column.id, index, title, subtitle);
+                          }),
                           onClearDone: column.isDoneColumn()
                               ? () => boardProv.clearDoneColumn(column.id)
                               : null,

@@ -4,8 +4,12 @@ import 'package:clean_kanban/domain/entities/column.dart';
 import 'package:clean_kanban/domain/usecases/task_use_cases.dart';
 import 'package:clean_kanban/core/result.dart';
 import 'package:clean_kanban/core/exceptions.dart';
+import 'package:clean_kanban/domain/events/board_events.dart';
+import 'package:clean_kanban/domain/events/event_notifier.dart';
+import 'package:clean_kanban/core/exceptions.dart';
 
 void main() {
+  
   group('Task Use Cases', () {
     late KanbanColumn column;
     late KanbanColumn destination;
@@ -16,6 +20,9 @@ void main() {
     late MoveTaskUseCase moveTaskUseCase;
     late DeleteDoneTaskUseCase deleteDoneTaskUseCase;
     late ClearDoneColumnUseCase clearDoneColumnUseCase;
+    late EditTaskUseCase editTaskUseCase;
+    // late EventNotifier eventNotifier;
+    // late List<BoardEvent> emittedEvents;
 
     setUp(() {
       column = KanbanColumn(id: 'col1', header: 'To Do', columnLimit: 3);
@@ -27,6 +34,13 @@ void main() {
       moveTaskUseCase = MoveTaskUseCase();
       deleteDoneTaskUseCase = DeleteDoneTaskUseCase();
       clearDoneColumnUseCase = ClearDoneColumnUseCase();
+      editTaskUseCase = EditTaskUseCase();
+
+      // emittedEvents = [];
+      // eventNotifier = EventNotifier();
+      // eventNotifier.subscribe((event) { TODO: implement eventNotifier.subscribe 
+      //   emittedEvents.add(event);
+      // });
     });
 
     test('should add a task to a column using AddTaskUseCase', () {
@@ -205,6 +219,50 @@ void main() {
           default:
             fail('Expected Failure<String>, but got ${clearDoneColumnUseCase.execute(column).runtimeType}');
         }
+      });
+    });
+    
+    group('Edit task use case', () {
+      test('should edit task title and subtitle successfully', () {
+
+        // Arrange
+        final task = Task(id: 'task1', title: 'Original Title', subtitle: 'Original Subtitle');
+        column.addTask(task);
+
+        // Act
+        final result = editTaskUseCase.execute(column, 0, 'Updated Title', 'Updated Subtitle');
+
+        // Assert
+        expect(result, isA<Success>());
+        expect(column.tasks[0].title, equals('Updated Title'));
+        expect(column.tasks[0].subtitle, equals('Updated Subtitle'));
+        // expect(emittedEvents.length, equals(1));
+        // expect(emittedEvents.first, isA<TaskEditedEvent>());
+      });
+
+      test('should throw TaskOperationException when index is out of bounds', () {
+        // Act & Assert
+        expect(
+          () => editTaskUseCase.execute(column, 999, 'Updated Title', 'Updated Subtitle'),
+          throwsA(isA<TaskOperationException>())
+        );
+      });
+
+      test('should not modify task when title and subtitle are same', () {
+        // Arrange
+        final task = Task(id: 'task1', title: 'Original Title', subtitle: 'Original Subtitle');
+        column.addTask(task);
+
+        // Act
+        final result = editTaskUseCase.execute(
+          column,
+          0,
+          'Original Title',
+          'Original Subtitle'
+        );
+
+        // Assert
+        expect(result, isA<Success>());
       });
     });
   });

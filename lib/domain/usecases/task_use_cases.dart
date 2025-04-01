@@ -86,3 +86,31 @@ class ClearDoneColumnUseCase {
     }
   }
 }
+
+class EditTaskUseCase {
+  /// Edits an existing task at the specified index in the column.
+  /// 
+  /// Returns a Result indicating success or failure.
+  /// Throws TaskOperationException if the task cannot be edited.
+  Result<Task> execute(KanbanColumn column, int index, String newTitle, String newSubtitle) {
+    try {
+      final task = column.tasks[index];
+      
+      // Check if any changes are needed
+      if (task.title == newTitle && task.subtitle == newSubtitle) {
+        return Success(task);
+      }
+
+      final updatedTask = task.copyWith(
+        title: newTitle,
+        subtitle: newSubtitle,
+      );
+      
+      column.replaceTask(index, updatedTask);
+      EventNotifier().notify(TaskEditedEvent(task, updatedTask, column));
+      return Success(updatedTask);
+    } catch (e) {
+      throw TaskOperationException('Failed to edit task: ${e.toString()}');
+    }
+  }
+}

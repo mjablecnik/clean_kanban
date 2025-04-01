@@ -40,5 +40,22 @@ void main() {
       expect(() => Task(id: id, title: title, subtitle: longSubtitle),
           throwsA(isA<TaskOperationException>()));
     });
+
+    test('Copy old task with new title and subtitle', (){
+      // Arrange
+      const id = '4';
+      const title = 'Old Title';
+      const subtitle = 'Old Subtitle';
+      final task = Task(id: id, title: title, subtitle: subtitle);
+
+      // Act
+      final newTask = task.copyWith(title: 'New Title', subtitle: 'New Subtitle');
+
+      // Assert
+      expect(task.title, equals('Old Title'));
+      expect(task.subtitle, equals('Old Subtitle'));
+      expect(newTask.title, equals('New Title'));
+      expect(newTask.subtitle, equals('New Subtitle'));
+    });
   });
 }

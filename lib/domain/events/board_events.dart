@@ -48,3 +48,11 @@ class DoneColumnClearedEvent extends BoardEvent {
 
   DoneColumnClearedEvent(this.removedTasks, this.column);
 }
+
+class TaskEditedEvent extends BoardEvent {
+  final Task oldTask;
+  final Task newTask;
+  final KanbanColumn column;
+
+  TaskEditedEvent(this.oldTask, this.newTask, this.column);
+}

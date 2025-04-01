@@ -22,4 +22,25 @@ class Task {
       'subtitle': subtitle,
     };
   }
+
+  Task copyWith({ String? title, String? subtitle}) {
+    return Task(
+      id: id,
+      title: title ?? this.title,
+      subtitle: subtitle ?? this.subtitle,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    
+    return other is Task &&
+      other.id == id &&
+      other.title == title &&
+      other.subtitle == subtitle;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, subtitle);
 }

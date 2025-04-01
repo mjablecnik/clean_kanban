@@ -17,6 +17,7 @@ void main() {
   });
 
   group('BoardProvider', () {
+    
     test('should load a simple board if no board exists', () async {
       // Arrange
       final boardProvider = BoardProvider();
@@ -300,6 +301,28 @@ void main() {
 
       // Assert
       expect(notified, true);
+    });
+
+    test('should update a task in column', () {
+      // Arrange
+      final boardProvider = BoardProvider();
+      boardProvider.board = Board.simple();
+      final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+      boardProvider.addTask('todo', task);
+
+      final expectedTask = task.copyWith(
+        title: 'Updated Title',
+        subtitle: 'Updated Subtitle',
+      );
+
+      // Act
+      boardProvider.editTask('todo', 0,  'Updated Title', 'Updated Subtitle');
+
+      // Assert
+      final column =
+          boardProvider.board!.columns.firstWhere((c) => c.id == 'todo');
+      expect(column.tasks.length, equals(1));
+      expect(column.tasks.first, equals(expectedTask));
     });
   });
 }

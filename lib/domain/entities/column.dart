@@ -60,6 +60,13 @@ class KanbanColumn {
     }
   }
 
+  void replaceTask(int index, Task updatedTask) {
+    if (index < 0 || index >= tasks.length) {
+      throw ColumnOperationException('replaceTask - Index out of range');
+    }
+    tasks[index] = updatedTask;
+  }
+
   // Convert column to JSON format for persistence
   Map<String, dynamic> toJson() {
     return {

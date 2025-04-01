@@ -19,7 +19,7 @@ class BoardProvider extends ChangeNotifier {
   final ReorderTaskUseCase _reorderTaskUseCase = getIt<ReorderTaskUseCase>();
   final DeleteDoneTaskUseCase _deleteDoneTaskUseCase = DeleteDoneTaskUseCase();
   final ClearDoneColumnUseCase _clearDoneColumnUseCase = ClearDoneColumnUseCase();
-
+  final EditTaskUseCase _editTaskUseCase = EditTaskUseCase();
 
   Future<void> loadBoard({Map<String, dynamic>? config}) async {
     try {
@@ -86,6 +86,16 @@ class BoardProvider extends ChangeNotifier {
     final column = _findColumn(columnId);
     if (column != null) {
       final result = _clearDoneColumnUseCase.execute(column);
+      notifyListeners();
+      return result;
+    }
+    return Failure('Column not found');
+  }
+
+  Result<Task> editTask(String columnId, int index,  String newTitle, String newSubtitle) {
+    final column = _findColumn(columnId);
+    if (column != null) {
+      final result = _editTaskUseCase.execute(column, index, newTitle, newSubtitle);
       notifyListeners();
       return result;
     }

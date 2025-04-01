@@ -114,4 +114,22 @@ void main() {
           () => source.moveTaskTo(0, destination), throwsA(isA<Exception>()));
     });
   });
+
+  group('edit task in column', (){
+    test('should edit a task in place', () {
+      // Arrange
+      final column =
+          KanbanColumn(id: 'col10', header: 'Edit Test', columnLimit: null);
+      final task = Task(id: '1', title: 'Task1', subtitle: 'Desc1');
+      column.addTask(task);
+
+      // Act
+      final updatedTask = task.copyWith(title: 'Updated Task', subtitle: 'Updated Desc');
+      column.replaceTask(0, updatedTask);
+
+      // Assert
+      expect(column.tasks.first.title, equals('Updated Task'));
+      expect(column.tasks.first.subtitle, equals('Updated Desc'));
+    });
+  });
 }

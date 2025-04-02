@@ -146,10 +146,10 @@ class KanbanThemeProvider extends InheritedWidget {
   ///
   /// The [theme] and [child] arguments must not be null.
   const KanbanThemeProvider({
-    Key? key,
+    super.key,
     required this.theme,
-    required Widget child,
-  }) : super(key: key, child: child);
+    required super.child,
+  });
 
   /// Retrieves the [KanbanTheme] from the closest [KanbanThemeProvider] ancestor.
   ///

@@ -38,6 +38,10 @@ class TaskFormDialog extends StatefulWidget {
   State<TaskFormDialog> createState() => TaskFormDialogState();
 }
 
+/// The state class for [TaskFormDialog] widget.
+///
+/// This class manages the form state including text controllers for title and subtitle inputs,
+/// form validation, submission state, and error handling.
 class TaskFormDialogState extends State<TaskFormDialog> {
   late final TextEditingController _titleController;
   late final TextEditingController _subtitleController;

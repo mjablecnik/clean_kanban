@@ -31,19 +31,19 @@ class OperationLimitedToDoneColumnException extends KanbanException {
 /// Exception thrown when a task-related operation fails.
 class TaskOperationException extends KanbanException {
   /// Creates a new [TaskOperationException] with the specified error [message].
-  const TaskOperationException(String message) : super(message);
+  const TaskOperationException(super.message);
 }
 
 /// Exception thrown when a column-related operation fails.
 class ColumnOperationException extends KanbanException {
   /// Creates a new [ColumnOperationException] with the specified error [message].
-  const ColumnOperationException(String message) : super(message);
+  const ColumnOperationException(super.message);
 }
 
 /// Base exception for Kanban board-related errors.
 class KanbanBoardException extends KanbanException {
   /// Creates a new [KanbanBoardException] with the specified error [message].
-  const KanbanBoardException(String message) : super(message);
+  const KanbanBoardException(super.message);
 }
 
 /// Exception thrown when attempting to create a board with fewer than the minimum required columns.

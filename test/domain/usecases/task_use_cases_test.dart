@@ -7,7 +7,6 @@ import 'package:clean_kanban/core/result.dart';
 import 'package:clean_kanban/core/exceptions.dart';
 import 'package:clean_kanban/domain/events/board_events.dart';
 import 'package:clean_kanban/domain/events/event_notifier.dart';
-import 'package:clean_kanban/core/exceptions.dart';
 
 void main() {
   

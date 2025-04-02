@@ -1,9 +1,6 @@
 import 'package:clean_kanban/clean_kanban.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:clean_kanban/ui/widgets/task_card.dart';
-import 'package:clean_kanban/domain/entities/task.dart';
-import 'package:clean_kanban/ui/widgets/task_drag_data.dart';
 
 void main() {
   final cardTheme = TaskCardTheme();

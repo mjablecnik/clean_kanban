@@ -25,7 +25,7 @@ class KanbanTheme {
     this.cardTheme = const TaskCardTheme(),
     this.boardBackgroundColor = const Color(0xFFF5F5F5),
     this.boardBorderColor = const Color(0xFFE0E0E0),
-// TODO: add dialog theme
+    // TODO: add dialog theme
   });
 
   /// Creates a light theme for the Kanban board.
@@ -110,6 +110,34 @@ class KanbanTheme {
     );
   }
 
+  /// Creates a [KanbanTheme] based on the provided [ThemeData].
+  ///
+  /// Uses colors from the theme's color scheme to ensure consistency with the app theme.
+  factory KanbanTheme.fromTheme(ThemeData theme) {
+    final ColorScheme colorScheme = theme.colorScheme;
+    
+    return KanbanTheme(
+      columnTheme: KanbanColumnTheme(
+        columnBackgroundColor: colorScheme.surface,
+        columnBorderColor: colorScheme.outlineVariant,
+        columnHeaderColor: colorScheme.primaryContainer,
+        columnHeaderTextColor: colorScheme.onPrimaryContainer,
+        columnAddButtonBoxColor: colorScheme.primary,
+        columnAddIconColor: colorScheme.onPrimary,
+      ),
+      cardTheme: TaskCardTheme(
+        cardBackgroundColor: colorScheme.surface,
+        cardBorderColor: colorScheme.outlineVariant,
+        cardTitleColor: colorScheme.onSurface,
+        cardSubtitleColor: colorScheme.onSurfaceVariant,
+        cardMoveIconEnabledColor: colorScheme.primary,
+        cardMoveIconDisabledColor: colorScheme.outlineVariant,
+      ),
+      boardBackgroundColor: colorScheme.surface,
+      boardBorderColor: colorScheme.outline,
+    );
+  }
+
   /// Creates a copy of this theme with the given fields replaced with new values.
   ///
   /// Any parameter that is null will keep its original value.
@@ -153,12 +181,13 @@ class KanbanThemeProvider extends InheritedWidget {
 
   /// Retrieves the [KanbanTheme] from the closest [KanbanThemeProvider] ancestor.
   ///
-  /// If there is no [KanbanThemeProvider] in the widget's ancestry, returns a default theme.
-  /// This method will cause the widget to rebuild when the theme changes.
+  /// If there is no [KanbanThemeProvider] in the widget's ancestry, returns a theme
+  /// based on the current system theme. This method will cause the widget to rebuild 
+  /// when the theme changes.
   static KanbanTheme of(BuildContext context) {
     final KanbanThemeProvider? provider =
         context.dependOnInheritedWidgetOfExactType<KanbanThemeProvider>();
-    return provider?.theme ?? const KanbanTheme();
+    return provider?.theme ?? KanbanTheme.fromTheme(Theme.of(context));
   }
 
   /// Determines whether dependent widgets should rebuild when the theme changes.

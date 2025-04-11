@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// A dialog widget that displays a form for creating or editing tasks.
 ///
 /// This dialog provides fields for entering a task title and subtitle,
-/// with validation and error handling built-in.
+/// with validation and error handling built-in. Follows Material 3 design guidelines.
 class TaskFormDialog extends StatefulWidget {
   /// Callback function called when the form is saved.
   /// Takes a [title] and [subtitle] as parameters.
@@ -118,11 +118,11 @@ class TaskFormDialogState extends State<TaskFormDialog> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: Theme.of(context).colorScheme.error,
         behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
           label: 'Dismiss',
-          textColor: Colors.white,
+          textColor: Theme.of(context).colorScheme.onError,
           onPressed: () {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           },
@@ -133,11 +133,18 @@ class TaskFormDialogState extends State<TaskFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    
     return PopScope(
       canPop: !_isSubmitting,
       child: Dialog(
         insetPadding:
             const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+        elevation: 6, // Material 3 elevation
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28), // Material 3 shape
+        ),
         child: ConstrainedBox(
           constraints: const BoxConstraints(
             maxWidth: 400.0,
@@ -151,10 +158,7 @@ class TaskFormDialogState extends State<TaskFormDialog> {
               children: [
                 Text(
                   widget.dialogTitle,
-                  style: const TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 24.0),
                 SingleChildScrollView(
@@ -166,15 +170,16 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                       children: [
                         TextFormField(
                           controller: _titleController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Title',
                             hintText: 'Enter task title',
                             errorMaxLines: 2,
                             helperText: 'Required, max 100 characters',
                             helperMaxLines: 2,
-                            errorStyle: TextStyle(color: Colors.red),
+                            errorStyle: TextStyle(color: colorScheme.error),
                             filled: true,
-                            border: OutlineInputBorder(),
+                            fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+                            border: const OutlineInputBorder(),
                           ),
                           textInputAction: TextInputAction.next,
                           autofocus: true,
@@ -204,8 +209,9 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                             errorMaxLines: 2,
                             helperText: 'Optional, max 200 characters',
                             helperMaxLines: 2,
-                            errorStyle: const TextStyle(color: Colors.red),
+                            errorStyle: TextStyle(color: colorScheme.error),
                             filled: true,
+                            fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
                             border: const OutlineInputBorder(),
                             prefixIcon: const Icon(Icons.short_text),
                             suffixIcon: IconButton(
@@ -250,13 +256,13 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                     FilledButton(
                       onPressed: _isSubmitting ? null : _handleSubmit,
                       child: _isSubmitting
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                                    AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
                               ),
                             )
                           : Text(widget.submitLabel),

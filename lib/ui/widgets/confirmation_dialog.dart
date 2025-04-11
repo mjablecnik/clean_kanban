@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 ///
 /// This class offers a static method to display an alert dialog with
 /// customizable title, message, and action buttons for confirming or
-/// canceling an action.
+/// canceling an action. The implementation follows Material 3 design guidelines.
 class ConfirmationDialog {
   /// Shows a confirmation dialog with customizable content and actions.
   ///
@@ -29,27 +29,55 @@ class ConfirmationDialog {
     String cancelLabel = 'Cancel',
     Color? confirmColor,
   }) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    
     return showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            child: Text(cancelLabel),
-            onPressed: () => Navigator.of(context).pop(false),
+      builder: (context) => Dialog(
+        elevation: 6, // Material 3 elevation
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28), // Material 3 shape
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                message,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    child: Text(cancelLabel),
+                    onPressed: () => Navigator.of(context).pop(false),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: confirmColor ?? colorScheme.error,
+                      foregroundColor: colorScheme.onError,
+                    ),
+                    child: Text(label),
+                    onPressed: () {
+                      onPressed();
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: confirmColor ?? Colors.red[400],
-            ),
-            child: Text(label),
-            onPressed: () {
-              onPressed();
-              Navigator.of(context).pop(true);
-            },
-          ),
-        ],
+        ),
       ),
     ).then((value) => value ?? false);
   }

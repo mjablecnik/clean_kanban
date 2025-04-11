@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clean_kanban/clean_kanban.dart';
-import 'repositories/shared_preferences_board_repository.dart'; // Updated import
+import 'repositories/shared_preferences_board_repository.dart';
+import 'repositories/theme_provider.dart'; // Import the theme provider
+import 'theme.dart'; // Import the theme
 
 void main() {
   WidgetsFlutterBinding
@@ -36,41 +38,67 @@ class MyExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(create: (context) {
-      final boardProv = BoardProvider();
-      boardProv.loadBoard(config: _boardConfig);
-      boardProv.addListener(() {
-        // auto save function
-        if (boardProv.board != null) {
-          boardProv.saveBoard();
-        }
-      });
-      return boardProv;
-    }, child: Consumer<BoardProvider>(builder: (context, boardProv, child) {
-      return MaterialApp(
-        title: 'Clean Kanban Example',
-        theme: ThemeData.light(),
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Kanban Board'),
-            actions: [
-              // Add save button
-              IconButton(
-                icon: const Icon(Icons.save),
-                onPressed: () {
-                  if (boardProv.board != null) {
-                    boardProv.saveBoard();
-                  }
-                },
+    // Create an instance of MaterialTheme with default TextTheme
+    final materialTheme = MaterialTheme(ThemeData().textTheme);
+    
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) {
+          final boardProv = BoardProvider();
+          boardProv.loadBoard(config: _boardConfig);
+          boardProv.addListener(() {
+            // auto save function
+            if (boardProv.board != null) {
+              boardProv.saveBoard();
+            }
+          });
+          return boardProv;
+        }),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: Consumer2<BoardProvider, ThemeProvider>(
+        builder: (context, boardProv, themeProvider, child) {
+          // Use the fromTheme factory to create Kanban themes that match our Material themes
+          final kanbanLightTheme = KanbanTheme.fromTheme(materialTheme.light());
+          final kanbanDarkTheme = KanbanTheme.fromTheme(materialTheme.dark());
+
+          return MaterialApp(
+            title: 'Clean Kanban Example',
+            theme: materialTheme.light(),
+            darkTheme: materialTheme.dark(),
+            themeMode: themeProvider.themeMode,
+            home: Scaffold(
+              appBar: AppBar(
+                title: const Text('Kanban Board'),
+                actions: [
+                  // Add save button
+                  IconButton(
+                    icon: const Icon(Icons.save),
+                    onPressed: () {
+                      if (boardProv.board != null) {
+                        boardProv.saveBoard();
+                      }
+                    },
+                  ),
+                  // Add theme toggle button
+                  IconButton(
+                    icon: const Icon(Icons.brightness_6),
+                    onPressed: () {
+                      themeProvider.toggleTheme();
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-          body: BoardWidget(
-            theme: KanbanTheme.light(),
-          ),
-        ),
-      );
-    }));
+              body: BoardWidget(
+                theme: themeProvider.themeMode == ThemeMode.dark 
+                  ? kanbanDarkTheme 
+                  : kanbanLightTheme,
+              ),
+            ),
+          );
+        }
+      ),
+    );
   }
 }
 

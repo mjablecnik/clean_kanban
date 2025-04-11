@@ -131,6 +131,20 @@ BoardWidget(
 )
 ```
 
+### Material 3 Theme Integration (Recommended)
+```dart
+// This automatically adapts to your app's ThemeData
+BoardWidget(
+  theme: KanbanTheme.fromTheme(Theme.of(context)),
+)
+```
+
+This approach is **recommended** as it:
+- Ensures consistency with your app's Material 3 theme
+- Automatically adapts to light/dark mode changes
+- Uses the appropriate color scheme variants from your theme
+- Simplifies theme management in your application
+
 ### Custom Theme
 ```dart
 BoardWidget(

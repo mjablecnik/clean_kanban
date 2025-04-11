@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.0.4
+- Update UI components to follow Material 3 design guidelines
+
 ## 0.0.3
 - refactor for improved  maintainability and readability
 

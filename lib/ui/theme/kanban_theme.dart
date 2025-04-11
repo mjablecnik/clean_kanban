@@ -84,6 +84,8 @@ class KanbanTheme {
   ///
   /// Takes a [primaryColor] parameter and generates appropriate light and dark
   /// variants for various theme components.
+  /// @deprecated Use [fromTheme] instead. This will be removed in a future version.
+  @Deprecated('Use fromTheme instead. This will be removed in a future version.')
   factory KanbanTheme.fromColor(Color primaryColor) {
     final Color primaryLight = Color.lerp(primaryColor, Colors.white, 0.3)!;
     final Color primaryDark = Color.lerp(primaryColor, Colors.black, 0.3)!;

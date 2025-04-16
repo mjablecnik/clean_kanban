@@ -120,7 +120,7 @@ class KanbanTheme {
     
     return KanbanTheme(
       columnTheme: KanbanColumnTheme(
-        columnBackgroundColor: colorScheme.surface,
+        columnBackgroundColor: colorScheme.surfaceContainerLow,
         columnBorderColor: colorScheme.outlineVariant,
         columnHeaderColor: colorScheme.primaryContainer,
         columnHeaderTextColor: colorScheme.onPrimaryContainer,
@@ -128,7 +128,7 @@ class KanbanTheme {
         columnAddIconColor: colorScheme.onPrimary,
       ),
       cardTheme: TaskCardTheme(
-        cardBackgroundColor: colorScheme.surface,
+        cardBackgroundColor: colorScheme.surfaceContainerLowest,
         cardBorderColor: colorScheme.outlineVariant,
         cardTitleColor: colorScheme.onSurface,
         cardSubtitleColor: colorScheme.onSurfaceVariant,

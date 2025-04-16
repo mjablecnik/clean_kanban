@@ -19,12 +19,16 @@ class KanbanTheme {
   /// The color of the board's border.
   final Color boardBorderColor;
 
+  /// The width of the board's border.
+  final double boardBorderWidth;
+
   /// Creates a [KanbanTheme] with default values.
   const KanbanTheme({
     this.columnTheme = const KanbanColumnTheme(),
     this.cardTheme = const TaskCardTheme(),
     this.boardBackgroundColor = const Color(0xFFF5F5F5),
     this.boardBorderColor = const Color(0xFFE0E0E0),
+    this.boardBorderWidth = 0.0,
     // TODO: add dialog theme
   });
 
@@ -44,13 +48,16 @@ class KanbanTheme {
       cardTheme: TaskCardTheme(
         cardBackgroundColor: Colors.white,
         cardBorderColor: Color(0xFFE0E0E0),
+        cardBorderWidth: 0.0,
         cardTitleColor: Color.fromRGBO(0, 0, 0, 0.867),
         cardSubtitleColor: Color.fromRGBO(0, 0, 0, 0.541),
         cardMoveIconEnabledColor: Color.fromRGBO(25, 118, 210, 1),
         cardMoveIconDisabledColor: Color.fromRGBO(224, 224, 224, 1),
+        cardDividerColor: Color(0xFFE0E0E0),
       ),
       boardBackgroundColor: Color(0xFFF5F5F5),
       boardBorderColor: Color(0xFFE0E0E0),
+      boardBorderWidth: 0.0,
     );
   }
 
@@ -70,13 +77,16 @@ class KanbanTheme {
       cardTheme: TaskCardTheme(
         cardBackgroundColor: Color(0xFF424242),
         cardBorderColor: Color(0xFF616161),
+        cardBorderWidth: 0.0,
         cardTitleColor: Colors.white,
         cardSubtitleColor: Color.fromRGBO(255, 255, 255, 0.7),
         cardMoveIconEnabledColor: Color(0xFF90CAF9),
         cardMoveIconDisabledColor: Color(0xFF616161),
+        cardDividerColor: Color(0xFF616161),
       ),
       boardBackgroundColor: Color(0xFF121212),
       boardBorderColor: Color(0xFF1E1E1E),
+      boardBorderWidth: 0.0,
     );
   }
 
@@ -102,13 +112,16 @@ class KanbanTheme {
       cardTheme: const TaskCardTheme(
         cardBackgroundColor: Colors.white,
         cardBorderColor: Color(0xFFE0E0E0),
+        cardBorderWidth: 0.0,
         cardTitleColor: Color.fromRGBO(0, 0, 0, 0.867),
         cardSubtitleColor: Color.fromRGBO(0, 0, 0, 0.541),
         cardMoveIconEnabledColor: Color.fromRGBO(25, 118, 210, 1),
         cardMoveIconDisabledColor: Color.fromRGBO(224, 224, 224, 1),
+        cardDividerColor: Color(0xFFE0E0E0),
       ),
       boardBackgroundColor: const Color(0xFFF5F5F5),
       boardBorderColor: const Color(0xFFE0E0E0),
+      boardBorderWidth: 0.0,
     );
   }
 
@@ -116,12 +129,20 @@ class KanbanTheme {
   ///
   /// Uses colors from the theme's color scheme to ensure consistency with the app theme.
   factory KanbanTheme.fromTheme(ThemeData theme) {
+    return KanbanTheme.fromThemeWithBorder(theme, false, 0.0);
+  }
+  
+  /// Creates a [KanbanTheme] based on the provided [ThemeData] and border settings.
+  ///
+  /// Uses colors from the theme's color scheme to ensure consistency with the app theme.
+  factory KanbanTheme.fromThemeWithBorder(ThemeData theme, bool enableBorder, double borderWidth) {
     final ColorScheme colorScheme = theme.colorScheme;
     
     return KanbanTheme(
       columnTheme: KanbanColumnTheme(
         columnBackgroundColor: colorScheme.surfaceContainerLow,
-        columnBorderColor: colorScheme.outlineVariant,
+        columnBorderColor: enableBorder ? colorScheme.outlineVariant : Colors.transparent,
+        columnBorderWidth: enableBorder ? borderWidth : 0.0,
         columnHeaderColor: colorScheme.primaryContainer,
         columnHeaderTextColor: colorScheme.onPrimaryContainer,
         columnAddButtonBoxColor: colorScheme.primary,
@@ -129,14 +150,17 @@ class KanbanTheme {
       ),
       cardTheme: TaskCardTheme(
         cardBackgroundColor: colorScheme.surfaceContainerLowest,
-        cardBorderColor: colorScheme.outlineVariant,
+        cardBorderColor: enableBorder ? colorScheme.outlineVariant : Colors.transparent,
+        cardBorderWidth: enableBorder ? borderWidth : 0.0,
         cardTitleColor: colorScheme.onSurface,
         cardSubtitleColor: colorScheme.onSurfaceVariant,
         cardMoveIconEnabledColor: colorScheme.primary,
         cardMoveIconDisabledColor: colorScheme.outlineVariant,
+        cardDividerColor: colorScheme.outlineVariant,
       ),
       boardBackgroundColor: colorScheme.surface,
-      boardBorderColor: colorScheme.outline,
+      boardBorderColor:  enableBorder ? colorScheme.outline : Colors.transparent,
+      boardBorderWidth: enableBorder ? borderWidth : 0.0,
     );
   }
 

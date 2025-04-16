@@ -71,6 +71,9 @@ class TaskCardTheme {
   /// Color of the card's border.
   final Color cardBorderColor;
 
+  /// Width of the card's border.
+  final double cardBorderWidth;
+
   /// Text color for the task title.
   final Color cardTitleColor;
 
@@ -83,17 +86,46 @@ class TaskCardTheme {
   /// Color for disabled move/drag icons.
   final Color cardMoveIconDisabledColor;
 
+  /// Color of the card's divider.
+  final Color cardDividerColor;
+
   /// Creates a [TaskCardTheme] with customizable colors.
   ///
   /// All parameters have default values that create a standard light theme.
   const TaskCardTheme({
     this.cardBackgroundColor = Colors.white,
     this.cardBorderColor = const Color(0xFFE0E0E0),
+    this.cardBorderWidth = 0.0,
     this.cardTitleColor = const Color.fromRGBO(0, 0, 0, 0.867),
     this.cardSubtitleColor = const Color.fromRGBO(0, 0, 0, 0.541),
     this.cardMoveIconEnabledColor = const Color.fromRGBO(25, 118, 210, 1),
     this.cardMoveIconDisabledColor = const Color.fromRGBO(224, 224, 224, 1),
+    this.cardDividerColor = const Color(0xFFE0E0E0),
   });
+
+  /// Creates a copy of this [TaskCardTheme] with modified values.
+  ///
+  /// Any parameter that is null will keep its original value.
+  TaskCardTheme copyWith({
+    Color? cardBackgroundColor,
+    Color? cardBorderColor,
+    double? cardBorderWidth,
+    Color? cardTitleColor,
+    Color? cardSubtitleColor,
+    Color? cardMoveIconEnabledColor,
+    Color? cardMoveIconDisabledColor,
+  }) {
+    return TaskCardTheme(
+      cardBackgroundColor: cardBackgroundColor ?? this.cardBackgroundColor,
+      cardBorderColor: cardBorderColor ?? this.cardBorderColor,
+      cardBorderWidth: cardBorderWidth ?? this.cardBorderWidth,
+      cardTitleColor: cardTitleColor ?? this.cardTitleColor,
+      cardSubtitleColor: cardSubtitleColor ?? this.cardSubtitleColor,
+      cardMoveIconEnabledColor: cardMoveIconEnabledColor ?? this.cardMoveIconEnabledColor,
+      cardMoveIconDisabledColor: cardMoveIconDisabledColor ?? this.cardMoveIconDisabledColor,
+      cardDividerColor: cardDividerColor ?? this.cardDividerColor,
+    );
+  }
 }
 
 /// A widget that displays the content of a task card.
@@ -175,8 +207,9 @@ class TaskCardControls extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         border: Border(
+          // this is the vertical border
           left: BorderSide(
-            color: theme.cardBorderColor.withValues(alpha: 0.7),
+            color: theme.cardDividerColor.withValues(alpha: 0.7),
             width: 1.0,
           ),
         ),
@@ -191,11 +224,12 @@ class TaskCardControls extends StatelessWidget {
             tooltip: 'Edit this task',
             color: theme.cardMoveIconEnabledColor,
           ),
+          // Divider
           Container(
             height: 1,
             width: TaskCardLayout.controlDividerWidth,
             margin: const EdgeInsets.symmetric(vertical: 2.0),
-            color: theme.cardBorderColor.withValues(alpha: 0.7),
+            color: theme.cardDividerColor.withValues(alpha: 0.7),
           ),
           _buildControlButton(
             icon: Icons.delete_outline,
@@ -307,8 +341,8 @@ class TaskCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(TaskCardLayout.cardBorderRadius),
         side: BorderSide(
           color: theme.cardBorderColor,
-          width: 1.0,
-          style: BorderStyle.solid,
+          width: theme.cardBorderWidth,
+          style: theme.cardBorderWidth > 0 ? BorderStyle.solid : BorderStyle.none,
         ),
       ),
       clipBehavior: Clip.antiAlias,

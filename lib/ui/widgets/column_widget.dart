@@ -12,9 +12,6 @@ class KanbanColumnLayout {
   /// Border radius for the column
   static const double columnBorderRadius = 8.0;
 
-  /// Border width for the column
-  static const double columnBorderWidth = 1.0;
-
   /// Size of header action buttons
   static const double actionButtonSize = 32.0;
 
@@ -39,6 +36,9 @@ class KanbanColumnTheme {
   /// Color of the column's border.
   final Color columnBorderColor;
 
+  /// Border width for the column
+  final double columnBorderWidth;
+
   /// Background color of the column header.
   final Color columnHeaderColor;
 
@@ -57,11 +57,35 @@ class KanbanColumnTheme {
   const KanbanColumnTheme({
     this.columnBackgroundColor = Colors.white,
     this.columnBorderColor = const Color(0xFFE0E0E0),
+    this.columnBorderWidth = 0.0,
     this.columnHeaderColor = Colors.blue,
     this.columnHeaderTextColor = Colors.black87,
     this.columnAddButtonBoxColor = const Color.fromARGB(255, 76, 127, 175),
     this.columnAddIconColor = Colors.white,
   });
+
+  /// Creates a copy of this [KanbanColumnTheme] with modified values.
+  /// 
+  /// Any parameter that is null will keep its original value.
+  KanbanColumnTheme copyWith({
+    Color? columnBackgroundColor,
+    Color? columnBorderColor,
+    double? columnBorderWidth,
+    Color? columnHeaderColor,
+    Color? columnHeaderTextColor,
+    Color? columnAddButtonBoxColor,
+    Color? columnAddIconColor,
+  }) {
+    return KanbanColumnTheme(
+      columnBackgroundColor: columnBackgroundColor ?? this.columnBackgroundColor,
+      columnBorderColor: columnBorderColor ?? this.columnBorderColor,
+      columnBorderWidth: columnBorderWidth ?? this.columnBorderWidth,
+      columnHeaderColor: columnHeaderColor ?? this.columnHeaderColor,
+      columnHeaderTextColor: columnHeaderTextColor ?? this.columnHeaderTextColor,
+      columnAddButtonBoxColor: columnAddButtonBoxColor ?? this.columnAddButtonBoxColor,
+      columnAddIconColor: columnAddIconColor ?? this.columnAddIconColor,
+    );
+  }
 }
 
 /// A widget that displays the header of a Kanban column.
@@ -406,8 +430,8 @@ class ColumnWidget extends StatelessWidget {
             color: theme.columnBackgroundColor,
             borderRadius: BorderRadius.circular(KanbanColumnLayout.columnBorderRadius),
             border: Border.all(
-              color: theme.columnBorderColor.withValues(alpha: 0.3),
-              width: KanbanColumnLayout.columnBorderWidth,
+              color: theme.columnBorderColor,
+              width: theme.columnBorderWidth,
             ),
           ),
           child: Column(

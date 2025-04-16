@@ -35,47 +35,54 @@ class ConfirmationDialog {
       context: context,
       builder: (context) => Dialog(
         elevation: 6, // Material 3 elevation
+        backgroundColor: colorScheme.surfaceContainer, // Set the dialog background color
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(28), // Material 3 shape
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                message,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    child: Text(cancelLabel),
-                    onPressed: () => Navigator.of(context).pop(false),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: confirmColor ?? colorScheme.error,
-                      foregroundColor: colorScheme.onError,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 400.0,
+            minWidth: 280.0,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  message,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      child: Text(cancelLabel),
+                      onPressed: () => Navigator.of(context).pop(false),
                     ),
-                    child: Text(label),
-                    onPressed: () {
-                      onPressed();
-                      Navigator.of(context).pop(true);
-                    },
-                  ),
-                ],
-              ),
-            ],
+                    const SizedBox(width: 8),
+                    FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: confirmColor ?? colorScheme.error,
+                        foregroundColor: colorScheme.onError,
+                      ),
+                      child: Text(label),
+                      onPressed: () {
+                        onPressed();
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,7 +1,7 @@
 name: clean_kanban
 description: >-
   A versatile Kanban board library for Flutter apps, built with clean architecture principles. 
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/kinwahlai/clean_kanban.git
 
 environment:

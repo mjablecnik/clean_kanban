@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.0.5 
+- Enhance Kanban theme with customizable border properties for columns and task cards and **default** to borderless
+- Set background color for confirmation and task form dialogs
+
 ## 0.0.4
 - Update UI components to follow Material 3 design guidelines
 

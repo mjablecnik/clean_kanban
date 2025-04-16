@@ -142,6 +142,7 @@ class TaskFormDialogState extends State<TaskFormDialog> {
         insetPadding:
             const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
         elevation: 6, // Material 3 elevation
+        backgroundColor: colorScheme.surfaceContainer, // Set the dialog background color
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(28), // Material 3 shape
         ),

@@ -111,13 +111,25 @@ class ColumnHeader extends StatelessWidget {
     this.onClearDone,
   }) : super();
 
+  /// Gets the appropriate header color based on theme brightness and column settings
+  Color _getHeaderColor(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    if (brightness == Brightness.light && column.headerBgColorLight != null) {
+      return column.headerBgColorLight!.toColor();
+    } else if (brightness == Brightness.dark && column.headerBgColorDark != null) {
+      return column.headerBgColorDark!.toColor();
+    }
+    // Fall back to the theme's default color if no custom color is specified
+    return theme.columnHeaderColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(KanbanColumnLayout.headerPadding),
       height: KanbanColumnLayout.headerHeight,
       decoration: BoxDecoration(
-        color: theme.columnHeaderColor,
+        color: _getHeaderColor(context),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(KanbanColumnLayout.columnBorderRadius)),
         boxShadow: [
           BoxShadow(

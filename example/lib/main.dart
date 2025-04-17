@@ -107,7 +107,7 @@ const Map<String, dynamic> _boardConfig = {
     {
       'id': 'todo',
       'header': 'To Do',
-      "headerBgColorLight": "#FFF8F8F8",  // Light theme color (white-ish)
+      "headerBgColorLight": "#FFF6F6F6",  // Light theme color (white-ish)
       "headerBgColorDark": "#FF333333",   // Dark theme color (dark gray)
       'limit': 15,
       'tasks': [
@@ -118,8 +118,6 @@ const Map<String, dynamic> _boardConfig = {
     {
       'id': 'doing',
       'header': 'In Progress',
-      "headerBgColorLight": "#FFFFEFD5",  // Light theme color (papaya whip)
-      "headerBgColorDark": "#FF4B3621",   // Dark theme color (coffee)
       'limit': 1,
       'tasks': [],
       'canAddTask': false
@@ -134,7 +132,7 @@ const Map<String, dynamic> _boardConfig = {
     {
       'id': 'done',
       'header': 'Done',
-      "headerBgColorLight": "#FFE6FFE6",  // Light theme color (light green)
+      "headerBgColorLight": "#FFA6CCA6",  // Light theme color (light green)
       "headerBgColorDark": "#FF006400",   // Dark theme color (dark green)
       'limit': null,
       'tasks': [],

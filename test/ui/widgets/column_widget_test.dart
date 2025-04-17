@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/ui/widgets/column_widget.dart';
 import 'package:clean_kanban/domain/entities/column.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
+import 'package:clean_kanban/ui/theme/kanban_theme.dart';
 
 void main() {
   final columnTheme = KanbanColumnTheme();

@@ -66,3 +66,12 @@ class BoardConfigMandatoryFieldsException extends KanbanBoardException {
   const BoardConfigMandatoryFieldsException()
       : super('Column configuration must contain id and header');
 }
+
+/// Exception thrown when the hex color format is invalid.
+/// with a field [field].
+class InvalidHexColorFormatException extends KanbanBoardException {
+  final String field;
+  /// Creates a new [InvalidHexColorFormatException] with the specified field [field].
+  const InvalidHexColorFormatException(this.field)
+      : super('Invalid hex color format in field $field. Must be hex ARGB like "#FF333333"');
+}

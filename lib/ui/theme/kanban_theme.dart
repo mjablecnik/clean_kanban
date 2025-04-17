@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:clean_kanban/ui/widgets/column_widget.dart';
 import 'package:clean_kanban/ui/widgets/task_card.dart';
 
+/// Extension to convert hex string colors to Flutter Color objects.
+extension HexColor on String {
+  /// Converts a hex color string in ARGB format (#AARRGGBB) to a Color object.
+  /// Example: "#FF333333" becomes Color(0xFF333333).
+  Color toColor() {
+    final hexCode = this.substring(1); // Remove the #
+    return Color(int.parse(hexCode, radix: 16));
+  }
+}
+
 /// A comprehensive theme for the Kanban board.
 ///
 /// This class coordinates all component themes (columns, cards, board, dialog)
@@ -29,7 +39,6 @@ class KanbanTheme {
     this.boardBackgroundColor = const Color(0xFFF5F5F5),
     this.boardBorderColor = const Color(0xFFE0E0E0),
     this.boardBorderWidth = 0.0,
-    // TODO: add dialog theme
   });
 
   /// Creates a light theme for the Kanban board.

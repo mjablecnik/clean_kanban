@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/domain/entities/column.dart';
+import 'package:clean_kanban/core/exceptions.dart';
 
 void main() {
   group('Column Entity', () {
@@ -130,6 +131,72 @@ void main() {
       // Assert
       expect(column.tasks.first.title, equals('Updated Task'));
       expect(column.tasks.first.subtitle, equals('Updated Desc'));
+    });
+  });
+  
+  group('header background colors', () {
+    test('should create a column with valid custom header colors', () {
+      // Arrange & Act
+      final column = KanbanColumn(
+        id: 'col11', 
+        header: 'Colored', 
+        headerBgColorLight: '#FFF8F8F8',
+        headerBgColorDark: '#FF333333',
+      );
+
+      // Assert
+      expect(column.headerBgColorLight, equals('#FFF8F8F8'));
+      expect(column.headerBgColorDark, equals('#FF333333'));
+    });
+
+    test('should throw InvalidHexColorFormatException for invalid light theme color format', () {
+      // Act & Assert
+      expect(() => KanbanColumn(
+        id: 'col12', 
+        header: 'Invalid Light', 
+        headerBgColorLight: '#F8F8F8', // Missing alpha channel
+      ), throwsA(isA<InvalidHexColorFormatException>()));
+    });
+
+    test('should throw InvalidHexColorFormatException for invalid dark theme color format', () {
+      // Act & Assert
+      expect(() => KanbanColumn(
+        id: 'col13', 
+        header: 'Invalid Dark', 
+        headerBgColorDark: 'FF333333', // Missing # prefix
+      ), throwsA(isA<InvalidHexColorFormatException>()));
+    });
+
+    test('should include header colors in JSON when provided', () {
+      // Arrange
+      final column = KanbanColumn(
+        id: 'col14', 
+        header: 'JSON Test', 
+        headerBgColorLight: '#FFFFFFFF',
+        headerBgColorDark: '#FF000000',
+      );
+
+      // Act
+      final json = column.toJson();
+
+      // Assert
+      expect(json['headerBgColorLight'], equals('#FFFFFFFF'));
+      expect(json['headerBgColorDark'], equals('#FF000000'));
+    });
+
+    test('should exclude header colors from JSON when not provided', () {
+      // Arrange
+      final column = KanbanColumn(
+        id: 'col15', 
+        header: 'JSON Test No Colors',
+      );
+
+      // Act
+      final json = column.toJson();
+
+      // Assert
+      expect(json.containsKey('headerBgColorLight'), isFalse);
+      expect(json.containsKey('headerBgColorDark'), isFalse);
     });
   });
 }

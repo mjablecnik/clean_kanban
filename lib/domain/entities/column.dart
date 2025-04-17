@@ -22,17 +22,45 @@ class KanbanColumn {
   /// Whether tasks can be directly added to this column.
   final bool canAddTask;
 
+  // new fields to hold hex color codes
+  /// Background color for the column header in light theme.
+  /// Must be in hex ARGB format like "#FF333333"
+  final String? headerBgColorLight;
+  
+  /// Background color for the column header in dark theme.
+  /// Must be in hex ARGB format like "#FFF8F8F8"
+  final String? headerBgColorDark;
+
   /// Creates a new Kanban column.
   ///
   /// [id] and [header] are required.
   /// [columnLimit] is optional and defaults to null (no limit).
   /// [canAddTask] defaults to true.
+  /// [headerBgColorLight] and [headerBgColorDark] are optional hex ARGB colors.
   KanbanColumn({
     required this.id,
     required this.header,
     this.columnLimit,
     this.canAddTask = true,
-  });
+    this.headerBgColorLight,
+    this.headerBgColorDark,
+  }) {
+    // Validate color format if provided
+    if (headerBgColorLight != null && !_isValidHexColor(headerBgColorLight!)) {
+      throw InvalidHexColorFormatException('headerBgColorLight');
+    }
+    if (headerBgColorDark != null && !_isValidHexColor(headerBgColorDark!)) {
+      throw InvalidHexColorFormatException('headerBgColorDark');
+    }
+  }
+
+  /// Validates that a string is a proper hex ARGB color.
+  /// 
+  /// Format must be #AARRGGBB (e.g., "#FF333333").
+  static bool _isValidHexColor(String hexColor) {
+    final hexColorRegExp = RegExp(r'^#[0-9A-Fa-f]{8}$');
+    return hexColorRegExp.hasMatch(hexColor);
+  }
 
   /// Adds a task to this column.
   ///
@@ -118,6 +146,8 @@ class KanbanColumn {
       'header': header,
       'limit': columnLimit,
       'canAddTask': canAddTask,
+      if (headerBgColorLight != null) 'headerBgColorLight': headerBgColorLight,
+      if (headerBgColorDark != null) 'headerBgColorDark': headerBgColorDark,
       'tasks': tasks.map((task) => task.toJson()).toList(),
     };
   }

@@ -116,7 +116,7 @@ const Map<String, dynamic> _boardConfig = {
     {
       'id': 'doing',
       'header': 'In Progress',
-      'limit': null,
+      'limit': 1,
       'tasks': [],
       'canAddTask': false
     },

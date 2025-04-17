@@ -302,7 +302,7 @@ class ColumnTaskList extends StatelessWidget {
         );
       },
       onWillAcceptWithDetails: (details) {
-        return _shouldAcceptDrop(details.data.sourceColumn, column, false);
+        return _shouldAcceptDrop(details.data.sourceColumn, column);
       },
       onAcceptWithDetails: (details) {
         onTaskDropped?.call(details.data.sourceColumn, details.data.sourceIndex, column);
@@ -334,7 +334,7 @@ class ColumnTaskList extends StatelessWidget {
         );
       },
       onWillAcceptWithDetails: (details) {
-        return _shouldAcceptDrop(details.data.sourceColumn, column, true);
+        return _shouldAcceptDrop(details.data.sourceColumn, column);
       },
       onAcceptWithDetails: (details) {
         if (details.data.sourceColumn == column && details.data.sourceIndex != index) {
@@ -351,18 +351,12 @@ class ColumnTaskList extends StatelessWidget {
     );
   }
 
-  bool _shouldAcceptDrop(KanbanColumn sourceColumn, KanbanColumn targetColumn, bool acceptReorder) {
-    if (sourceColumn == targetColumn) {
-      return acceptReorder; // reorder task in _buildDragTargetItem
-    }
-    if (sourceColumn != targetColumn) {
-      // check if target column limit not reached
-      if (targetColumn.columnLimit != null && targetColumn.tasks.length >= targetColumn.columnLimit!) {
+  bool _shouldAcceptDrop(KanbanColumn sourceColumn, KanbanColumn targetColumn) {
+    if (targetColumn.columnLimit != null && targetColumn.tasks.length >= targetColumn.columnLimit!) {
         return false; // target column limit reached
-      }
-      return true; // this is different column, so we will accept it
-    }
-    return false;
+    } else  {
+      return true;
+    } 
   }
 }
 

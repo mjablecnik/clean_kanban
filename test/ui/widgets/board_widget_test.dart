@@ -1,11 +1,11 @@
-import 'package:clean_kanban/ui/widgets/task_card.dart';
+import 'package:clean_kanban/domain/entities/board.dart';
+import 'package:clean_kanban/injection_container.dart';
+import 'package:clean_kanban/ui/providers/board_provider.dart';
+import 'package:clean_kanban/ui/widgets/board_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:clean_kanban/ui/providers/board_provider.dart';
-import 'package:clean_kanban/ui/widgets/board_widget.dart';
-import 'package:clean_kanban/domain/entities/board.dart';
-import 'package:clean_kanban/injection_container.dart';
+
 import '../../domain/repositories/test_board_repository.dart';
 
 void main() {
@@ -117,8 +117,8 @@ void main() {
     await tester.pumpAndSettle();
 
     // Assert: The tasks should be reordered within the column.
-    final taskCards =
-        tester.widgetList<TaskCard>(find.byType(TaskCard)).toList();
+    // final taskCards =
+    //     tester.widgetList<TaskCard>(find.byType(TaskCard)).toList();
 
     // TODO: drag to reorder test failed
     // expect(taskCards.map((taskCard) => taskCard.data.task.title).toList(), [

@@ -13,21 +13,21 @@ void main() {
   EventNotifier().subscribe((event) {
     switch (event) {
       case BoardLoadedEvent loaded:
-        print('Board loaded: ${loaded.board}');
+        debugPrint('Board loaded: ${loaded.board}');
       case BoardSavedEvent saved:
-        print('Board saved: ${saved.board}');
+        debugPrint('Board saved: ${saved.board}');
       case TaskMovedEvent moved:
-        print('Task "${moved.task.title}" moved from ${moved.source.header} to ${moved.destination.header}');
+        debugPrint('Task "${moved.task.title}" moved from ${moved.source.header} to ${moved.destination.header}');
       case TaskAddedEvent added:
-        print('New task added: "${added.task.title}"');
+        debugPrint('New task added: "${added.task.title}"');
       case TaskRemovedEvent removed:
-        print('Task removed: "${removed.task.title}"');
+        debugPrint('Task removed: "${removed.task.title}"');
       case TaskEditedEvent edited:
-        print('Task edited: title="${edited.newTask.title}"');
+        debugPrint('Task edited: title="${edited.newTask.title}"');
       case TaskReorderedEvent reordered:
-        print('Task reordered: "${reordered.task.title}" moved from ${reordered.oldIndex} to ${reordered.newIndex} in ${reordered.column.header}');
+        debugPrint('Task reordered: "${reordered.task.title}" moved from ${reordered.oldIndex} to ${reordered.newIndex} in ${reordered.column.header}');
       case DoneColumnClearedEvent cleared:
-        print('${cleared.removedTasks.length} tasks cleared from Done column');
+        debugPrint('${cleared.removedTasks.length} tasks cleared from Done column');
     }
 });
   runApp(const MyExampleApp());

@@ -35,7 +35,7 @@ class ConfirmationDialog {
       context: context,
       builder: (context) => Dialog(
         elevation: 6, // Material 3 elevation
-        backgroundColor: colorScheme.surfaceContainer, // Set the dialog background color
+        backgroundColor: colorScheme.surfaceContainer, // TODO: consider to use surfaceContainerLowest
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(28), // Material 3 shape
         ),

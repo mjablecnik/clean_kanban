@@ -157,6 +157,15 @@ class BoardProvider extends ChangeNotifier {
       await _saveBoardUseCase.execute(board!);
     }
   }
+
+  /// Updates the current board state in storage.
+  ///
+  /// Does nothing if no board is currently loaded.
+  Future<void> updateBoard() async {
+    if (board != null) {
+      await _updateBoardUseCase.execute(board!);
+    }
+  }
   
   KanbanColumn? _findColumn(String columnId) {
     return board?.columns.firstWhere((c) => c.id == columnId);

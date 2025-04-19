@@ -2,13 +2,14 @@
 
 A powerful, customizable Kanban board library for Flutter applications built with clean architecture principles. It provides a complete solution for implementing Kanban-style task management with features like drag-and-drop, column limits, and persistent storage.
 
-<!-- ![Demo](docs/assets/demo.gif) -->
+<img src="clean_kanban_demo.gif" width="600" alt="Demo">
 
 ## Key Features
 
 ### 🎯 Core Features
 - Drag and drop tasks between columns
 - Long press to initiate task dragging
+- Task reordering within columns
 - Configurable column limits (WIP limits)
 - Custom task card designs
 - Column-specific settings (e.g., disable adding tasks)
@@ -19,12 +20,14 @@ A powerful, customizable Kanban board library for Flutter applications built wit
 ### 💎 UI/UX Features
 - Material Design components
 - Customizable themes (light/dark/custom)
+- Custom column header colors
 - Loading states and progress indicators
 - Error handling with user feedback
 - Confirmation dialogs
 - Mouse cursor support and tooltips
 - Task editing and deletion
 - Visual feedback during drag operations
+- Mobile-optimized layouts
 
 ### 🏗 Architecture
 - Clean Architecture implementation
@@ -39,7 +42,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  clean_kanban: ^0.0.1
+  clean_kanban: ^0.0.6
 ```
 
 ## Quick Start
@@ -115,6 +118,31 @@ final config = {
 BoardProvider()..loadBoard(config: config);
 ```
 
+### 4. Custom Column Header Colors
+
+You can customize column header colors for both light and dark themes:
+
+```dart
+final config = {
+  'columns': [
+    {
+      'id': 'todo',
+      'header': 'To Do',
+      'headerBgColorLight': "#FFF6F6F6",  // Light theme color (white-ish)
+      'headerBgColorDark': "#FF333333",   // Dark theme color (dark gray)
+      'tasks': []
+    },
+    {
+      'id': 'done',
+      'header': 'Done',
+      'headerBgColorLight': "#FFA6CCA6",  // Light theme color (light green)
+      'headerBgColorDark': "#FF006400",   // Dark theme color (dark green)
+      'tasks': []
+    }
+  ]
+};
+```
+
 ## Theming
 
 ### Light Theme
@@ -144,6 +172,18 @@ This approach is **recommended** as it:
 - Automatically adapts to light/dark mode changes
 - Uses the appropriate color scheme variants from your theme
 - Simplifies theme management in your application
+
+### With Custom Border Options
+```dart
+// Create a theme with custom border settings
+BoardWidget(
+  theme: KanbanTheme.fromThemeWithBorder(
+    Theme.of(context), 
+    enableBorder: true,
+    borderWidth: 1.0
+  ),
+)
+```
 
 ### Custom Theme
 ```dart
@@ -201,14 +241,27 @@ Listen to board events:
 EventNotifier().subscribe((event) {
   switch (event) {
     case TaskMovedEvent moved:
-      print('Task moved from ${moved.source.header} to ${moved.destination.header}');
+      debugPrint('Task moved from ${moved.source.header} to ${moved.destination.header}');
     case TaskAddedEvent added:
-      print('New task added: ${added.task.title}');
+      debugPrint('New task added: ${added.task.title}');
+    case TaskEditedEvent edited:
+      debugPrint('Task edited: title="${edited.newTask.title}"');
+    case TaskReorderedEvent reordered:
+      debugPrint('Task reordered within same column: "${reordered.task.title}"');
     case DoneColumnClearedEvent cleared:
-      print('${cleared.removedTasks.length} tasks cleared from Done column');
+      debugPrint('${cleared.removedTasks.length} tasks cleared from Done column');
   }
 });
 ```
+
+## Mobile Support
+
+The library automatically adapts to different screen sizes:
+
+- On larger screens: Displays columns side-by-side in a horizontal layout
+- On smaller screens: Columns flow vertically with optimized heights
+- Includes visual indicators for scrollable content
+- Maintains touch-friendly dimensions for all interactive elements
 
 ## Development
 

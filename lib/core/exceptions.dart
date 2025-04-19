@@ -70,6 +70,7 @@ class BoardConfigMandatoryFieldsException extends KanbanBoardException {
 /// Exception thrown when the hex color format is invalid.
 /// with a field [field].
 class InvalidHexColorFormatException extends KanbanBoardException {
+  /// The name of the field with the invalid hex color format.
   final String field;
   /// Creates a new [InvalidHexColorFormatException] with the specified field [field].
   const InvalidHexColorFormatException(this.field)

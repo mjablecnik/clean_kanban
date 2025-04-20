@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clean_kanban/clean_kanban.dart';
 import 'repositories/shared_preferences_board_repository.dart';
-import 'repositories/theme_provider.dart'; // Import the theme provider
-import 'theme.dart'; // Import the theme
+import 'repositories/theme_provider.dart'; 
+import 'theme.dart'; 
+import 'screens/column_settings_screen.dart';
 
 void main() {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // Add this to initialize Flutter binding
-  // Initialize dependency injection with SharedPreferencesBoardRepository.
+  WidgetsFlutterBinding.ensureInitialized();
   setupInjection(SharedPreferencesBoardRepository());
   EventNotifier().subscribe((event) {
     switch (event) {
@@ -29,7 +28,7 @@ void main() {
       case DoneColumnClearedEvent cleared:
         debugPrint('${cleared.removedTasks.length} tasks cleared from Done column');
     }
-});
+  });
   runApp(const MyExampleApp());
 }
 
@@ -56,47 +55,72 @@ class MyExampleApp extends StatelessWidget {
         }),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: Consumer2<BoardProvider, ThemeProvider>(
-        builder: (context, boardProv, themeProvider, child) {
-          // Use the fromTheme factory to create Kanban themes that match our Material themes
-          final kanbanLightTheme = KanbanTheme.fromTheme(materialTheme.light());
-          final kanbanDarkTheme = KanbanTheme.fromTheme(materialTheme.dark());
-
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
           return MaterialApp(
             title: 'Clean Kanban Example',
             theme: materialTheme.light(),
             darkTheme: materialTheme.dark(),
             themeMode: themeProvider.themeMode,
-            home: Scaffold(
-              appBar: AppBar(
-                title: const Text('Kanban Board'),
-                actions: [
-                  // Add save button
-                  IconButton(
-                    icon: const Icon(Icons.save),
-                    onPressed: () {
-                      if (boardProv.board != null) {
-                        boardProv.saveBoard();
-                      }
-                    },
-                  ),
-                  // Add theme toggle button
-                  IconButton(
-                    icon: const Icon(Icons.brightness_6),
-                    onPressed: () {
-                      themeProvider.toggleTheme();
-                    },
-                  ),
-                ],
-              ),
-              body: BoardWidget(
-                theme: themeProvider.themeMode == ThemeMode.dark 
-                  ? kanbanDarkTheme 
-                  : kanbanLightTheme,
-              ),
-            ),
+            home: const HomeScreen(),
           );
         }
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final boardProv = Provider.of<BoardProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    
+    // Create Kanban themes that match our Material themes
+    final materialTheme = MaterialTheme(Theme.of(context).textTheme);
+    final kanbanLightTheme = KanbanTheme.fromTheme(materialTheme.light());
+    final kanbanDarkTheme = KanbanTheme.fromTheme(materialTheme.dark());
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Kanban Board'),
+        actions: [
+          // Add save button
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              if (boardProv.board != null) {
+                boardProv.saveBoard();
+              }
+            },
+          ),
+          // Add theme toggle button
+          IconButton(
+            icon: const Icon(Icons.brightness_6),
+            onPressed: () {
+              themeProvider.toggleTheme();
+            },
+          ),
+          // Add navigation to column settings screen
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ColumnSettingsScreen(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: BoardWidget(
+        theme: themeProvider.themeMode == ThemeMode.dark 
+          ? kanbanDarkTheme 
+          : kanbanLightTheme,
       ),
     );
   }

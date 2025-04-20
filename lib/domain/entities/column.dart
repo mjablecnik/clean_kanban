@@ -158,4 +158,32 @@ class KanbanColumn {
   bool isDoneColumn() {
     return header.toLowerCase() == 'done';
   }
+
+  /// Creates a copy of this kanban column with the given fields replaced with new values.
+  ///
+  /// Any parameter that is null will keep its original value.
+  KanbanColumn copyWith({
+    String? id,
+    String? header,
+    int? columnLimit,
+    bool? canAddTask,
+    String? headerBgColorLight,
+    String? headerBgColorDark,
+    List<Task>? tasks,
+  }) {
+    final newColumn = KanbanColumn(
+      id: id ?? this.id,
+      header: header ?? this.header,
+      columnLimit: columnLimit ?? this.columnLimit,
+      canAddTask: canAddTask ?? this.canAddTask,
+      headerBgColorLight: headerBgColorLight ?? this.headerBgColorLight,
+      headerBgColorDark: headerBgColorDark ?? this.headerBgColorDark,
+    );
+    if (tasks != null) {
+      newColumn.tasks.addAll(tasks);
+    } else {
+      newColumn.tasks.addAll(this.tasks);
+    }
+    return newColumn;
+  }
 }

@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## 0.0.6
 - Allow customize column header background colors
+- Allow developer to update task limit for column via board provider
 - Bug fixes
 
 ## 0.0.5 

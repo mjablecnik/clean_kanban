@@ -114,6 +114,7 @@ class TaskCardTheme {
     Color? cardSubtitleColor,
     Color? cardMoveIconEnabledColor,
     Color? cardMoveIconDisabledColor,
+    Color? cardDividerColor,
   }) {
     return TaskCardTheme(
       cardBackgroundColor: cardBackgroundColor ?? this.cardBackgroundColor,

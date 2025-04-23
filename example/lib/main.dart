@@ -2,34 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clean_kanban/clean_kanban.dart';
 import 'repositories/shared_preferences_board_repository.dart';
-import 'repositories/theme_provider.dart'; // Import the theme provider
-import 'theme.dart'; // Import the theme
+import 'repositories/theme_provider.dart'; 
+import 'theme.dart'; 
+import 'screens/column_settings_screen.dart';
 
 void main() {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // Add this to initialize Flutter binding
-  // Initialize dependency injection with SharedPreferencesBoardRepository.
+  WidgetsFlutterBinding.ensureInitialized();
   setupInjection(SharedPreferencesBoardRepository());
   EventNotifier().subscribe((event) {
     switch (event) {
       case BoardLoadedEvent loaded:
-        print('Board loaded: ${loaded.board}');
+        debugPrint('Board loaded: ${loaded.board}');
       case BoardSavedEvent saved:
-        print('Board saved: ${saved.board}');
+        debugPrint('Board saved: ${saved.board}');
       case TaskMovedEvent moved:
-        print('Task "${moved.task.title}" moved from ${moved.source.header} to ${moved.destination.header}');
+        debugPrint('Task "${moved.task.title}" moved from ${moved.source.header} to ${moved.destination.header}');
       case TaskAddedEvent added:
-        print('New task added: "${added.task.title}"');
+        debugPrint('New task added: "${added.task.title}"');
       case TaskRemovedEvent removed:
-        print('Task removed: "${removed.task.title}"');
+        debugPrint('Task removed: "${removed.task.title}"');
       case TaskEditedEvent edited:
-        print('Task edited: title="${edited.newTask.title}"');
+        debugPrint('Task edited: title="${edited.newTask.title}"');
       case TaskReorderedEvent reordered:
-        print('Task reordered: "${reordered.task.title}" moved from ${reordered.oldIndex} to ${reordered.newIndex} in ${reordered.column.header}');
+        debugPrint('Task reordered: "${reordered.task.title}" moved from ${reordered.oldIndex} to ${reordered.newIndex} in ${reordered.column.header}');
       case DoneColumnClearedEvent cleared:
-        print('${cleared.removedTasks.length} tasks cleared from Done column');
+        debugPrint('${cleared.removedTasks.length} tasks cleared from Done column');
     }
-});
+  });
   runApp(const MyExampleApp());
 }
 
@@ -56,47 +55,72 @@ class MyExampleApp extends StatelessWidget {
         }),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: Consumer2<BoardProvider, ThemeProvider>(
-        builder: (context, boardProv, themeProvider, child) {
-          // Use the fromTheme factory to create Kanban themes that match our Material themes
-          final kanbanLightTheme = KanbanTheme.fromTheme(materialTheme.light());
-          final kanbanDarkTheme = KanbanTheme.fromTheme(materialTheme.dark());
-
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
           return MaterialApp(
             title: 'Clean Kanban Example',
             theme: materialTheme.light(),
             darkTheme: materialTheme.dark(),
             themeMode: themeProvider.themeMode,
-            home: Scaffold(
-              appBar: AppBar(
-                title: const Text('Kanban Board'),
-                actions: [
-                  // Add save button
-                  IconButton(
-                    icon: const Icon(Icons.save),
-                    onPressed: () {
-                      if (boardProv.board != null) {
-                        boardProv.saveBoard();
-                      }
-                    },
-                  ),
-                  // Add theme toggle button
-                  IconButton(
-                    icon: const Icon(Icons.brightness_6),
-                    onPressed: () {
-                      themeProvider.toggleTheme();
-                    },
-                  ),
-                ],
-              ),
-              body: BoardWidget(
-                theme: themeProvider.themeMode == ThemeMode.dark 
-                  ? kanbanDarkTheme 
-                  : kanbanLightTheme,
-              ),
-            ),
+            home: const HomeScreen(),
           );
         }
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final boardProv = Provider.of<BoardProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    
+    // Create Kanban themes that match our Material themes
+    final materialTheme = MaterialTheme(Theme.of(context).textTheme);
+    final kanbanLightTheme = KanbanTheme.fromTheme(materialTheme.light());
+    final kanbanDarkTheme = KanbanTheme.fromTheme(materialTheme.dark());
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Kanban Board'),
+        actions: [
+          // Add save button
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              if (boardProv.board != null) {
+                boardProv.saveBoard();
+              }
+            },
+          ),
+          // Add theme toggle button
+          IconButton(
+            icon: const Icon(Icons.brightness_6),
+            onPressed: () {
+              themeProvider.toggleTheme();
+            },
+          ),
+          // Add navigation to column settings screen
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ColumnSettingsScreen(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: BoardWidget(
+        theme: themeProvider.themeMode == ThemeMode.dark 
+          ? kanbanDarkTheme 
+          : kanbanLightTheme,
       ),
     );
   }
@@ -107,6 +131,8 @@ const Map<String, dynamic> _boardConfig = {
     {
       'id': 'todo',
       'header': 'To Do',
+      "headerBgColorLight": "#FFF6F6F6",  // Light theme color (white-ish)
+      "headerBgColorDark": "#FF333333",   // Dark theme color (dark gray)
       'limit': 15,
       'tasks': [
         {'id': '1', 'title': 'Task 1', 'subtitle': 'Description 1'},
@@ -116,7 +142,7 @@ const Map<String, dynamic> _boardConfig = {
     {
       'id': 'doing',
       'header': 'In Progress',
-      'limit': null,
+      'limit': 1,
       'tasks': [],
       'canAddTask': false
     },
@@ -130,6 +156,8 @@ const Map<String, dynamic> _boardConfig = {
     {
       'id': 'done',
       'header': 'Done',
+      "headerBgColorLight": "#FFA6CCA6",  // Light theme color (light green)
+      "headerBgColorDark": "#FF006400",   // Dark theme color (dark green)
       'limit': null,
       'tasks': [],
       'canAddTask': false

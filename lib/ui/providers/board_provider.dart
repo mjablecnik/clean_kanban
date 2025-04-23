@@ -22,9 +22,10 @@ class BoardProvider extends ChangeNotifier {
   final DeleteTaskUseCase _deleteTaskUseCase = getIt<DeleteTaskUseCase>();
   final MoveTaskUseCase _moveTaskUseCase = getIt<MoveTaskUseCase>();
   final ReorderTaskUseCase _reorderTaskUseCase = getIt<ReorderTaskUseCase>();
-  final DeleteDoneTaskUseCase _deleteDoneTaskUseCase = DeleteDoneTaskUseCase();
-  final ClearDoneColumnUseCase _clearDoneColumnUseCase = ClearDoneColumnUseCase();
-  final EditTaskUseCase _editTaskUseCase = EditTaskUseCase();
+  final DeleteDoneTaskUseCase _deleteDoneTaskUseCase = getIt<DeleteDoneTaskUseCase>();
+  final ClearDoneColumnUseCase _clearDoneColumnUseCase = getIt<ClearDoneColumnUseCase>();
+  final EditTaskUseCase _editTaskUseCase = getIt<EditTaskUseCase>();
+  final UpdateColumnLimitUseCase _updateColumnLimitUseCase = getIt<UpdateColumnLimitUseCase>();
 
   /// Loads the board from storage or creates a new one.
   ///
@@ -149,12 +150,33 @@ class BoardProvider extends ChangeNotifier {
     return Failure('Column not found');
   }
 
+  /// Updates the task limit for a specific column.
+  ///
+  /// [columnId] is the ID of the column to update.
+  /// [newLimit] is the new task limit (null for unlimited).
+  Future<void> updateColumnLimit(String columnId, int? newLimit) async {
+    final column = _findColumn(columnId);
+    if (board != null && column != null) {
+      await _updateColumnLimitUseCase.execute(board!, column, newLimit);
+      notifyListeners();
+    }
+  }
+
   /// Saves the current board state to storage.
   ///
   /// Does nothing if no board is currently loaded.
   Future<void> saveBoard() async {
     if (board != null) {
       await _saveBoardUseCase.execute(board!);
+    }
+  }
+
+  /// Updates the current board state in storage.
+  ///
+  /// Does nothing if no board is currently loaded.
+  Future<void> updateBoard() async {
+    if (board != null) {
+      await _updateBoardUseCase.execute(board!);
     }
   }
   

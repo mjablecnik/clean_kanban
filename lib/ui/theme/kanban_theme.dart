@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:clean_kanban/ui/widgets/column_widget.dart';
 import 'package:clean_kanban/ui/widgets/task_card.dart';
 
+/// Extension to convert hex string colors to Flutter Color objects.
+extension HexColor on String {
+  /// Converts a hex color string in ARGB format (#AARRGGBB) to a Color object.
+  /// Example: "#FF333333" becomes Color(0xFF333333).
+  Color toColor() {
+    final hexCode = substring(1); // Remove the #
+    return Color(int.parse(hexCode, radix: 16));
+  }
+}
+
 /// A comprehensive theme for the Kanban board.
 ///
 /// This class coordinates all component themes (columns, cards, board, dialog)
@@ -29,7 +39,6 @@ class KanbanTheme {
     this.boardBackgroundColor = const Color(0xFFF5F5F5),
     this.boardBorderColor = const Color(0xFFE0E0E0),
     this.boardBorderWidth = 0.0,
-    // TODO: add dialog theme
   });
 
   /// Creates a light theme for the Kanban board.
@@ -86,41 +95,6 @@ class KanbanTheme {
       ),
       boardBackgroundColor: Color(0xFF121212),
       boardBorderColor: Color(0xFF1E1E1E),
-      boardBorderWidth: 0.0,
-    );
-  }
-
-  /// Creates a custom theme based on the primary color.
-  ///
-  /// Takes a [primaryColor] parameter and generates appropriate light and dark
-  /// variants for various theme components.
-  /// @deprecated Use [fromTheme] instead. This will be removed in a future version.
-  @Deprecated('Use fromTheme instead. This will be removed in a future version.')
-  factory KanbanTheme.fromColor(Color primaryColor) {
-    final Color primaryLight = Color.lerp(primaryColor, Colors.white, 0.3)!;
-    final Color primaryDark = Color.lerp(primaryColor, Colors.black, 0.3)!;
-
-    return KanbanTheme(
-      columnTheme: KanbanColumnTheme(
-        columnBackgroundColor: Colors.white,
-        columnBorderColor: const Color(0xFFE0E0E0),
-        columnHeaderColor: primaryColor,
-        columnHeaderTextColor: Colors.white,
-        columnAddButtonBoxColor: primaryDark,
-        columnAddIconColor: Colors.white,
-      ),
-      cardTheme: const TaskCardTheme(
-        cardBackgroundColor: Colors.white,
-        cardBorderColor: Color(0xFFE0E0E0),
-        cardBorderWidth: 0.0,
-        cardTitleColor: Color.fromRGBO(0, 0, 0, 0.867),
-        cardSubtitleColor: Color.fromRGBO(0, 0, 0, 0.541),
-        cardMoveIconEnabledColor: Color.fromRGBO(25, 118, 210, 1),
-        cardMoveIconDisabledColor: Color.fromRGBO(224, 224, 224, 1),
-        cardDividerColor: Color(0xFFE0E0E0),
-      ),
-      boardBackgroundColor: const Color(0xFFF5F5F5),
-      boardBorderColor: const Color(0xFFE0E0E0),
       boardBorderWidth: 0.0,
     );
   }

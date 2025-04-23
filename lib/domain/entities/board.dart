@@ -60,6 +60,8 @@ class Board {
         header: colConfig['header'],
         columnLimit: colConfig['limit'],
         canAddTask: colConfig['canAddTask'] ?? true,
+        headerBgColorLight: colConfig['headerBgColorLight'],
+        headerBgColorDark: colConfig['headerBgColorDark'],
       );
 
       if (colConfig['tasks'] != null) {

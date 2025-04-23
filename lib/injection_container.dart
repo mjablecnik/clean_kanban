@@ -26,6 +26,7 @@ void setupInjection(BoardRepository repository) {
   getIt.registerFactory(() => GetBoardUseCase(getIt<BoardRepository>()));
   getIt.registerFactory(() => SaveBoardUseCase(getIt<BoardRepository>()));
   getIt.registerFactory(() => UpdateBoardUseCase(getIt<BoardRepository>()));
+  getIt.registerFactory(() => UpdateColumnLimitUseCase(getIt<BoardRepository>()));
 
   // Register task use cases.
   getIt.registerLazySingleton<AddTaskUseCase>(() => AddTaskUseCase());

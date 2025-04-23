@@ -179,7 +179,7 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                             helperMaxLines: 2,
                             errorStyle: TextStyle(color: colorScheme.error),
                             filled: true,
-                            fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+                            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                             border: const OutlineInputBorder(),
                           ),
                           textInputAction: TextInputAction.next,
@@ -212,7 +212,7 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                             helperMaxLines: 2,
                             errorStyle: TextStyle(color: colorScheme.error),
                             filled: true,
-                            fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+                            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                             border: const OutlineInputBorder(),
                             prefixIcon: const Icon(Icons.short_text),
                             suffixIcon: IconButton(

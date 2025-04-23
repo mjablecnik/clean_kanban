@@ -106,3 +106,23 @@ class TaskEditedEvent extends BoardEvent {
   /// Creates a new task edited event.
   TaskEditedEvent(this.oldTask, this.newTask, this.column);
 }
+
+/// An event that occurs when a Kanban column's task limit is updated.
+///
+/// This event contains the reference to the affected [column] and the [newLimit]
+/// that was set. The [newLimit] can be null, which typically indicates no limit
+/// is set for the column. This can happen when a previous limit was set and
+/// then removed.
+///
+/// This event is dispatched after a column's task limit has been changed, allowing
+/// listeners to react to this change accordingly.
+class ColumnTaskLimitUpdatedEvent extends BoardEvent {
+  /// The column whose task limit was updated.
+  final KanbanColumn column;
+  
+  /// The new task limit.
+  final int? newLimit;
+
+  /// Creates a new task limit updated event.
+  ColumnTaskLimitUpdatedEvent(this.column, this.newLimit);
+}

@@ -1,65 +1,92 @@
-import 'package:clean_kanban/core/exceptions.dart';
+import 'package:uuid/uuid.dart';
 
-/// Represents a task in a Kanban board.
-///
-/// Each task has a unique [id], [title], and [subtitle].
-/// The title and subtitle are limited to 100 characters each.
 class Task {
-  /// Unique identifier for the task.
+  /// Unique identifier for the task_manager
   final String id;
 
-  /// The title of the task.
-  /// Must be 100 characters or less.
-  final String title;
+  /// Name of the task_manager
+  String title;
 
-  /// The subtitle or description of the task.
-  /// Must be 100 characters or less.
-  final String subtitle;
-  
-  /// Creates a new task with the given [id], [title], and [subtitle].
-  ///
-  /// Throws [TaskOperationException] if:
-  /// * [title] is longer than 100 characters
-  /// * [subtitle] is longer than 100 characters
-  Task({required this.id, required this.title, required this.subtitle}) {
-    if (title.length > 100) {
-      throw TaskOperationException('Title must be at most 100 characters long.');
-    }
-    if (subtitle.length > 100) {
-      throw TaskOperationException('Subtitle must be at most 100 characters long.');
-    }
-  }
-  
-  /// Converts the task to a JSON-compatible map for persistence.
+  /// Description of the task_manager
+  String subtitle;
+
+  /// Deadline for the task_manager
+  DateTime? deadline;
+
+  /// Whether the task is solved or not
+  bool solved;
+
+  /// Priority of the task (1-4, where 4 is highest)
+  int priority;
+
+  /// When the task was created
+  final DateTime created;
+
+  /// Constructor for creating a new task_manager
+  Task({
+    String? id,
+    required this.title,
+    this.subtitle = '',
+    this.deadline,
+    this.solved = false,
+    this.priority = 1,
+    DateTime? created,
+  }) :
+        id = id ?? const Uuid().v4(),
+        created = created ?? DateTime.now();
+
+  /// Convert task_manager to JSON map
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
-      'subtitle': subtitle,
+      'name': title,
+      'description': subtitle,
+      'deadline': deadline?.toIso8601String(),
+      'solved': solved,
+      'priority': priority,
+      'created': created.toIso8601String(),
     };
   }
 
-  /// Creates a copy of this task with optionally updated fields.
-  ///
-  /// The [id] is preserved while [title] and [subtitle] can be updated.
-  Task copyWith({ String? title, String? subtitle}) {
+  /// Create task_manager from JSON map
+  factory Task.fromJson(Map<String, dynamic> json) {
+    return Task(
+      id: json['id'] as String?,
+      title: json['name'] as String,
+      subtitle: json['description'] as String? ?? '',
+      deadline: json['deadline'] != null
+          ? DateTime.parse(json['deadline'] as String)
+          : null,
+      solved: json['solved'] as bool? ?? false,
+      priority: json['priority'] as int? ?? 1,
+      created: json['created'] != null
+          ? DateTime.parse(json['created'] as String)
+          : null,
+    );
+  }
+
+  /// Create a copy of this task_manager with optional new values
+  Task copyWith({
+    String? title,
+    String? subtitle,
+    DateTime? deadline,
+    bool? solved,
+    int? priority,
+    DateTime? created,
+  }) {
     return Task(
       id: id,
       title: title ?? this.title,
       subtitle: subtitle ?? this.subtitle,
+      deadline: deadline ?? this.deadline,
+      solved: solved ?? this.solved,
+      priority: priority ?? this.priority,
+      created: created ?? this.created,
     );
   }
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    
-    return other is Task &&
-      other.id == id &&
-      other.title == title &&
-      other.subtitle == subtitle;
+  String toString() {
+    return 'Task{id: $id, name: $title, description: $subtitle, deadline: $deadline, solved: $solved, priority: $priority, created: $created}';
   }
-
-  @override
-  int get hashCode => Object.hash(id, title, subtitle);
 }

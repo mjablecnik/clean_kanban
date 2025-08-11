@@ -1,8 +1,8 @@
+import 'package:clean_kanban/config.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
-import 'package:example/repositories/todoist_repository.dart';
+import 'package:clean_kanban/domain/repositories/todoist_repository.dart';
 
-import 'config.dart';
-import 'entities/project.dart';
+import '../entities/project.dart';
 
 /// Custom exceptions for TaskService
 class TaskServiceException implements Exception {

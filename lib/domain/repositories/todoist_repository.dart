@@ -1,9 +1,9 @@
+import 'package:clean_kanban/config.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:dio/dio.dart';
 import 'dart:io' show Platform;
 
-import 'package:example/config.dart';
-import 'package:example/entities/project.dart';
+import 'package:clean_kanban/domain/entities/project.dart';
 
 
 /// Custom exceptions for Todoist API

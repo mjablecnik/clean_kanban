@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pomodoro/main.dart';
+import 'package:pomodoro/screens/pomodoro_screen.dart';
+import 'package:pomodoro/screens/timer_service.dart';
 import 'package:provider/provider.dart';
 import 'package:clean_kanban/clean_kanban.dart';
 import 'repositories/shared_preferences_board_repository.dart';
-import 'repositories/theme_provider.dart'; 
-import 'theme.dart'; 
+import 'repositories/theme_provider.dart';
+import 'theme.dart';
 import 'screens/column_settings_screen.dart';
 
 void main() {
@@ -24,7 +27,8 @@ void main() {
       case TaskEditedEvent edited:
         debugPrint('Task edited: title="${edited.newTask.title}"');
       case TaskReorderedEvent reordered:
-        debugPrint('Task reordered: "${reordered.task.title}" moved from ${reordered.oldIndex} to ${reordered.newIndex} in ${reordered.column.header}');
+        debugPrint(
+            'Task reordered: "${reordered.task.title}" moved from ${reordered.oldIndex} to ${reordered.newIndex} in ${reordered.column.header}');
       case DoneColumnClearedEvent cleared:
         debugPrint('${cleared.removedTasks.length} tasks cleared from Done column');
     }
@@ -39,7 +43,7 @@ class MyExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Create an instance of MaterialTheme with default TextTheme
     final materialTheme = MaterialTheme(ThemeData().textTheme);
-    
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) {
@@ -54,18 +58,17 @@ class MyExampleApp extends StatelessWidget {
           return boardProv;
         }),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider<TimerService>(create: (_) => TimerService()),
       ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, child) {
-          return MaterialApp(
-            title: 'Clean Kanban Example',
-            theme: materialTheme.light(),
-            darkTheme: materialTheme.dark(),
-            themeMode: themeProvider.themeMode,
-            home: const HomeScreen(),
-          );
-        }
-      ),
+      child: Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'Clean Kanban Example',
+          theme: materialTheme.light(),
+          darkTheme: materialTheme.dark(),
+          themeMode: themeProvider.themeMode,
+          home: const HomeScreen(),
+        );
+      }),
     );
   }
 }
@@ -77,16 +80,51 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final boardProv = Provider.of<BoardProvider>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
-    
+    final timerService = Provider.of<TimerService>(context);
+
     // Create Kanban themes that match our Material themes
     final materialTheme = MaterialTheme(Theme.of(context).textTheme);
     final kanbanLightTheme = KanbanTheme.fromTheme(materialTheme.light());
     final kanbanDarkTheme = KanbanTheme.fromTheme(materialTheme.dark());
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kanban Board'),
         actions: [
+          // Add pomodoro button
+          IconButton(
+            icon: const Icon(Icons.timer),
+            onPressed: () {
+              showDialog(
+                context: context,
+                barrierDismissible: true,
+                builder: (context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    title: const Text(''),
+                    content: SizedBox(
+                      width: 400,
+                      height: 500,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: SizedBox(
+                          width: 650,
+                          height: 900,
+                          child: PomodoroScreen(),
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Close'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
           // Add save button
           IconButton(
             icon: const Icon(Icons.save),
@@ -118,9 +156,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: BoardWidget(
-        theme: themeProvider.themeMode == ThemeMode.dark 
-          ? kanbanDarkTheme 
-          : kanbanLightTheme,
+        theme: themeProvider.themeMode == ThemeMode.dark ? kanbanDarkTheme : kanbanLightTheme,
       ),
     );
   }
@@ -131,33 +167,21 @@ const Map<String, dynamic> _boardConfig = {
     {
       'id': 'todo',
       'header': 'To Do',
-      "headerBgColorLight": "#FFF6F6F6",  // Light theme color (white-ish)
-      "headerBgColorDark": "#FF333333",   // Dark theme color (dark gray)
+      "headerBgColorLight": "#FFF6F6F6", // Light theme color (white-ish)
+      "headerBgColorDark": "#FF333333", // Dark theme color (dark gray)
       'limit': 15,
       'tasks': [
         {'id': '1', 'title': 'Task 1', 'subtitle': 'Description 1'},
         {'id': '2', 'title': 'Task 2', 'subtitle': 'Description 2'},
       ]
     },
-    {
-      'id': 'doing',
-      'header': 'In Progress',
-      'limit': 1,
-      'tasks': [],
-      'canAddTask': false
-    },
-    {
-      'id': 'review',
-      'header': 'Review',
-      'limit': null,
-      'tasks': [],
-      'canAddTask': false
-    },
+    {'id': 'doing', 'header': 'In Progress', 'limit': 1, 'tasks': [], 'canAddTask': false},
+    {'id': 'review', 'header': 'Review', 'limit': null, 'tasks': [], 'canAddTask': false},
     {
       'id': 'done',
       'header': 'Done',
-      "headerBgColorLight": "#FFA6CCA6",  // Light theme color (light green)
-      "headerBgColorDark": "#FF006400",   // Dark theme color (dark green)
+      "headerBgColorLight": "#FFA6CCA6", // Light theme color (light green)
+      "headerBgColorDark": "#FF006400", // Dark theme color (dark green)
       'limit': null,
       'tasks': [],
       'canAddTask': false

@@ -63,6 +63,7 @@ class MyExampleApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
         return MaterialApp(
           title: 'Clean Kanban Example',
+          debugShowCheckedModeBanner: false,
           theme: materialTheme.light(),
           darkTheme: materialTheme.dark(),
           themeMode: themeProvider.themeMode,

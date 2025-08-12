@@ -166,17 +166,29 @@ class HomeScreen extends StatelessWidget {
 const Map<String, dynamic> _boardConfig = {
   'columns': [
     {
-      'id': 'todo',
-      'header': 'To Do',
+      'id': 'backlog',
+      'header': 'Backlog',
       "headerBgColorLight": "#FFF6F6F6", // Light theme color (white-ish)
       "headerBgColorDark": "#FF333333", // Dark theme color (dark gray)
-      'limit': 15,
+      'limit': null,
       'tasks': [
-        {'id': '1', 'title': 'Task 1', 'subtitle': 'Description 1'},
-        {'id': '2', 'title': 'Task 2', 'subtitle': 'Description 2'},
+        //{'id': '1', 'title': 'Task 1', 'subtitle': 'Description 1'},
+        //{'id': '2', 'title': 'Task 2', 'subtitle': 'Description 2'},
       ]
     },
-    {'id': 'doing', 'header': 'In Progress', 'limit': 1, 'tasks': [], 'canAddTask': false},
+    {
+      'id': 'todo',
+      'header': 'To Do',
+      //"headerBgColorLight": "#FFF6F6F6", // Light theme color (white-ish)
+      //"headerBgColorDark": "#FF333333", // Dark theme color (dark gray)
+      'limit': null,
+      'tasks': [
+        //{'id': '1', 'title': 'Task 1', 'subtitle': 'Description 1'},
+        //{'id': '2', 'title': 'Task 2', 'subtitle': 'Description 2'},
+      ]
+    },
+    {'id': 'doing', 'header': 'In Progress', 'limit': null, 'tasks': [], 'canAddTask': false},
+    {'id': 'blocked', 'header': 'Blocked', 'limit': null, 'tasks': [], 'canAddTask': false},
     {'id': 'review', 'header': 'Review', 'limit': null, 'tasks': [], 'canAddTask': false},
     {
       'id': 'done',

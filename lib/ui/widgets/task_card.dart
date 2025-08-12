@@ -349,42 +349,45 @@ class TaskCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: MouseRegion(
         cursor: SystemMouseCursors.grab,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: isDragging
-                ? null
-                : LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      theme.cardBackgroundColor,
-                      theme.cardBackgroundColor.withValues(alpha: 0.95),
-                    ],
-                  ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              TaskCardLayout.contentPadding,
-              12.0,
-              TaskCardLayout.controlsPadding,
-              12.0,
+        child: GestureDetector(
+          onDoubleTap: onEditTask,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: isDragging
+                  ? null
+                  : LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        theme.cardBackgroundColor,
+                        theme.cardBackgroundColor.withValues(alpha: 0.95),
+                      ],
+                    ),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: TaskCardContent(
-                    data: data,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                TaskCardLayout.contentPadding,
+                12.0,
+                TaskCardLayout.controlsPadding,
+                12.0,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TaskCardContent(
+                      data: data,
+                      theme: theme,
+                    ),
+                  ),
+                  const SizedBox(width: 8.0),
+                  TaskCardControls(
+                    onEditTask: onEditTask,
+                    onDeleteTask: onDeleteTask,
                     theme: theme,
                   ),
-                ),
-                const SizedBox(width: 8.0),
-                TaskCardControls(
-                  onEditTask: onEditTask,
-                  onDeleteTask: onDeleteTask,
-                  theme: theme,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

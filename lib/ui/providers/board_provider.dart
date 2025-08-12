@@ -31,8 +31,9 @@ class BoardProvider extends ChangeNotifier {
   ///
   /// If [config] is provided, creates a board from the configuration.
   /// Otherwise, attempts to load a saved board or creates a simple board.
-  Future<void> loadBoard({Map<String, dynamic>? config}) async {
+  Future<void> loadBoard({Map<String, dynamic>? config, bool reset = false}) async {
     try {
+      if (reset) throw Exception();
       final fetchedBoard = await _getBoardUseCase.execute();
       board = fetchedBoard;
       debugPrint('Previous saved board found');

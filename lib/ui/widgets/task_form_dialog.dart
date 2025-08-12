@@ -224,11 +224,12 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                                   : () => setState(() => _subtitleController.clear()),
                             ),
                           ),
-                          textInputAction: TextInputAction.done,
+                          textInputAction: TextInputAction.newline,
                           enabled: !_isSubmitting,
                           maxLength: 200,
-                          maxLines: 1,
-                          onFieldSubmitted: (_) => _handleSubmit(),
+                          maxLines: null, // Allows for multiple lines
+                          minLines: 3, // Set a minimum number of lines
+                          // onFieldSubmitted: (_) => _handleSubmit(), // Remove this if you want Enter to create a new line
                           onChanged: (value) {
                             if (_hasError) {
                               setState(() => _hasError = false);

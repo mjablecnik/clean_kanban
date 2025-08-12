@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pomodoro/main.dart';
 import 'package:pomodoro/screens/pomodoro_screen.dart';
 import 'package:pomodoro/screens/timer_service.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +57,9 @@ class MyExampleApp extends StatelessWidget {
           return boardProv;
         }),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider<TimerService>(create: (_) => TimerService()),
+        ChangeNotifierProvider<TimerService>(
+          create: (_) => TimerService(soundPath: 'alarm.mp3'),
+        ),
       ],
       child: Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
         return MaterialApp(
@@ -74,6 +75,39 @@ class MyExampleApp extends StatelessWidget {
   }
 }
 
+showPomodoroDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      final timerService = Provider.of<TimerService>(context);
+      timerService.setCallback(() => showPomodoroDialog(context));
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: const Text(''),
+        content: SizedBox(
+          width: 400,
+          height: 500,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: SizedBox(
+              width: 650,
+              height: 900,
+              child: PomodoroScreen(),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -81,7 +115,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final boardProv = Provider.of<BoardProvider>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final timerService = Provider.of<TimerService>(context);
 
     // Create Kanban themes that match our Material themes
     final materialTheme = MaterialTheme(Theme.of(context).textTheme);
@@ -96,34 +129,7 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.timer),
             onPressed: () {
-              showDialog(
-                context: context,
-                barrierDismissible: true,
-                builder: (context) {
-                  return AlertDialog(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    title: const Text(''),
-                    content: SizedBox(
-                      width: 400,
-                      height: 500,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: SizedBox(
-                          width: 650,
-                          height: 900,
-                          child: PomodoroScreen(),
-                        ),
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Close'),
-                      ),
-                    ],
-                  );
-                },
-              );
+              showPomodoroDialog(context);
             },
           ),
           // Add save button

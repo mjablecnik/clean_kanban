@@ -13,10 +13,10 @@ class PomodoroScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<TimerService>(context);
     return Scaffold(
-      backgroundColor: provider.currentState == "FOCUS" ? Colors.redAccent : Colors.greenAccent,
+      backgroundColor: provider.currentState == "FOCUS" ? Colors.redAccent : Colors.green,
       appBar: AppBar(
         elevation: 10,
-        backgroundColor: provider.currentState == "FOCUS" ? Colors.redAccent : Colors.greenAccent,
+        backgroundColor: provider.currentState == "FOCUS" ? Colors.redAccent : Colors.green,
         title: const Text(
           'POMODORO',
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),

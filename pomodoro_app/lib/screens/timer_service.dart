@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class TimerService extends ChangeNotifier {
   late Timer timer;
@@ -10,12 +11,32 @@ class TimerService extends ChangeNotifier {
   int rounds = 0;
   int goal = 0;
   String currentState = "FOCUS";
+  String? soundPath;
+  Function? callback;
+
+  TimerService({this.soundPath, this.callback});
+
+  playAlarm() async {
+    if (soundPath != null) {
+      final player = AudioPlayer();
+      player.setVolume(1);
+      await player.play(AssetSource(soundPath!));
+      Future.delayed(const Duration(seconds: 2), () => player.stop());
+    }
+  }
+
+  setCallback(Function callback) {
+    this.callback = callback;
+  }
 
   void start() {
     timerPlaying = true;
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (currentDuration == 0) {
         handleNextRound();
+        pause();
+        playAlarm();
+        await callback?.call();
       } else {
         currentDuration--;
         notifyListeners();
@@ -33,7 +54,7 @@ class TimerService extends ChangeNotifier {
     timer.cancel();
     currentState = "FOCUS";
     currentDuration = selectedTime = 1500;
-    rounds = goal = 0;
+    //rounds = goal = 0;
     timerPlaying = false;
     notifyListeners();
   }
@@ -47,24 +68,24 @@ class TimerService extends ChangeNotifier {
   void handleNextRound() {
     if (currentState == "FOCUS" && rounds != 3) {
       currentState = "BREAK";
-      currentDuration = 300;
-      selectedTime = 300;
+      currentDuration = selectedTime;
+      //selectedTime = 300;
       rounds++;
       goal++;
     } else if (currentState == "BREAK") {
       currentState = "FOCUS";
-      currentDuration = 1500;
-      selectedTime = 1500;
+      currentDuration = selectedTime;
+      //selectedTime = 1500;
     } else if (currentState == "FOCUS" && rounds == 3) {
       currentState = "LONG BREAK";
-      currentDuration = 1500;
-      selectedTime = 1500;
+      currentDuration = selectedTime;
+      //selectedTime = 1500;
       rounds++;
       goal++;
     } else if (currentState == "LONG BREAK") {
       currentState = "FOCUS";
-      currentDuration = 1500;
-      selectedTime = 1500;
+      currentDuration = selectedTime;
+      //selectedTime = 1500;
       rounds = 0;
     }
     notifyListeners();

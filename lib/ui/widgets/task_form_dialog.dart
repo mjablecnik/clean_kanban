@@ -184,7 +184,8 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                             fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                             border: const OutlineInputBorder(),
                           ),
-                          textInputAction: TextInputAction.next,
+                          //textInputAction: TextInputAction.next,
+                          onFieldSubmitted: (_) => _handleSubmit(),
                           autofocus: true,
                           enabled: !_isSubmitting,
                           maxLength: 100,
@@ -207,10 +208,10 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                         TextFormField(
                           controller: _subtitleController,
                           decoration: InputDecoration(
-                            labelText: 'Subtitle',
-                            hintText: 'Brief description or link to task',
+                            labelText: 'Description',
+                            //hintText: 'Brief description or link to task',
                             errorMaxLines: 2,
-                            helperText: 'Optional, max 200 characters',
+                            //helperText: 'Optional, max 200 characters',
                             helperMaxLines: 2,
                             errorStyle: TextStyle(color: colorScheme.error),
                             filled: true,
@@ -226,7 +227,7 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                           ),
                           textInputAction: TextInputAction.newline,
                           enabled: !_isSubmitting,
-                          maxLength: 200,
+                          //maxLength: 200,
                           maxLines: null, // Allows for multiple lines
                           minLines: 3, // Set a minimum number of lines
                           // onFieldSubmitted: (_) => _handleSubmit(), // Remove this if you want Enter to create a new line

@@ -66,11 +66,7 @@ class Board {
 
       if (colConfig['tasks'] != null) {
         for (final taskConfig in colConfig['tasks']) {
-          final task = Task(
-            id: taskConfig['id'],
-            title: taskConfig['title'],
-            subtitle: taskConfig['subtitle'],
-          );
+          final task = Task.fromJson(taskConfig);
           column.addTask(task);
         }
       }

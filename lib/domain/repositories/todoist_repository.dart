@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:clean_kanban/config.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:dio/dio.dart';
 import 'dart:io' show Platform;
 
 import 'package:clean_kanban/domain/entities/project.dart';
-
 
 /// Custom exceptions for Todoist API
 class TodoistApiException implements Exception {
@@ -35,8 +36,7 @@ class TodoistRepository {
   TodoistRepository({
     String? apiToken,
     Dio? dio,
-  }) :
-        _apiToken = apiToken ?? TaskConfig.todoistApiToken,
+  })  : _apiToken = apiToken ?? TaskConfig.todoistApiToken,
         _dio = dio ?? Dio() {
     // Configure Dio with default headers for authentication
     _dio.options.headers['Authorization'] = 'Bearer $_apiToken';
@@ -52,70 +52,61 @@ class TodoistRepository {
   }
 
   /// Create a new task in Todoist (handles both tasks and subtasks)
-  Future<Task> createTask({
-    required String content,
-    String? description,
-    String? projectId,
-    String? parentId,
-    DateTime? dueDate,
-    int? priority,
-  }) async {
+  Future<Task> createTask(Task task) async {
     try {
       final data = {
-        'content': content,
-        if (description != null) 'description': description,
-        if (projectId != null) 'project_id': projectId,
-        if (parentId != null) 'parent_id': parentId,
-        if (dueDate != null) 'due_date': dueDate.toIso8601String().split('T')[0],
-        if (priority != null) 'priority': priority,
+        'content': task.title,
+        if (task.subtitle.isNotEmpty) 'description': task.subtitle,
+        // Assuming you might want to link to a project ID if available in your Task model
+        // if (task.projectId != null) 'project_id': task.projectId,
+        // Assuming you might want to link to a parent task ID if available in your Task model
+        // if (task.parentId != null) 'parent_id': task.parentId,
+        if (task.deadline != null) 'due_date': task.deadline!.toIso8601String().split('T')[0],
+        'priority': task.priority,
       };
-
       final response = await _dio.post('$_baseUrl/tasks', data: data);
 
-      // Convert Todoist task to our Task model
-      return Task(
-        id: response.data['id'],
+      final responseTask = Task(
+        id: "${response.data['id']}",
         title: response.data['content'],
         subtitle: response.data['description'] ?? '',
-        deadline: response.data['due'] != null ?
-        DateTime.parse(response.data['due']['date']) : null,
+        deadline: response.data['due'] != null ? DateTime.parse(response.data['due']['date']) : null,
         solved: response.data['completed'] ?? false,
         created: DateTime.now(),
+        priority: response.data['priority'] ?? 1,
       );
+      return responseTask;
     } catch (e) {
       throw _handleApiError(e);
     }
   }
 
-  /// Update an existing task in Todoist
-  Future<Task> updateTask({
-    required String taskId,
-    String? content,
-    String? description,
-    String? projectId,
-    DateTime? dueDate,
-    bool? completed,
-    int? priority,
-  }) async {
-    try {
-      final data = {
-        if (content != null) 'content': content,
-        if (description != null) 'description': description,
-        if (projectId != null) 'project_id': projectId,
-        if (dueDate != null) 'due_date': dueDate.toIso8601String().split('T')[0],
-        if (completed != null) 'completed': completed,
-        if (priority != null) 'priority': priority,
-      };
+  /// Complete a task in Todoist
+  Future<bool> completeTask(String taskId, bool completed) async {
+    if (completed) {
+      await _dio.post('$_baseUrl/tasks/$taskId/close');
+    } else {
+      await _dio.post('$_baseUrl/tasks/$taskId/reopen');
+    }
+    return true;
+  }
 
-      final response = await _dio.post('$_baseUrl/tasks/$taskId', data: data);
+  /// Update an existing task in Todoist
+  Future<Task> updateTask(Task task) async {
+    try {
+      print(task);
+      final data = {
+        'content': task.title,
+        if (task.subtitle.isNotEmpty) 'description': task.subtitle else "description": 0,
+      };
+      final response = await _dio.post('$_baseUrl/tasks/${task.id}', data: data);
 
       // Convert Todoist task to our Task model
       return Task(
         id: response.data['id'],
         title: response.data['content'],
         subtitle: response.data['description'] ?? '',
-        deadline: response.data['due'] != null ?
-        DateTime.parse(response.data['due']['date']) : null,
+        deadline: response.data['due'] != null ? DateTime.parse(response.data['due']['date']) : null,
         solved: response.data['completed'] ?? false,
         priority: response.data['priority'] ?? 1,
         created: DateTime.now(), // We don't get creation date from API
@@ -141,16 +132,17 @@ class TodoistRepository {
       final response = await _dio.get('$_baseUrl/tasks');
 
       final List<dynamic> tasksData = response.data;
-      return tasksData.map((taskData) => Task(
-        id: taskData['id'],
-        title: taskData['content'],
-        subtitle: taskData['description'] ?? '',
-        deadline: taskData['due'] != null ?
-        DateTime.parse(taskData['due']['date']) : null,
-        solved: taskData['completed'] ?? false,
-        priority: taskData['priority'] ?? 1,
-        created: DateTime.now(), // We don't get creation date from API
-      )).toList();
+      return tasksData
+          .map((taskData) => Task(
+                id: taskData['id'],
+                title: taskData['content'],
+                subtitle: taskData['description'] ?? '',
+                deadline: taskData['due'] != null ? DateTime.parse(taskData['due']['date']) : null,
+                solved: taskData['completed'] ?? false,
+                priority: taskData['priority'] ?? 1,
+                created: DateTime.now(), // We don't get creation date from API
+              ))
+          .toList();
     } catch (e) {
       throw _handleApiError(e);
     }
@@ -162,11 +154,13 @@ class TodoistRepository {
       final response = await _dio.get('$_baseUrl/projects');
 
       final List<dynamic> projectsData = response.data;
-      return projectsData.map((projectData) => Project(
-        id: projectData['id'],
-        name: projectData['name'],
-        created: DateTime.now(), // We don't get creation date from API
-      )).toList();
+      return projectsData
+          .map((projectData) => Project(
+                id: projectData['id'],
+                name: projectData['name'],
+                created: DateTime.now(), // We don't get creation date from API
+              ))
+          .toList();
     } catch (e) {
       throw _handleApiError(e);
     }
@@ -180,16 +174,17 @@ class TodoistRepository {
       });
 
       final List<dynamic> tasksData = response.data;
-      return tasksData.map((taskData) => Task(
-        id: taskData['id'],
-        title: taskData['content'],
-        subtitle: taskData['description'] ?? '',
-        deadline: taskData['due'] != null ?
-        DateTime.parse(taskData['due']['date']) : null,
-        solved: taskData['completed'] ?? false,
-        priority: taskData['priority'] ?? 1,
-        created: DateTime.now(),
-      )).toList();
+      return tasksData
+          .map((taskData) => Task(
+                id: taskData['id'],
+                title: taskData['content'],
+                subtitle: taskData['description'] ?? '',
+                deadline: taskData['due'] != null ? DateTime.parse(taskData['due']['date']) : null,
+                solved: taskData['completed'] ?? false,
+                priority: taskData['priority'] ?? 1,
+                created: DateTime.now(),
+              ))
+          .toList();
     } catch (e) {
       throw _handleApiError(e);
     }
@@ -208,9 +203,9 @@ class TodoistRepository {
           case 404:
             return TodoistApiException('Resource not found', statusCode: 404);
           case 400:
-            return TodoistApiException('Bad request: ${data['error'] ?? 'Unknown error'}', statusCode: 400);
+            return TodoistApiException('Bad request: ${data ?? 'Unknown error'}', statusCode: 400);
           default:
-            return TodoistApiException('API error: ${data['error'] ?? 'Unknown error'}', statusCode: statusCode);
+            return TodoistApiException('API error: ${data ?? 'Unknown error'}', statusCode: statusCode);
         }
       }
       return TodoistNetworkException(error.message ?? 'Unknown network error');

@@ -1,3 +1,4 @@
+import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:flutter/material.dart';
 
 /// A dialog widget that displays a form for creating or editing tasks.
@@ -7,7 +8,7 @@ import 'package:flutter/material.dart';
 class TaskFormDialog extends StatefulWidget {
   /// Callback function called when the form is saved.
   /// Takes a [title] and [subtitle] as parameters.
-  final Function(String title, String subtitle) onSave;
+  final Function(Task task) onSave;
 
   /// The initial title to populate the title field.
   final String? initialTitle;
@@ -92,7 +93,7 @@ class TaskFormDialogState extends State<TaskFormDialog> {
         FocusManager.instance.primaryFocus?.unfocus();
 
         try {
-          widget.onSave(title, subtitle);
+          widget.onSave(Task(title: title, subtitle: subtitle));
           Navigator.of(context).pop();
         } catch (e) {
           _showError('Failed to save task. Please try again.');
@@ -135,14 +136,15 @@ class TaskFormDialogState extends State<TaskFormDialog> {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = Theme.of(context).textTheme;
-    
+
     return PopScope(
       canPop: !_isSubmitting,
       child: Dialog(
-        insetPadding:
-            const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
-        elevation: 6, // Material 3 elevation
-        backgroundColor: colorScheme.surfaceContainer, // Set the dialog background color
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+        elevation: 6,
+        // Material 3 elevation
+        backgroundColor: colorScheme.surfaceContainer,
+        // Set the dialog background color
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(28), // Material 3 shape
         ),
@@ -219,8 +221,7 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                               icon: const Icon(Icons.clear),
                               onPressed: _subtitleController.text.isEmpty
                                   ? null
-                                  : () => setState(
-                                      () => _subtitleController.clear()),
+                                  : () => setState(() => _subtitleController.clear()),
                             ),
                           ),
                           textInputAction: TextInputAction.done,
@@ -262,8 +263,7 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
+                                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
                               ),
                             )
                           : Text(widget.submitLabel),

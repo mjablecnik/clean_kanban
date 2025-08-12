@@ -1,8 +1,7 @@
-import 'package:uuid/uuid.dart';
 
 class Task {
   /// Unique identifier for the task_manager
-  final String id;
+  String? id;
 
   /// Name of the task_manager
   String title;
@@ -24,7 +23,7 @@ class Task {
 
   /// Constructor for creating a new task_manager
   Task({
-    String? id,
+    this.id,
     required this.title,
     this.subtitle = '',
     this.deadline,
@@ -32,7 +31,6 @@ class Task {
     this.priority = 1,
     DateTime? created,
   }) :
-        id = id ?? const Uuid().v4(),
         created = created ?? DateTime.now();
 
   /// Convert task_manager to JSON map
@@ -67,6 +65,7 @@ class Task {
 
   /// Create a copy of this task_manager with optional new values
   Task copyWith({
+    String? id,
     String? title,
     String? subtitle,
     DateTime? deadline,
@@ -75,7 +74,7 @@ class Task {
     DateTime? created,
   }) {
     return Task(
-      id: id,
+      id: id ?? this.id,
       title: title ?? this.title,
       subtitle: subtitle ?? this.subtitle,
       deadline: deadline ?? this.deadline,

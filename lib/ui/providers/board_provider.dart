@@ -49,10 +49,10 @@ class BoardProvider extends ChangeNotifier {
   ///
   /// [columnId] is the ID of the target column.
   /// [task] is the task to be added.
-  void addTask(String columnId, Task task) {
+  Future<void> addTask(String columnId, Task task) async {
     final col = _findColumn(columnId);
     if (col != null) {
-      _addTaskUseCase.execute(col, task);
+      await _addTaskUseCase.execute(col, task);
       notifyListeners();
     }
   }
@@ -79,11 +79,11 @@ class BoardProvider extends ChangeNotifier {
   /// [sourceIndex] is the task's current position.
   /// [destColId] is the ID of the destination column.
   /// [destinationIndex] is the optional target position.
-  void moveTask(String sourceColId, int sourceIndex, String destColId, [int? destinationIndex]) {
+  Future<void> moveTask(String sourceColId, int sourceIndex, String destColId, [int? destinationIndex]) async {
     final source = _findColumn(sourceColId);
     final destination = _findColumn(destColId);
     if (source != null && destination != null) {
-      _moveTaskUseCase.execute(source, sourceIndex, destination, destinationIndex);
+      await _moveTaskUseCase.execute(source, sourceIndex, destination, destinationIndex);
       notifyListeners();
     }
   }
@@ -122,10 +122,10 @@ class BoardProvider extends ChangeNotifier {
   /// [columnId] must be the ID of the Done column.
   ///
   /// Returns a [Result] containing the list of removed tasks or an error message.
-  Result<List<Task>> clearDoneColumn(String columnId) {
+  Future<Result<List<Task>>> clearDoneColumn(String columnId) async {
     final column = _findColumn(columnId);
     if (column != null) {
-      final result = _clearDoneColumnUseCase.execute(column);
+      final result = await _clearDoneColumnUseCase.execute(column);
       notifyListeners();
       return result;
     }
@@ -140,10 +140,10 @@ class BoardProvider extends ChangeNotifier {
   /// [newSubtitle] is the updated subtitle for the task.
   ///
   /// Returns a [Result] containing the updated task or an error message.
-  Result<Task> editTask(String columnId, int index, String newTitle, String newSubtitle) {
+  Future<Result<Task>> editTask(String columnId, int index, Task task) async {
     final column = _findColumn(columnId);
     if (column != null) {
-      final result = _editTaskUseCase.execute(column, index, newTitle, newSubtitle);
+      final result = await _editTaskUseCase.execute(column, index, task);
       notifyListeners();
       return result;
     }

@@ -11,47 +11,47 @@ import 'package:clean_kanban/ui/theme/kanban_theme.dart';
 class BoardLayout {
   /// Border radius for the board container
   static const double boardBorderRadius = 8.0;
-  
+
   /// Border width for the board container
   static const double boardBorderWidth = 1.0;
-  
+
   /// Padding around the entire board
   static const double boardPadding = 4.0;
-  
+
   /// Padding between columns in horizontal layout
   static const double columnHorizontalPadding = 2.0;
-  
+
   /// Padding between columns in vertical layout
   static const double columnVerticalPadding = 8.0;
-  
+
   /// Width threshold to determine if screen is narrow
   static const double narrowScreenThreshold = 600.0;
-  
+
   /// Default maximum height for columns in mobile view
   static const double mobileColumnMaxHeight = 400.0;
 }
 
 /// A widget that handles displaying a single column within the board.
-/// 
+///
 /// Reduces duplication between mobile and desktop layouts.
 class BoardColumn extends StatelessWidget {
   /// The column to display
   final KanbanColumn column;
-  
+
   /// The theme to apply to this column
   final KanbanTheme effectiveTheme;
-  
+
   /// Maximum height for mobile view
   final double? mobileMaxHeight;
-  
+
   /// Board provider for state management
   final BoardProvider boardProvider;
-  
+
   /// Function to show task edit dialog
-  final Function(BuildContext, String, String, Function(String, String)) showEditTaskDialog;
-  
+  final Function(BuildContext, String, String, Function(Task)) showEditTaskDialog;
+
   /// Function to show task add dialog
-  final Function(BuildContext, Function(String, String)) showAddTaskDialog;
+  final Function(BuildContext, Function(Task)) showAddTaskDialog;
 
   /// Creates a BoardColumn.
   const BoardColumn({
@@ -71,13 +71,8 @@ class BoardColumn extends StatelessWidget {
       column: column,
       mobileMaxHeight: mobileMaxHeight,
       onAddTask: () {
-        showAddTaskDialog(context, (title, subtitle) {
-          final newTask = Task(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
-            title: title,
-            subtitle: subtitle,
-          );
-          boardProvider.addTask(column.id, newTask);
+        showAddTaskDialog(context, (Task task) {
+          boardProvider.addTask(column.id, task);
         });
       },
       onReorderedTask: (column, oldIndex, newIndex) {
@@ -89,14 +84,15 @@ class BoardColumn extends StatelessWidget {
       onDeleteTask: (column, index) {
         boardProvider.removeTask(column.id, index);
       },
-      onEditTask: (column, index, initialTitle, initialSubtitle) =>
-          showEditTaskDialog(context, initialTitle, initialSubtitle,
-              (title, subtitle) {
-            boardProvider.editTask(column.id, index, title, subtitle);
-          }),
-      onClearDone: column.isDoneColumn()
-          ? () => boardProvider.clearDoneColumn(column.id)
-          : null,
+      onEditTask: (column, index, initialTitle, initialSubtitle) => showEditTaskDialog(
+        context,
+        initialTitle,
+        initialSubtitle,
+        (Task task) {
+          boardProvider.editTask(column.id, index, task);
+        },
+      ),
+      onClearDone: column.isDoneColumn() ? () => boardProvider.clearDoneColumn(column.id) : null,
     );
   }
 }
@@ -107,15 +103,15 @@ class BoardColumn extends StatelessWidget {
 class BoardViewport extends StatelessWidget {
   /// The board provider for state management
   final BoardProvider boardProvider;
-  
+
   /// The effective theme for styling
   final KanbanTheme effectiveTheme;
-  
+
   /// Function to show task edit dialog
-  final Function(BuildContext, String, String, Function(String, String)) showEditTaskDialog;
-  
+  final Function(BuildContext, String, String, Function(Task task)) showEditTaskDialog;
+
   /// Function to show task add dialog
-  final Function(BuildContext, Function(String, String)) showAddTaskDialog;
+  final Function(BuildContext, Function(Task task)) showAddTaskDialog;
 
   /// Creates a BoardViewport.
   const BoardViewport({
@@ -133,9 +129,7 @@ class BoardViewport extends StatelessWidget {
         final isNarrowScreen = constraints.maxWidth < BoardLayout.narrowScreenThreshold;
         return Padding(
           padding: const EdgeInsets.all(BoardLayout.boardPadding),
-          child: isNarrowScreen
-              ? _buildMobileLayout(context)
-              : _buildDesktopLayout(context),
+          child: isNarrowScreen ? _buildMobileLayout(context) : _buildDesktopLayout(context),
         );
       },
     );
@@ -206,15 +200,12 @@ class BoardWidget extends StatelessWidget {
   ///
   /// Takes a [context] for showing the dialog and an [onAddTask] callback
   /// that receives the new task's title and subtitle.
-  void _showAddTaskDialog(
-      BuildContext context, Function(String, String) onAddTask) {
+  void _showAddTaskDialog(BuildContext context, Function(Task) onAddTask) {
     showDialog(
         context: context,
         barrierDismissible: true,
-        builder: (BuildContext context) => TaskFormDialog(
-            dialogTitle: 'Add New Task',
-            submitLabel: 'Add',
-            onSave: onAddTask));
+        builder: (BuildContext context) =>
+            TaskFormDialog(dialogTitle: 'Add New Task', submitLabel: 'Add', onSave: onAddTask));
   }
 
   /// Shows a dialog for editing an existing task.
@@ -222,8 +213,7 @@ class BoardWidget extends StatelessWidget {
   /// Takes a [context], [initialTitle], [initialSubtitle], and an [onEditTask]
   /// callback that receives the updated title and subtitle.
   void _showEditTaskDialog(
-      BuildContext context, String initialTitle, String initialSubtitle,
-      Function(String, String) onEditTask) {
+      BuildContext context, String initialTitle, String initialSubtitle, Function(Task task) onEditTask) {
     showDialog(
         context: context,
         barrierDismissible: true,
@@ -238,7 +228,7 @@ class BoardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveTheme = theme ?? KanbanThemeProvider.of(context);
-    
+
     return KanbanThemeProvider(
       theme: effectiveTheme,
       child: Container(
@@ -255,7 +245,7 @@ class BoardWidget extends StatelessWidget {
             if (boardProv.board == null) {
               return const Center(child: CircularProgressIndicator());
             }
-            
+
             return BoardViewport(
               boardProvider: boardProv,
               effectiveTheme: effectiveTheme,

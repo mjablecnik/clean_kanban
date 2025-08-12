@@ -93,6 +93,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TrayListener {
 
   late Timer timer;
+  String currentTime = "";
+
   @override
   void initState() {
     super.initState();
@@ -145,6 +147,9 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
       (timer) {
         final duration = timerService.currentDuration;
         trayManager.setTitle("${duration ~/ 60}:${(duration % 60).toString().split('.').first.padLeft(2, '0')}");
+        setState(() {
+          currentTime = "${duration ~/ 60}:${(duration % 60).toString().split('.').first.padLeft(2, '0')}";
+        });
       },
     );
 
@@ -152,6 +157,13 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
       appBar: AppBar(
         title: const Text('Kanban Board'),
         actions: [
+          Text(currentTime),
+          IconButton(
+            icon: Icon(timerService.timerPlaying ? Icons.pause : Icons.play_arrow),
+            onPressed: () {
+              timerService.timerPlaying ? timerService.pause() : timerService.start();
+            },
+          ),
           // Add pomodoro button
           IconButton(
             icon: const Icon(Icons.timer),

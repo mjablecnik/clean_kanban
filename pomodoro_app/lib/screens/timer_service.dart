@@ -8,7 +8,7 @@ class TimerService extends ChangeNotifier {
   double currentDuration = 1500;
   double selectedTime = 1500;
   bool timerPlaying = false;
-  int rounds = 0;
+  int rounds = 1;
   int goal = 0;
   String currentState = "FOCUS";
   String? soundPath;
@@ -54,7 +54,8 @@ class TimerService extends ChangeNotifier {
     timer.cancel();
     currentState = "FOCUS";
     currentDuration = selectedTime = 1500;
-    //rounds = goal = 0;
+    rounds = 1;
+    goal = 0;
     timerPlaying = false;
     notifyListeners();
   }
@@ -66,27 +67,23 @@ class TimerService extends ChangeNotifier {
   }
 
   void handleNextRound() {
-    if (currentState == "FOCUS" && rounds != 3) {
+    if (currentState == "FOCUS" && rounds != 4) {
       currentState = "BREAK";
-      currentDuration = selectedTime;
-      //selectedTime = 300;
-      rounds++;
-      goal++;
+      currentDuration = 300;
     } else if (currentState == "BREAK") {
       currentState = "FOCUS";
       currentDuration = selectedTime;
-      //selectedTime = 1500;
-    } else if (currentState == "FOCUS" && rounds == 3) {
-      currentState = "LONG BREAK";
-      currentDuration = selectedTime;
-      //selectedTime = 1500;
       rounds++;
+      goal++;
+    } else if (currentState == "FOCUS" && rounds == 4) {
+      currentState = "LONG BREAK";
+      currentDuration = 1800;
+      if (rounds < 4) rounds++;
       goal++;
     } else if (currentState == "LONG BREAK") {
       currentState = "FOCUS";
       currentDuration = selectedTime;
-      //selectedTime = 1500;
-      rounds = 0;
+      rounds = 1;
     }
     notifyListeners();
   }

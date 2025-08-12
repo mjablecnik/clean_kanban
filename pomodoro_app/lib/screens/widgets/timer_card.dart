@@ -91,6 +91,6 @@ Color renderColor(String currentState) {
   if (currentState == "FOCUS") {
     return Colors.redAccent;
   } else {
-    return Colors.greenAccent;
+    return Colors.green;
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:example/repositories/toggl_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:pomodoro/screens/pomodoro_screen.dart';
 import 'package:pomodoro/screens/timer_service.dart';
@@ -93,6 +94,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TrayListener {
   late Timer timer;
   String currentTime = "";
+  int currentTimeEntryId = 0;
 
   @override
   void initState() {
@@ -202,9 +204,16 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
       ),
       body: BoardWidget(
         theme: themeProvider.themeMode == ThemeMode.dark ? kanbanDarkTheme : kanbanLightTheme,
-        runTask: (Task task, bool isRunning) {
-          print(task);
-          print(isRunning);
+        runTask: (Task task, bool isRunning) async {
+          TogglRepository togglRepository = TogglRepository();
+
+          if (isRunning) {
+            await togglRepository.stopTimeEntry(timeEntryId: currentTimeEntryId);
+          } else {
+            final entryId = await togglRepository.startTimeEntry(description: task.title);
+            setState(() => currentTimeEntryId = entryId);
+          }
+
           if (timerService.timerPlaying == isRunning) {
             timerService.timerPlaying ? timerService.pause() : timerService.start();
           }

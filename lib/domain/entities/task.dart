@@ -1,4 +1,6 @@
 
+import '../repositories/toggl_repository.dart';
+
 class Task {
   /// Unique identifier for the task_manager
   String? id;
@@ -21,6 +23,8 @@ class Task {
   /// When the task was created
   final DateTime created;
 
+  Project? project;
+
   /// Constructor for creating a new task_manager
   Task({
     this.id,
@@ -29,6 +33,7 @@ class Task {
     this.deadline,
     this.solved = false,
     this.priority = 1,
+    this.project,
     DateTime? created,
   }) :
         created = created ?? DateTime.now();
@@ -43,6 +48,7 @@ class Task {
       'solved': solved,
       'priority': priority,
       'created': created.toIso8601String(),
+      'project': project?.toJson(),
     };
   }
 
@@ -57,6 +63,7 @@ class Task {
           : null,
       solved: json['solved'] as bool? ?? false,
       priority: json['priority'] as int? ?? 1,
+      project: json['project'] != null ? Project.fromJson(json['project']) : null,
       created: json['created'] != null
           ? DateTime.parse(json['created'] as String)
           : null,
@@ -72,6 +79,7 @@ class Task {
     bool? solved,
     int? priority,
     DateTime? created,
+    Project? project,
   }) {
     return Task(
       id: id ?? this.id,
@@ -81,11 +89,12 @@ class Task {
       solved: solved ?? this.solved,
       priority: priority ?? this.priority,
       created: created ?? this.created,
+      project: project ?? this.project,
     );
   }
 
   @override
   String toString() {
-    return 'Task{id: $id, name: $title, description: $subtitle, deadline: $deadline, solved: $solved, priority: $priority, created: $created}';
+    return 'Task{id: $id, name: $title, description: $subtitle, deadline: $deadline, solved: $solved, priority: $priority, created: $created, project: $project}';
   }
 }

@@ -94,10 +94,9 @@ class TodoistRepository {
   /// Update an existing task in Todoist
   Future<Task> updateTask(Task task) async {
     try {
-      print(task);
       final data = {
         'content': task.title,
-        if (task.subtitle.isNotEmpty) 'description': task.subtitle else "description": 0,
+        if (task.subtitle.isNotEmpty) 'description': task.subtitle,
       };
       final response = await _dio.post('$_baseUrl/tasks/${task.id}', data: data);
 
@@ -112,6 +111,7 @@ class TodoistRepository {
         created: DateTime.now(), // We don't get creation date from API
       );
     } catch (e) {
+      print(e);
       throw _handleApiError(e);
     }
   }

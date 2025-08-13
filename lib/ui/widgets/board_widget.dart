@@ -7,6 +7,8 @@ import 'package:clean_kanban/ui/widgets/column_widget.dart';
 import 'package:clean_kanban/domain/entities/task.dart';
 import 'package:clean_kanban/ui/theme/kanban_theme.dart';
 
+import '../../domain/repositories/toggl_repository.dart';
+
 /// Constants for Board layout measurements
 class BoardLayout {
   /// Border radius for the board container
@@ -48,7 +50,7 @@ class BoardColumn extends StatelessWidget {
   final BoardProvider boardProvider;
 
   /// Function to show task edit dialog
-  final Function(BuildContext, String, String, Function(Task)) showEditTaskDialog;
+  final Function(BuildContext, String, String, Project, Function(Task)) showEditTaskDialog;
 
   /// Function to show task add dialog
   final Function(BuildContext, Function(Task)) showAddTaskDialog;
@@ -88,10 +90,11 @@ class BoardColumn extends StatelessWidget {
       onDeleteTask: (column, index) {
         boardProvider.removeTask(column.id, index);
       },
-      onEditTask: (column, index, initialTitle, initialSubtitle) => showEditTaskDialog(
+      onEditTask: (column, index, initialTitle, initialSubtitle, initialProject) => showEditTaskDialog(
         context,
         initialTitle,
         initialSubtitle,
+        initialProject,
         (Task task) {
           boardProvider.editTask(column.id, index, task);
         },
@@ -112,7 +115,7 @@ class BoardViewport extends StatelessWidget {
   final KanbanTheme effectiveTheme;
 
   /// Function to show task edit dialog
-  final Function(BuildContext, String, String, Function(Task task)) showEditTaskDialog;
+  final Function(BuildContext, String, String, Project, Function(Task task)) showEditTaskDialog;
 
   /// Function to show task add dialog
   final Function(BuildContext, Function(Task task)) showAddTaskDialog;
@@ -223,16 +226,24 @@ class BoardWidget extends StatelessWidget {
   /// Takes a [context], [initialTitle], [initialSubtitle], and an [onEditTask]
   /// callback that receives the updated title and subtitle.
   void _showEditTaskDialog(
-      BuildContext context, String initialTitle, String initialSubtitle, Function(Task task) onEditTask) {
+    BuildContext context,
+    String initialTitle,
+    String initialSubtitle,
+    Project initialProject,
+    Function(Task task) onEditTask,
+  ) {
     showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context) => TaskFormDialog(
-            initialTitle: initialTitle,
-            initialSubtitle: initialSubtitle,
-            dialogTitle: 'Edit Task',
-            submitLabel: 'Save',
-            onSave: onEditTask));
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) => TaskFormDialog(
+        initialTitle: initialTitle,
+        initialSubtitle: initialSubtitle,
+        dialogTitle: 'Edit Task',
+        submitLabel: 'Save',
+        initialProject: initialProject,
+        onSave: onEditTask,
+      ),
+    );
   }
 
   @override

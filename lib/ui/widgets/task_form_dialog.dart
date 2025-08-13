@@ -1,5 +1,8 @@
 import 'package:clean_kanban/domain/entities/task.dart';
+import 'package:clean_kanban/ui/widgets/project_selector_dialog.dart';
 import 'package:flutter/material.dart';
+
+import '../../domain/repositories/toggl_repository.dart';
 
 /// A dialog widget that displays a form for creating or editing tasks.
 ///
@@ -22,6 +25,8 @@ class TaskFormDialog extends StatefulWidget {
   /// The label text for the submit button.
   final String submitLabel;
 
+  final Project? initialProject;
+
   /// Creates a [TaskFormDialog].
   ///
   /// The [onSave] callback is required and is called when the form is submitted
@@ -31,6 +36,7 @@ class TaskFormDialog extends StatefulWidget {
     required this.onSave,
     this.initialTitle,
     this.initialSubtitle,
+    this.initialProject,
     this.dialogTitle = 'Add New Task',
     this.submitLabel = 'Add',
   });
@@ -49,12 +55,14 @@ class TaskFormDialogState extends State<TaskFormDialog> {
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false;
   bool _hasError = false;
+  Project? currentProject;
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.initialTitle);
     _subtitleController = TextEditingController(text: widget.initialSubtitle);
+    currentProject = widget.initialProject;
   }
 
   @override
@@ -93,7 +101,7 @@ class TaskFormDialogState extends State<TaskFormDialog> {
         FocusManager.instance.primaryFocus?.unfocus();
 
         try {
-          widget.onSave(Task(title: title, subtitle: subtitle));
+          widget.onSave(Task(title: title, subtitle: subtitle, project: currentProject));
           Navigator.of(context).pop();
         } catch (e) {
           _showError('Failed to save task. Please try again.');
@@ -238,6 +246,25 @@ class TaskFormDialogState extends State<TaskFormDialog> {
                             // Force a rebuild to update the clear button state
                             setState(() {});
                           },
+                        ),
+                        SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text("Project: "),
+                            TextButton(
+                              onPressed: () async {
+                                final togglRepository = TogglRepository();
+                                final projects = await togglRepository.getProjects();
+                                final Project? project = await showProjectSelectorDialog(
+                                    context, [Project(id: -1, name: "Bez projektu", isActive: true, color: Colors.black38.colorToHex()), ...projects]);
+
+                                if (project != null) setState(() => currentProject = project);
+                                if (project?.id == -1) setState(() => currentProject = null);
+                              },
+                              child: Text(currentProject?.name ?? "Bez projektu", style: TextStyle(color: currentProject?.color.hexToColor())),
+                            ),
+                          ],
                         ),
                       ],
                     ),

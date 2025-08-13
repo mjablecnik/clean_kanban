@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:dio/dio.dart';
-import 'package:example/config.dart';
+import 'package:flutter/material.dart';
+
+import '../../config.dart';
 
 /// Repository for interacting with the Toggl API.
 /// Provides functionality to start and stop time tracking.
@@ -22,7 +24,7 @@ class TogglRepository {
     String? apiToken,
     Dio? dio,
     int? workspaceId,
-  })  : _apiToken = apiToken ?? MainConfig.togglApiToken,
+  })  : _apiToken = apiToken ?? TaskConfig.togglApiToken,
         _dio = dio ?? Dio(),
         _workspaceId = workspaceId {
     // Configure Dio with base options
@@ -207,7 +209,7 @@ class Project {
   final int id;
   final String name;
   final bool isActive;
-  final Color color;
+  final String color;
 
   Project({
     required this.id,
@@ -221,7 +223,7 @@ class Project {
       id: json['id'] as int,
       name: json['name'] as String,
       isActive: json['active'] as bool,
-      color: _hexToColor(json['color'] as String),
+      color: json['color'] as String,
     );
   }
 
@@ -240,6 +242,16 @@ class Project {
   }
 }
 
-Color _hexToColor(String code) {
-  return Color(int.parse(code.substring(1), radix: 16) + 0xFF000000);
+
+extension StringExt on String {
+  Color? hexToColor() {
+    return Color(int.parse(this.substring(1), radix: 16) + 0xFF000000);
+  }
 }
+
+extension ColorExt on Color {
+  String colorToHex() {
+    return '#${this.value.toRadixString(16).substring(2)}';
+  }
+}
+

@@ -1,6 +1,8 @@
 import 'package:clean_kanban/clean_kanban.dart';
 import 'package:flutter/material.dart';
 
+import '../../domain/repositories/toggl_repository.dart';
+
 /// Constants for KanbanColumn layout measurements
 class KanbanColumnLayout {
   /// Height of the column header
@@ -65,7 +67,7 @@ class KanbanColumnTheme {
   });
 
   /// Creates a copy of this [KanbanColumnTheme] with modified values.
-  /// 
+  ///
   /// Any parameter that is null will keep its original value.
   KanbanColumnTheme copyWith({
     Color? columnBackgroundColor,
@@ -180,10 +182,8 @@ class ColumnHeader extends StatelessWidget {
           const Spacer(),
           Row(
             children: [
-              if (column.isDoneColumn())
-                _buildClearButton(context),
-              if (column.canAddTask && onAddTask != null)
-                _buildAddButton(),
+              if (column.isDoneColumn()) _buildClearButton(context),
+              if (column.canAddTask && onAddTask != null) _buildAddButton(),
             ],
           ),
         ],
@@ -197,8 +197,8 @@ class ColumnHeader extends StatelessWidget {
       width: KanbanColumnLayout.actionButtonSize,
       margin: const EdgeInsets.only(right: 8.0),
       decoration: BoxDecoration(
-        color: Colors.red[400]?.withValues(alpha: 
-          column.tasks.isNotEmpty && onClearDone != null ? 1.0 : 0.3,
+        color: Colors.red[400]?.withValues(
+          alpha: column.tasks.isNotEmpty && onClearDone != null ? 1.0 : 0.3,
         ),
         borderRadius: BorderRadius.circular(8.0),
       ),
@@ -206,19 +206,17 @@ class ColumnHeader extends StatelessWidget {
         icon: const Icon(Icons.clear_all, size: KanbanColumnLayout.actionIconSize),
         padding: EdgeInsets.zero,
         color: Colors.white,
-        tooltip: column.tasks.isEmpty
-            ? 'No tasks to clear'
-            : 'Clear all done tasks',
+        tooltip: column.tasks.isEmpty ? 'No tasks to clear' : 'Clear all done tasks',
         onPressed: (column.tasks.isNotEmpty && onClearDone != null)
             ? () => ConfirmationDialog.show(
-                context: context,
-                title: 'Clear all done tasks',
-                message: 'Are you sure you want to clear all done tasks? This action cannot be undone.',
-                label: 'Clear',
-                onPressed: () {
-                  onClearDone?.call();
-                },
-              )
+                  context: context,
+                  title: 'Clear all done tasks',
+                  message: 'Are you sure you want to clear all done tasks? This action cannot be undone.',
+                  label: 'Clear',
+                  onPressed: () {
+                    onClearDone?.call();
+                  },
+                )
             : null,
       ),
     );
@@ -257,13 +255,15 @@ class ColumnTaskList extends StatelessWidget {
   final Function(KanbanColumn column, int oldIndex, int newIndex)? onReorderedTask;
 
   /// Callback when a task is dropped into this column
-  final Function(KanbanColumn source, int sourceIndex, KanbanColumn destination, [int? destinationIndex])? onTaskDropped;
+  final Function(KanbanColumn source, int sourceIndex, KanbanColumn destination, [int? destinationIndex])?
+      onTaskDropped;
 
   /// Callback when a task's delete button is pressed
   final Function(KanbanColumn column, int index)? onDeleteTask;
 
   /// Callback when a task's edit button is pressed
-  final Function(KanbanColumn column, int index, String initialTitle, String initialSubtitle)? onEditTask;
+  final Function(KanbanColumn column, int index, String initialTitle, String initialSubtitle, Project initialProject)?
+      onEditTask;
 
   final Function? runTask;
 
@@ -345,7 +345,19 @@ class ColumnTaskList extends StatelessWidget {
               onDeleteTask?.call(column, index);
             },
           ),
-          onEditTask: () => onEditTask?.call(column, index, task.title, task.subtitle),
+          onEditTask: () => onEditTask?.call(
+            column,
+            index,
+            task.title,
+            task.subtitle,
+            task.project ??
+                Project(
+                  id: -1,
+                  name: "Bez projektu",
+                  isActive: true,
+                  color: Colors.black38.colorToHex(),
+                ),
+          ),
           runTask: runTask,
         );
       },
@@ -369,10 +381,10 @@ class ColumnTaskList extends StatelessWidget {
 
   bool _shouldAcceptDrop(KanbanColumn sourceColumn, KanbanColumn targetColumn) {
     if (targetColumn.columnLimit != null && targetColumn.tasks.length >= targetColumn.columnLimit!) {
-        return false; // target column limit reached
-    } else  {
+      return false; // target column limit reached
+    } else {
       return true;
-    } 
+    }
   }
 }
 
@@ -394,7 +406,8 @@ class ColumnWidget extends StatelessWidget {
   final Function(KanbanColumn column, int oldIndex, int newIndex)? onReorderedTask;
 
   /// Callback when a task is dropped into this column.
-  final Function(KanbanColumn source, int sourceIndex, KanbanColumn destination, [int? destinationIndex])? onTaskDropped;
+  final Function(KanbanColumn source, int sourceIndex, KanbanColumn destination, [int? destinationIndex])?
+      onTaskDropped;
 
   /// Callback when the clear all done tasks button is pressed.
   final Function()? onClearDone;
@@ -403,7 +416,8 @@ class ColumnWidget extends StatelessWidget {
   final Function(KanbanColumn column, int index)? onDeleteTask;
 
   /// Callback when a task's edit button is pressed.
-  final Function(KanbanColumn column, int index, String initialTitle, String initialSubtitle)? onEditTask;
+  final Function(KanbanColumn column, int index, String initialTitle, String initialSubtitle, Project initialProject)?
+      onEditTask;
 
   /// Maximum height for the column when displayed on mobile
   /// Only applied when the column is in a vertical layout
@@ -436,9 +450,7 @@ class ColumnWidget extends StatelessWidget {
         final isNarrowScreen = constraints.maxWidth < KanbanColumnLayout.narrowScreenThreshold;
 
         return Container(
-          constraints: isNarrowScreen && mobileMaxHeight != null
-              ? BoxConstraints(maxHeight: mobileMaxHeight!)
-              : null,
+          constraints: isNarrowScreen && mobileMaxHeight != null ? BoxConstraints(maxHeight: mobileMaxHeight!) : null,
           decoration: BoxDecoration(
             color: theme.columnBackgroundColor,
             borderRadius: BorderRadius.circular(KanbanColumnLayout.columnBorderRadius),

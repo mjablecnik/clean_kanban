@@ -16,7 +16,7 @@ class AddTaskUseCase {
   /// - [column]: The column to add the task to
   /// - [task]: The task to be added
   Future<void> execute(KanbanColumn column, Task task) async {
-    final createdTask = await TodoistRepository().createTask(task);
+    final createdTask = (await TodoistRepository().createTask(task)).copyWith(project: task.project);
     column.addTask(createdTask);
     EventNotifier().notify(TaskAddedEvent(createdTask, column));
   }

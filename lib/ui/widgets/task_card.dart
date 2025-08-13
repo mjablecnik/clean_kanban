@@ -1,3 +1,4 @@
+import 'package:clean_kanban/domain/repositories/toggl_repository.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/task.dart';
 import 'task_drag_data.dart';
@@ -172,6 +173,12 @@ class TaskCardContent extends StatelessWidget {
             color: theme.cardSubtitleColor,
           ),
         ),
+        if (data.task.project != null)
+          Badge(
+            label: Text(data.task.project!.name),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            backgroundColor: data.task.project?.color.hexToColor(),
+          )
       ],
     );
   }

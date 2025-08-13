@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:example/repositories/toggl_repository.dart';
+
+import '../../domain/repositories/toggl_repository.dart';
 
 /// Shows a dialog with a scrollable list of projects.
 /// Returns the selected project when a project is clicked, or null if the dialog is dismissed.
@@ -21,7 +22,7 @@ Future<Project?> showProjectSelectorDialog(
               final project = projects[index];
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: project.color,
+                  backgroundColor: project.color.hexToColor(),
                   radius: 12,
                 ),
                 title: Text(project.name),

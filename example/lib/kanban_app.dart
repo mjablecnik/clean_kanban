@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:example/repositories/toggl_repository.dart';
-import 'package:example/widgets/project_selector_dialog.dart';
+import 'package:clean_kanban/domain/repositories/toggl_repository.dart';
+import 'package:clean_kanban/ui/widgets/project_selector_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:pomodoro/screens/pomodoro_screen.dart';
 import 'package:pomodoro/screens/timer_service.dart';
@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:clean_kanban/clean_kanban.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
-import 'repositories/shared_preferences_board_repository.dart';
 import 'repositories/theme_provider.dart';
 import 'theme.dart';
 import 'screens/column_settings_screen.dart';
@@ -93,8 +92,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TrayListener {
-  late Timer timer;
-  String currentTime = "";
   int currentTimeEntryId = 0;
   Project? currentProject;
 
@@ -103,12 +100,6 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
     super.initState();
 
     trayManager.addListener(this);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    timer.cancel();
   }
 
   @override
@@ -140,21 +131,11 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
     final kanbanLightTheme = KanbanTheme.fromTheme(materialTheme.light());
     final kanbanDarkTheme = KanbanTheme.fromTheme(materialTheme.dark());
 
-    timerService.setCallback(() async {
+    Provider.of<TimerService>(context).setCallback(() async {
       showPomodoroDialog(context);
       await windowManager.show();
       await windowManager.focus();
     });
-    timer = Timer.periodic(
-      Duration(seconds: 1),
-      (timer) {
-        final duration = timerService.currentDuration;
-        trayManager.setTitle("${duration ~/ 60}:${(duration % 60).toString().split('.').first.padLeft(2, '0')}");
-        setState(() {
-          currentTime = "${duration ~/ 60}:${(duration % 60).toString().split('.').first.padLeft(2, '0')}";
-        });
-      },
-    );
 
     return Scaffold(
       appBar: AppBar(
@@ -165,14 +146,14 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
               final togglRepository = TogglRepository();
               final projects = await togglRepository.getProjects();
               final Project? project = await showProjectSelectorDialog(
-                  context, [Project(id: -1, name: "Bez projektu", isActive: true, color: Colors.black38), ...projects]);
+                  context, [Project(id: -1, name: "Bez projektu", isActive: true, color: Colors.black38.colorToHex()), ...projects]);
 
               if (project != null) setState(() => currentProject = project);
               if (project?.id == -1) setState(() => currentProject = null);
             },
-            child: Text(currentProject?.name ?? "Bez projektu", style: TextStyle(color: currentProject?.color)),
+            child: Text(currentProject?.name ?? "Bez projektu", style: TextStyle(color: currentProject?.color.hexToColor())),
           ),
-          Text(currentTime),
+          TimerWidget(timerService: Provider.of<TimerService>(context)),
           IconButton(
             icon: Icon(timerService.timerPlaying ? Icons.pause : Icons.play_arrow),
             onPressed: () {
@@ -276,3 +257,42 @@ const Map<String, dynamic> _boardConfig = {
     }
   ]
 };
+
+class TimerWidget extends StatefulWidget {
+  const TimerWidget({super.key, required this.timerService});
+  final TimerService timerService;
+
+  @override
+  State<TimerWidget> createState() => _TimerWidgetState();
+}
+
+class _TimerWidgetState extends State<TimerWidget> {
+  late Timer timer;
+  String currentTime = "";
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(
+      Duration(seconds: 1),
+          (timer) {
+        final duration = widget.timerService.currentDuration;
+        trayManager.setTitle("${duration ~/ 60}:${(duration % 60).toString().split('.').first.padLeft(2, '0')}");
+        setState(() {
+          currentTime = "${duration ~/ 60}:${(duration % 60).toString().split('.').first.padLeft(2, '0')}";
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(currentTime);
+  }
+}

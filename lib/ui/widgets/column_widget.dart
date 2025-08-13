@@ -265,6 +265,8 @@ class ColumnTaskList extends StatelessWidget {
   /// Callback when a task's edit button is pressed
   final Function(KanbanColumn column, int index, String initialTitle, String initialSubtitle)? onEditTask;
 
+  final Function? runTask;
+
   /// Creates a [ColumnTaskList] widget.
   const ColumnTaskList({
     super.key,
@@ -275,6 +277,7 @@ class ColumnTaskList extends StatelessWidget {
     this.onTaskDropped,
     this.onDeleteTask,
     this.onEditTask,
+    this.runTask,
   }) : super();
 
   @override
@@ -343,6 +346,7 @@ class ColumnTaskList extends StatelessWidget {
             },
           ),
           onEditTask: () => onEditTask?.call(column, index, task.title, task.subtitle),
+          runTask: runTask,
         );
       },
       onWillAcceptWithDetails: (details) {
@@ -405,6 +409,8 @@ class ColumnWidget extends StatelessWidget {
   /// Only applied when the column is in a vertical layout
   final double? mobileMaxHeight;
 
+  final Function? runTask;
+
   /// Creates a [ColumnWidget] with the given parameters.
   ///
   /// The [column] and [theme] parameters are required, while all callbacks
@@ -420,6 +426,7 @@ class ColumnWidget extends StatelessWidget {
     this.onEditTask,
     this.onClearDone,
     this.mobileMaxHeight = KanbanColumnLayout.defaultMobileMaxHeight,
+    this.runTask,
   }) : super();
 
   @override
@@ -457,6 +464,7 @@ class ColumnWidget extends StatelessWidget {
                   onTaskDropped: onTaskDropped,
                   onDeleteTask: onDeleteTask,
                   onEditTask: onEditTask,
+                  runTask: runTask,
                 ),
               ),
             ],

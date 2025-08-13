@@ -91,7 +91,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TrayListener {
-
   late Timer timer;
   String currentTime = "";
 
@@ -203,6 +202,13 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
       ),
       body: BoardWidget(
         theme: themeProvider.themeMode == ThemeMode.dark ? kanbanDarkTheme : kanbanLightTheme,
+        runTask: (Task task, bool isRunning) {
+          print(task);
+          print(isRunning);
+          if (timerService.timerPlaying == isRunning) {
+            timerService.timerPlaying ? timerService.pause() : timerService.start();
+          }
+        },
       ),
     );
   }

@@ -53,6 +53,8 @@ class BoardColumn extends StatelessWidget {
   /// Function to show task add dialog
   final Function(BuildContext, Function(Task)) showAddTaskDialog;
 
+  final Function? runTask;
+
   /// Creates a BoardColumn.
   const BoardColumn({
     super.key,
@@ -62,6 +64,7 @@ class BoardColumn extends StatelessWidget {
     required this.showEditTaskDialog,
     required this.showAddTaskDialog,
     this.mobileMaxHeight,
+    this.runTask,
   });
 
   @override
@@ -70,6 +73,7 @@ class BoardColumn extends StatelessWidget {
       theme: effectiveTheme.columnTheme,
       column: column,
       mobileMaxHeight: mobileMaxHeight,
+      runTask: runTask,
       onAddTask: () {
         showAddTaskDialog(context, (Task task) {
           boardProvider.addTask(column.id, task);
@@ -113,6 +117,8 @@ class BoardViewport extends StatelessWidget {
   /// Function to show task add dialog
   final Function(BuildContext, Function(Task task)) showAddTaskDialog;
 
+  final Function? runTask;
+
   /// Creates a BoardViewport.
   const BoardViewport({
     super.key,
@@ -120,6 +126,7 @@ class BoardViewport extends StatelessWidget {
     required this.effectiveTheme,
     required this.showEditTaskDialog,
     required this.showAddTaskDialog,
+    this.runTask,
   });
 
   @override
@@ -150,6 +157,7 @@ class BoardViewport extends StatelessWidget {
                 showEditTaskDialog: showEditTaskDialog,
                 showAddTaskDialog: showAddTaskDialog,
                 mobileMaxHeight: BoardLayout.mobileColumnMaxHeight,
+                runTask: runTask,
               ),
             ),
           );
@@ -171,6 +179,7 @@ class BoardViewport extends StatelessWidget {
               boardProvider: boardProvider,
               showEditTaskDialog: showEditTaskDialog,
               showAddTaskDialog: showAddTaskDialog,
+              runTask: runTask,
             ),
           ),
         );
@@ -189,12 +198,13 @@ class BoardWidget extends StatelessWidget {
   ///
   /// If not provided, the theme will be obtained from the nearest [KanbanThemeProvider].
   final KanbanTheme? theme;
+  final Function? runTask;
 
   /// Creates a [BoardWidget] with an optional theme override.
   ///
   /// The [theme] parameter allows customizing the appearance of this specific board
   /// instance without affecting other boards in the application.
-  const BoardWidget({super.key, this.theme});
+  const BoardWidget({super.key, this.theme, this.runTask});
 
   /// Shows a dialog for adding a new task.
   ///
@@ -251,6 +261,7 @@ class BoardWidget extends StatelessWidget {
               effectiveTheme: effectiveTheme,
               showEditTaskDialog: _showEditTaskDialog,
               showAddTaskDialog: _showAddTaskDialog,
+              runTask: runTask,
             );
           },
         ),

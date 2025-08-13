@@ -1,61 +1,62 @@
 import 'package:flutter/material.dart';
+import '../../domain/entities/task.dart';
 import 'task_drag_data.dart';
 
 /// Constants for TaskCard layout measurements
 class TaskCardLayout {
   /// Border radius for the task card corners.
   static const double cardBorderRadius = 8.0;
-  
+
   /// Default elevation for the task card.
   static const double cardElevation = 2.0;
-  
+
   /// Elevation applied to the card when it's being dragged.
   static const double cardDraggingElevation = 8.0;
-  
+
   /// Scale factor applied to the card during drag operations.
   static const double dragScale = 1.04;
-  
+
   /// Padding for the main content area of the card.
   static const double contentPadding = 16.0;
-  
+
   /// Padding for the controls section of the card.
   static const double controlsPadding = 8.0;
-  
+
   /// Delay before a long press is recognized as a drag operation.
   static const Duration dragDelay = Duration(milliseconds: 120);
-  
+
   /// Minimum width constraint for the task card.
   static const double minCardWidth = 280.0;
-  
+
   /// Maximum width constraint for the task card.
   static const double maxCardWidth = 600.0;
 
   // Text styles
   /// Font size used for the task title.
   static const double titleFontSize = 17.0;
-  
+
   /// Font size used for the task subtitle.
   static const double subtitleFontSize = 14.0;
-  
+
   /// Letter spacing for the task title text.
   static const double titleLetterSpacing = -0.3;
-  
+
   /// Line height multiplier for the subtitle text.
   static const double subtitleLineHeight = 1.3;
 
   // Control buttons
   /// Width of control buttons in the card.
   static const double controlButtonWidth = 32.0;
-  
+
   /// Height of control buttons in the card.
   static const double controlButtonHeight = 28.0;
-  
+
   /// Size of icons used in control buttons.
   static const double controlIconSize = 18.0;
-  
+
   /// Width of the divider between control buttons.
   static const double controlDividerWidth = 16.0;
-  
+
   /// Border radius for control button hit areas.
   static const double controlBorderRadius = 4.0;
 }
@@ -133,7 +134,7 @@ class TaskCardTheme {
 class TaskCardContent extends StatelessWidget {
   /// The data associated with this task, used to display title and subtitle.
   final TaskDragData data;
-  
+
   /// Theme configuration for styling the content.
   final TaskCardTheme theme;
 
@@ -177,15 +178,17 @@ class TaskCardContent extends StatelessWidget {
 }
 
 /// A widget that displays the control buttons for a task card.
-class TaskCardControls extends StatelessWidget {
+class TaskCardControls extends StatefulWidget {
   /// Callback function triggered when the edit button is pressed.
   final VoidCallback? onEditTask;
-  
+
   /// Callback function triggered when the delete button is pressed.
   final VoidCallback? onDeleteTask;
-  
+
   /// Theme configuration for styling the control buttons.
   final TaskCardTheme theme;
+
+  final Function? runTask;
 
   /// Creates a [TaskCardControls] widget.
   ///
@@ -196,8 +199,16 @@ class TaskCardControls extends StatelessWidget {
     super.key,
     this.onEditTask,
     this.onDeleteTask,
+    this.runTask,
     required this.theme,
   });
+
+  @override
+  State<TaskCardControls> createState() => _TaskCardControlsState();
+}
+
+class _TaskCardControlsState extends State<TaskCardControls> {
+  bool isRunning = false;
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +221,7 @@ class TaskCardControls extends StatelessWidget {
         border: Border(
           // this is the vertical border
           left: BorderSide(
-            color: theme.cardDividerColor.withValues(alpha: 0.7),
+            color: widget.theme.cardDividerColor.withValues(alpha: 0.7),
             width: 1.0,
           ),
         ),
@@ -220,23 +231,32 @@ class TaskCardControls extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildControlButton(
-            icon: Icons.mode_edit_outline,
-            onPressed: onEditTask,
-            tooltip: 'Edit this task',
-            color: theme.cardMoveIconEnabledColor,
+            icon: isRunning ? Icons.pause : Icons.play_arrow,
+            onPressed: () {
+              widget.runTask?.call(isRunning);
+              setState(() => isRunning = !isRunning);
+            },
+            tooltip: 'Run this task',
+            color: widget.theme.cardMoveIconEnabledColor,
           ),
+          //_buildControlButton(
+          //  icon: Icons.mode_edit_outline,
+          //  onPressed: onEditTask,
+          //  tooltip: 'Edit this task',
+          //  color: theme.cardMoveIconEnabledColor,
+          //),
           // Divider
           Container(
             height: 1,
             width: TaskCardLayout.controlDividerWidth,
             margin: const EdgeInsets.symmetric(vertical: 2.0),
-            color: theme.cardDividerColor.withValues(alpha: 0.7),
+            color: widget.theme.cardDividerColor.withValues(alpha: 0.7),
           ),
           _buildControlButton(
             icon: Icons.delete_outline,
-            onPressed: onDeleteTask,
+            onPressed: widget.onDeleteTask,
             tooltip: 'Delete this task',
-            color: theme.cardMoveIconEnabledColor,
+            color: widget.theme.cardMoveIconEnabledColor,
           ),
         ],
       ),
@@ -291,6 +311,8 @@ class TaskCard extends StatelessWidget {
   /// Callback function when the edit button is pressed.
   final VoidCallback? onEditTask;
 
+  final Function? runTask;
+
   /// Creates a [TaskCard] widget.
   ///
   /// The [data] and [theme] parameters are required, while [onDeleteTask]
@@ -301,6 +323,7 @@ class TaskCard extends StatelessWidget {
     required this.theme,
     this.onDeleteTask,
     this.onEditTask,
+    this.runTask,
   });
 
   @override
@@ -384,6 +407,7 @@ class TaskCard extends StatelessWidget {
                   TaskCardControls(
                     onEditTask: onEditTask,
                     onDeleteTask: onDeleteTask,
+                    runTask: (bool isRunning) => runTask?.call(data.task, isRunning),
                     theme: theme,
                   ),
                 ],

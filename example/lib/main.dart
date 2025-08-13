@@ -15,7 +15,7 @@ void main() async {
   await windowManager.setPreventClose(false);
   WindowOptions windowOptions = WindowOptions(
     //size: Size(800, 600),
-    center: true,
+    //center: true,
     skipTaskbar: true,
     titleBarStyle: TitleBarStyle.normal,
     windowButtonVisibility: true,

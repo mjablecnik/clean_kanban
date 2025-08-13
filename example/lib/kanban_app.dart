@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:example/repositories/toggl_repository.dart';
+import 'package:example/widgets/project_selector_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:pomodoro/screens/pomodoro_screen.dart';
 import 'package:pomodoro/screens/timer_service.dart';
@@ -95,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
   late Timer timer;
   String currentTime = "";
   int currentTimeEntryId = 0;
+  Project? currentProject;
 
   @override
   void initState() {
@@ -158,6 +160,18 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
       appBar: AppBar(
         title: const Text('Kanban Board'),
         actions: [
+          TextButton(
+            onPressed: () async {
+              final togglRepository = TogglRepository();
+              final projects = await togglRepository.getProjects();
+              final Project? project = await showProjectSelectorDialog(
+                  context, [Project(id: -1, name: "Bez projektu", isActive: true, color: Colors.black38), ...projects]);
+
+              if (project != null) setState(() => currentProject = project);
+              if (project?.id == -1) setState(() => currentProject = null);
+            },
+            child: Text(currentProject?.name ?? "Bez projektu", style: TextStyle(color: currentProject?.color)),
+          ),
           Text(currentTime),
           IconButton(
             icon: Icon(timerService.timerPlaying ? Icons.pause : Icons.play_arrow),
@@ -210,7 +224,8 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
           if (isRunning) {
             await togglRepository.stopTimeEntry(timeEntryId: currentTimeEntryId);
           } else {
-            final entryId = await togglRepository.startTimeEntry(description: task.title);
+            final entryId =
+                await togglRepository.startTimeEntry(description: task.title, projectId: currentProject?.id);
             setState(() => currentTimeEntryId = entryId);
           }
 

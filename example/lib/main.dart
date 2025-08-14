@@ -17,7 +17,7 @@ void main() async {
     //size: Size(800, 600),
     //center: true,
     skipTaskbar: true,
-    title: 'Kanban Manager',
+    title: 'KanbanBoard',
     //titleBarStyle: TitleBarStyle.hidden,
     titleBarStyle: TitleBarStyle.normal,
     windowButtonVisibility: true,

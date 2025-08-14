@@ -206,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener {
             await togglRepository.stopTimeEntry(timeEntryId: currentTimeEntryId);
           } else {
             final entryId =
-                await togglRepository.startTimeEntry(description: task.title, projectId: currentProject?.id);
+                await togglRepository.startTimeEntry(description: task.title, projectId: task.project?.id ?? currentProject?.id);
             setState(() => currentTimeEntryId = entryId);
           }
 

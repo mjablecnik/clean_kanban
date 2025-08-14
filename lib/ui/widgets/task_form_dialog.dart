@@ -62,7 +62,7 @@ class TaskFormDialogState extends State<TaskFormDialog> {
     super.initState();
     _titleController = TextEditingController(text: widget.initialTitle);
     _subtitleController = TextEditingController(text: widget.initialSubtitle);
-    currentProject = widget.initialProject;
+    currentProject = widget.initialProject?.id == -1 ? null : widget.initialProject;
   }
 
   @override

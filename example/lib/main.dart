@@ -1,9 +1,9 @@
 import 'package:clean_kanban/domain/events/board_events.dart';
 import 'package:clean_kanban/domain/events/event_notifier.dart';
 import 'package:clean_kanban/injection_container.dart';
-import 'package:example/kanban_app.dart';
-import 'package:example/repositories/shared_preferences_board_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:kanban_board/kanban_app.dart';
+import 'package:kanban_board/repositories/shared_preferences_board_repository.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -17,6 +17,8 @@ void main() async {
     //size: Size(800, 600),
     //center: true,
     skipTaskbar: true,
+    title: 'Kanban Manager',
+    //titleBarStyle: TitleBarStyle.hidden,
     titleBarStyle: TitleBarStyle.normal,
     windowButtonVisibility: true,
     //backgroundColor: MacosColors.transparent,

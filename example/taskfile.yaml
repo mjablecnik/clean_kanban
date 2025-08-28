@@ -25,7 +25,7 @@ tasks:
       - build-macos
 
   install-macos:
-    cmd: "mv build/macos/Build/Products/Release/KanbanBoard.app /Applications/"
+    cmd: "rm -rf /Applications/KanbanBoard.app && mv build/macos/Build/Products/Release/KanbanBoard.app /Applications/"
     desc: "Install application"
     deps:
       - build-macos

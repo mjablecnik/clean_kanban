@@ -164,7 +164,7 @@ class TaskCardContent extends StatelessWidget {
             color: theme.cardTitleColor,
           ),
         ),
-        const SizedBox(height: 6.0),
+        const SizedBox(height: 8.0),
         Text(
           data.task.subtitle,
           style: TextStyle(
@@ -173,6 +173,8 @@ class TaskCardContent extends StatelessWidget {
             color: theme.cardSubtitleColor,
           ),
         ),
+        if (data.task.project != null)
+          const SizedBox(height: 12.0),
         if (data.task.project != null)
           Badge(
             label: Text(data.task.project!.name),
